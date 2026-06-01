@@ -283,79 +283,66 @@ body{background-image:radial-gradient(ellipse at 15% 0%,rgba(212,175,55,.05) 0%,
 <script>
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxfxa06AhxkCMFBj87pjbjaIFQDBdKMhyST4T7Gce4-W43m5sjqoVInPN9GjrSmiBRE/exec';
 const DP=[
-  {id:'P-10711',py:'PY7',sub:'Oct 21, 2025',pilot:'false',ps:'Further Part II information requested',cs:'Addressed',recs:'$39,198',ut:'ComEd',corr:'(1) Submit 15-module South array panel layout photo. (2) Submit system production report.',cmt:'Pending review. Upload updated SS and plan set.',pm:''},
-  {id:'P-13512',py:'PY8-2025',sub:'May 13, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$52,460',ut:'ComEd',corr:'',cmt:'Upload separate clear full array photos. Pending Approved SO.',pm:'Allaiza'},
-  {id:'P-13053',py:'PY8-2025',sub:'May 13, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$29,058',ut:'Ameren',corr:'',cmt:'Upload separate clear full array photos. Pending Approved SO.',pm:'Genneva'},
-  {id:'P-13457',py:'PY8-2025',sub:'May 13, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$48,950',ut:'ComEd',corr:'',cmt:'Pending Approved SO.',pm:'Francheska'},
-  {id:'P-12833',py:'PY8-2025',sub:'May 14, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$34,519',ut:'Ameren',corr:'',cmt:'Upload separate clear full array photos.',pm:'Angelica'},
-  {id:'P-13416',py:'PY8-2025',sub:'May 18, 2026',pilot:'false',ps:'Under Inspection',cs:'Addressed',recs:'$49,475',ut:'ComEd',corr:'Submit array layout photo of the 6-module South array.',cmt:'Pending SO approval.',pm:'May'},
-  {id:'P-12949',py:'PY8-2025',sub:'May 21, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$37,834',ut:'ComEd',corr:'',cmt:'Pending Approved SO.',pm:'Allaiza'},
-  {id:'P-11988',py:'PY8-2025',sub:'May 21, 2026',pilot:'false',ps:'Further Part II information requested',cs:'Pending',recs:'$34,714',ut:'Ameren',corr:'(1) Submit Cold Water Grounding mitigation photos. (2) Submit system production report.',cmt:'Monitoring photos showing system offline status.',pm:'Genneva'},
-  {id:'P-12990',py:'PY8-2025',sub:'May 22, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$32,568',ut:'ComEd',corr:'',cmt:'Pending Approved SO.',pm:'Francheska'},
+  {id:'P-10711',py:'PY7',sub:'Oct 21, 2025',pilot:false,ps:'Further Part II information requested',cs:'Addressed',recs:'$39,198',ut:'ComEd',corr:'(1) Submit 15-module South array panel layout photo. (2) Submit system production report.',cmt:'Pending review.',pm:''},
+  {id:'P-13512',py:'PY8-2025',sub:'May 13, 2026',pilot:false,ps:'Under Inspection',cs:'No feedback',recs:'$52,460',ut:'ComEd',corr:'',cmt:'Upload separate clear full array photos. Pending Approved SO.',pm:'Allaiza'},
+  {id:'P-13053',py:'PY8-2025',sub:'May 13, 2026',pilot:false,ps:'Under Inspection',cs:'No feedback',recs:'$29,058',ut:'Ameren',corr:'',cmt:'Upload separate clear full array photos. Pending Approved SO.',pm:'Genneva'},
+  {id:'P-13457',py:'PY8-2025',sub:'May 13, 2026',pilot:false,ps:'Under Inspection',cs:'No feedback',recs:'$48,950',ut:'ComEd',corr:'',cmt:'Pending Approved SO.',pm:'Francheska'},
+  {id:'P-12833',py:'PY8-2025',sub:'May 14, 2026',pilot:false,ps:'Under Inspection',cs:'No feedback',recs:'$34,519',ut:'Ameren',corr:'',cmt:'Upload separate clear full array photos.',pm:'Angelica'},
+  {id:'P-13416',py:'PY8-2025',sub:'May 18, 2026',pilot:false,ps:'Under Inspection',cs:'Addressed',recs:'$49,475',ut:'ComEd',corr:'Submit array layout photo of the 6-module South array.',cmt:'Pending SO approval.',pm:'May'},
+  {id:'P-12949',py:'PY8-2025',sub:'May 21, 2026',pilot:false,ps:'Under Inspection',cs:'No feedback',recs:'$37,834',ut:'ComEd',corr:'',cmt:'Pending Approved SO.',pm:'Allaiza'},
+  {id:'P-11988',py:'PY8-2025',sub:'May 21, 2026',pilot:false,ps:'Further Part II information requested',cs:'Pending',recs:'$34,714',ut:'Ameren',corr:'(1) Submit Cold Water Grounding mitigation photos. (2) Submit system production report.',cmt:'Monitoring photos showing system offline.',pm:'Genneva'},
+  {id:'P-12990',py:'PY8-2025',sub:'May 22, 2026',pilot:false,ps:'Under Inspection',cs:'No feedback',recs:'$32,568',ut:'ComEd',corr:'',cmt:'Pending Approved SO.',pm:'Francheska'},
 ];
 const DPM=['Mary','Allaiza','Genneva','Francheska','Angelica','May'];
 const MGR='Mary';
 
 let P=[],CL={},PR={},PML=[],AF=null,prPid='',showAF=false,showPMAF=false,openCards={},clSec={},activePM='';
 
-// ── API ──────────────────────────────────
 async function api(p){
   if(!SCRIPT_URL||SCRIPT_URL==='YOUR_URL')return null;
   const url=SCRIPT_URL+'?'+Object.entries(p).map(([k,v])=>k+'='+encodeURIComponent(v)).join('&');
-  try{const r=await fetch(url,{redirect:'follow',cache:'no-cache'});const t=await r.text();if(t.trim().startsWith('<'))return null;return JSON.parse(t);}catch(e){return null;}
+  try{const r=await fetch(url,{redirect:'follow',cache:'no-cache'});const t=await r.text();if(t.trim().startsWith('<'))return null;return JSON.parse(t);}
+  catch(e){return null;}
 }
 function si(msg,type){const el=document.getElementById('sync');el.textContent=msg;el.className='show '+(type||'');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3000);}
-
-// ── Cache ────────────────────────────────
 function sc(data){try{localStorage.setItem('ilsfa2',JSON.stringify({data,ts:Date.now()}));}catch(e){}}
 function lc(){try{const c=JSON.parse(localStorage.getItem('ilsfa2')||'null');if(c&&c.data)return c;}catch(e){}return null;}
-
-// ── Apply data ───────────────────────────
 function apd(data){
-  P=(data.projects||[]).map(p=>{const x={...p};x.pilot=x.pilot==='true'||x.pilot===true;return x;});
-  if(!P.length)P=DP.map(p=>{return{...p,pilot:false};});
-  CL={};(data.checklist||[]).forEach(r=>{CL[r.pid+'_'+r.iid]={done:r.done==='true',st:r.st||''};}); 
+  P=(data.projects||[]).map(p=>({...p,pilot:p.pilot===true||p.pilot==='true'}));
+  if(!P.length)P=DP.map(p=>({...p}));
+  CL={};(data.checklist||[]).forEach(r=>{CL[r.pid+'_'+r.iid]={done:r.done==='true',st:r.st||''};});
   PR={};(data.postReview||[]).forEach(r=>{PR[r.pid+'_'+r.iid]=r.val||'none';});
   const pm=(data.settings||[]).find(r=>r.key==='pmList');
   PML=pm?pm.val.split(',').filter(Boolean):[...DPM];
 }
-
-// ── Background refresh ───────────────────
 async function bgRefresh(){
   const data=await api({action:'getAll'});
-  if(!data||data.error){si('Sheet unreachable — cached data','err');return;}
+  if(!data||data.error){si('Sheet unreachable','err');return;}
   apd(data);sc(data);si('Synced with Google Sheets','ok');ra();
 }
-
-// ── Load ─────────────────────────────────
 async function loadData(){
   const cached=lc();
-  if(cached){
-    apd(cached.data);
-  }else{
-    P=DP.map(p=>{return{...p,pilot:false};});CL={};PR={};PML=[...DPM];
-  }
+  if(cached){apd(cached.data);}
+  else{P=DP.map(p=>({...p}));CL={};PR={};PML=[...DPM];}
   if(!activePM)activePM=PML[0];
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
   ra();
   if(SCRIPT_URL&&SCRIPT_URL!=='YOUR_URL'){
-    if(cached){const age=Math.round((Date.now()-cached.ts)/60000);si('Syncing... ('+age+'m ago)','');}
+    if(cached){const age=Math.round((Date.now()-cached.ts)/60000);si(`Syncing... (${age}m ago)`,'');}
     else si('Connecting to Google Sheets...','');
     bgRefresh();
   }
 }
-
 function hardRefresh(){try{localStorage.removeItem('ilsfa2');}catch(e){}si('Refreshing...','');bgRefresh();}
 
-// ── Checklist data ───────────────────────
 const CLS=[
   {id:'ss',title:'Site suitability',ic:'ti-home',items:[
     {id:'i1',n:'[1]',t:'Permit',note:'Ensure the accurate and officially approved permit is uploaded. Not a draft or expired version.',b:'doc',hs:false},
     {id:'i2',n:'[2]',t:'PTO / COC',note:'Must include date of approval AND ComEd representative signature. Both required.',b:'req',hs:false},
     {id:'i3',n:'[3]',t:'Net metering',note:'Correct net metering document matching project address and utility account.',b:'doc',hs:false},
     {id:'i4',n:'[4]',t:'PJM / SO SS',note:'Multiple photos — compile into ONE PDF before uploading.',b:'doc',hs:true},
-    {id:'i5',n:'[5]',t:'JCO',note:'All JCO photos complete and accurate. Missing or unclear — escalate to Install Team (Yen).',b:'doc',hs:true},
+    {id:'i5',n:'[5]',t:'JCO',note:'All JCO photos complete and accurate. Missing or unclear — escalate to Yen.',b:'doc',hs:true},
   ]},
   {id:'sd',title:'System design',ic:'ti-bolt',items:[
     {id:'i6',n:'[6]',t:'Inverter & module label photos',note:'Upload clear separate photos, then merge into a single file.',b:'doc',hs:true},
@@ -452,7 +439,6 @@ function tcs(pid,iid,v){const k=pid+'_'+iid;const ns=(CL[k]?.st||'')=== v?'':v;C
 function setPR(pid,iid,val){PR[pid+'_'+iid]=val;rpr();api({action:'setPR',pid,iid,val});}
 function tprs(id){openCards['_pr_'+id]=openCards['_pr_'+id]===false?true:false;rpr();}
 function tp(pid){openCards[pid]=openCards[pid]===false?true:false;rp();rtv();}
-
 function upf(pid,f,v){const p=P.find(x=>x.id===pid);if(!p)return;p[f]=v;rp();rdb();rss();api({action:'upsertProject',data:JSON.stringify(p)});}
 function spp(pid,pm){const p=P.find(x=>x.id===pid);if(!p)return;p.pm=pm;rp();rtv();rdb();api({action:'upsertProject',data:JSON.stringify(p)});}
 function spn(pid){const ce=document.getElementById('cn-'+pid),me=document.getElementById('mn-'+pid),p=P.find(x=>x.id===pid);if(!p)return;if(ce)p.corr=ce.value;if(me)p.cmt=me.value;rp();api({action:'upsertProject',data:JSON.stringify(p)});}
@@ -470,34 +456,43 @@ function fpg(){if(!AF)return P;const{t,v}=AF;if(t==='all')return P;if(t==='ps')r
 function fg(t,v,label,count){if(count===0&&t!=='all')return;AF={t,v,label};ntid('n-projects');document.querySelectorAll('#v-spl .nb').forEach((b,i)=>b.classList.toggle('a',i===1));rp();}
 function cf(){AF=null;rp();}
 function fgpm(pm,c){if(c===0)return;svid('team');activePM=pm;rtv();}
-</script>
 
-<script>
+// ── RENDER FUNCTIONS ──────────────────────────────────────────
+
 function rss(){
   const tr=P.reduce((a,p)=>a+rv(p),0);
   const app=P.filter(p=>p.ps==='Approved').length;
   const nc=P.filter(p=>p.ps==='Further Part II information requested').length;
   const ui=P.filter(p=>p.ps==='Under Inspection').length;
-  document.getElementById('hst1').innerHTML='<div class="hst-n" style="color:#fff">'+P.length+'</div><div class="hst-l">Projects</div>';
-  document.getElementById('hst1').onclick=function(){fg('all','all','All projects',P.length);};
-  document.getElementById('hst2').innerHTML='<div class="hst-n">$'+(tr/1000).toFixed(0)+'K</div><div class="hst-l">Total RECs</div>';
-  document.getElementById('hst3').innerHTML='<div class="hst-n" style="color:#f87171">'+nc+'</div><div class="hst-l">Need Correction</div>';
-  document.getElementById('hst3').onclick=function(){fg('ps','Further Part II information requested','Correction requested',nc);};
-  document.getElementById('sbst').innerHTML=
-    '<div class="sb-st" onclick="fg('all','all','All projects','+P.length+')"><span class="sb-st-l"><span class="dot" style="background:#4a9abe"></span>All projects</span><span class="sb-st-v">'+P.length+'</span></div>'+
-    '<div class="sb-st" onclick="fg('ps','Approved','Approved','+app+')"><span class="sb-st-l"><span class="dot" style="background:#2e8b35"></span>Approved</span><span class="sb-st-v" style="color:#166534">'+app+'</span></div>'+
-    '<div class="sb-st" onclick="fg('ps','Under Inspection','Under inspection','+ui+')"><span class="sb-st-l"><span class="dot" style="background:#4a9abe"></span>Under inspection</span><span class="sb-st-v">'+ui+'</span></div>'+
-    '<div class="sb-st" onclick="fg('ps','Further Part II information requested','Correction req.','+nc+')"><span class="sb-st-l"><span class="dot" style="background:#c93030"></span>Correction req.</span><span class="sb-st-v" style="color:#991B1B">'+nc+'</span></div>'+
-    '<div class="sb-st" onclick="fg('cs','Pending','Corr. pending','+P.filter(p=>p.cs==='Pending').length+')"><span class="sb-st-l"><span class="dot" style="background:#D97706"></span>Corr. pending</span><span class="sb-st-v">'+P.filter(p=>p.cs==='Pending').length+'</span></div>';
+  const pend=P.filter(p=>p.cs==='Pending').length;
+  document.getElementById('hst1').innerHTML=`<div class="hst-n" style="color:#fff">${P.length}</div><div class="hst-l">Projects</div>`;
+  document.getElementById('hst1').onclick=()=>fg('all','all','All projects',P.length);
+  document.getElementById('hst2').innerHTML=`<div class="hst-n">$${(tr/1000).toFixed(0)}K</div><div class="hst-l">Total RECs</div>`;
+  document.getElementById('hst3').innerHTML=`<div class="hst-n" style="color:#f87171">${nc}</div><div class="hst-l">Need Correction</div>`;
+  document.getElementById('hst3').onclick=()=>fg('ps','Further Part II information requested','Correction requested',nc);
+
+  const stats=[
+    {dot:'#4a9abe',label:'All projects',val:P.length,style:'',fn:()=>fg('all','all','All projects',P.length)},
+    {dot:'#2e8b35',label:'Approved',val:app,style:'color:var(--ot)',fn:()=>fg('ps','Approved','Approved',app)},
+    {dot:'#4a9abe',label:'Under inspection',val:ui,style:'',fn:()=>fg('ps','Under Inspection','Under inspection',ui)},
+    {dot:'#c93030',label:'Correction req.',val:nc,style:'color:var(--et)',fn:()=>fg('ps','Further Part II information requested','Correction req.',nc)},
+    {dot:'#D97706',label:'Corr. pending',val:pend,style:'',fn:()=>fg('cs','Pending','Corr. pending',pend)},
+  ];
+  const el=document.getElementById('sbst');
+  el.innerHTML=stats.map((s,i)=>`<div class="sb-st" data-si="${i}"><span class="sb-st-l"><span class="dot" style="background:${s.dot}"></span>${s.label}</span><span class="sb-st-v" style="${s.style}">${s.val}</span></div>`).join('');
+  stats.forEach((s,i)=>{
+    const d=el.querySelector(`[data-si="${i}"]`);
+    if(d)d.addEventListener('click',s.fn);
+  });
 }
 
-function row(label,n,recs,color,max,fn){
-  const w=max>0?Math.round(n/max*100):0;const z=n===0;
-  return '<div class="dbrow'+(z?' z':'')+'"'+((!z&&fn)?' onclick="'+fn+'"':'')+'>'+
-    '<div class="dbrl"><span style="width:9px;height:9px;border-radius:50%;background:'+color+';flex-shrink:0;display:inline-block"></span>'+label+'</div>'+
-    '<div class="dbrb"><div class="dbrf" style="width:'+w+'%;background:'+color+'"></div></div>'+
-    '<div class="dbrc">'+n+'</div><div class="dbrr">'+fr(recs)+'</div>'+
-    '<i class="ti ti-arrow-right darr"></i></div>';
+function dbRow(label,n,recs,color,max,fn){
+  const w=max>0?Math.round(n/max*100):0;
+  const el=document.createElement('div');
+  el.className='dbrow'+(n===0?' z':'');
+  el.innerHTML=`<div class="dbrl"><span style="width:9px;height:9px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block"></span>${label}</div><div class="dbrb"><div class="dbrf" style="width:${w}%;background:${color}"></div></div><div class="dbrc">${n}</div><div class="dbrr">${fr(recs)}</div><i class="ti ti-arrow-right darr"></i>`;
+  if(n>0&&fn)el.addEventListener('click',fn);
+  return el.outerHTML;
 }
 
 function rdb(){
@@ -509,94 +504,146 @@ function rdb(){
   const fi=P.filter(p=>p.ps==='Further Part II information requested').length;
   const pil=P.filter(isp).length;
   const now=new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
-  const sl=[{l:'Under inspection',k:'Under Inspection',c:'#4a9abe'},{l:'Further info requested',k:'Further Part II information requested',c:'#c93030'},{l:'Part II submitted',k:'Part II Submitted',c:'#c9870a'},{l:'Approved',k:'Approved',c:'#2e8b35'}];
-  const cl=[{l:'No feedback',k:'No feedback',c:'#9CA3AF'},{l:'Pending',k:'Pending',c:'#c93030'},{l:'Partially addressed',k:'Partially addressed',c:'#c9870a'},{l:'Addressed',k:'Addressed',c:'#2e8b35'}];
-  const pl=['PY7','PY8','PY8-2025'];const pc={'PY7':'#D4AF37','PY8':'#4a9abe','PY8-2025':'#7ec8e3'};
+
+  const sl=[
+    {l:'Under inspection',k:'Under Inspection',c:'#4a9abe'},
+    {l:'Further info requested',k:'Further Part II information requested',c:'#c93030'},
+    {l:'Part II submitted',k:'Part II Submitted',c:'#c9870a'},
+    {l:'Approved',k:'Approved',c:'#2e8b35'},
+  ];
+  const cl=[
+    {l:'No feedback',k:'No feedback',c:'#9CA3AF'},
+    {l:'Pending',k:'Pending',c:'#c93030'},
+    {l:'Partially addressed',k:'Partially addressed',c:'#c9870a'},
+    {l:'Addressed',k:'Addressed',c:'#2e8b35'},
+  ];
+  const pl=['PY7','PY8','PY8-2025'];
+  const pc={'PY7':'#D4AF37','PY8':'#4a9abe','PY8-2025':'#7ec8e3'};
   const ul=[{u:'ComEd',c:'#1E293B'},{u:'Ameren',c:'#4a9abe'}];
-  let html='<div class="ts">Last updated: '+now+' &nbsp;·&nbsp; <span style="color:var(--gd)">Click any row to filter projects</span></div>';
-  html+='<div class="dbs">';
-  html+='<div class="dbc g" onclick="fg('all','all','All projects','+tot+')"><div class="dbn">'+tot+'</div><div style="font-size:11px;color:var(--t3);font-weight:500">Total projects</div><div style="font-size:13px;font-weight:600;color:var(--gd);margin-top:4px">'+fr(tr)+'</div></div>';
-  html+='<div class="dbc gr" onclick="fg('ps','Approved','Approved','+app+')"><div class="dbn">'+app+'</div><div style="font-size:11px;color:var(--t3);font-weight:500">Part II approved</div><div style="font-size:13px;font-weight:600;color:var(--ot);margin-top:4px">'+(tot?Math.round(app/tot*100):0)+'%</div></div>';
-  html+='<div class="dbc b" onclick="fg('ps','Under Inspection','Under inspection','+ui+')"><div class="dbn">'+ui+'</div><div style="font-size:11px;color:var(--t3);font-weight:500">Under inspection</div><div style="font-size:13px;font-weight:600;color:#4a9abe;margin-top:4px">'+(tot?Math.round(ui/tot*100):0)+'%</div></div>';
-  html+='<div class="dbc r" onclick="fg('ps','Further Part II information requested','Correction requested','+fi+')"><div class="dbn">'+fi+'</div><div style="font-size:11px;color:var(--t3);font-weight:500">Correction requested</div><div style="font-size:13px;font-weight:600;color:var(--et);margin-top:4px">'+(tot?Math.round(fi/tot*100):0)+'%</div></div>';
-  html+='</div><div class="d2c">';
-  html+='<div class="ds"><div class="dt"><i class="ti ti-activity" style="font-size:16px;color:var(--gd)"></i> Portal status</div>'+sl.map(s=>{const n=P.filter(p=>p.ps===s.k).length,r=P.filter(p=>p.ps===s.k).reduce((a,p)=>a+rv(p),0);return row(s.l,n,r,s.c,tot,"fg('ps','"+s.k+"','"+s.l+"',"+n+")")}).join('')+'</div>';
-  html+='<div class="ds"><div class="dt"><i class="ti ti-message-report" style="font-size:16px;color:var(--gd)"></i> Correction status</div>'+cl.map(c=>{const n=P.filter(p=>p.cs===c.k).length,r=P.filter(p=>p.cs===c.k).reduce((a,p)=>a+rv(p),0);return row(c.l,n,r,c.c,tot,"fg('cs','"+c.k+"','"+c.l+"',"+n+")")}).join('')+'</div>';
-  html+='</div><div class="d2c">';
-  html+='<div class="ds"><div class="dt"><i class="ti ti-calendar" style="font-size:16px;color:var(--gd)"></i> Program year</div>'+pl.map(py=>{const n=P.filter(p=>p.py===py).length,r=P.filter(p=>p.py===py).reduce((a,p)=>a+rv(p),0);return row(py,n,r,pc[py],Math.max(...pl.map(x=>P.filter(p=>p.py===x).length),1),"fg('py','"+py+"','"+py+"',"+n+")")}).join('')+'</div>';
-  html+='<div class="ds"><div class="dt"><i class="ti ti-plug" style="font-size:16px;color:var(--gd)"></i> Utility</div>'+ul.map(u=>{const n=P.filter(p=>p.ut===u.u).length,r=P.filter(p=>p.ut===u.u).reduce((a,p)=>a+rv(p),0);return row(u.u,n,r,u.c,tot,"fg('ut','"+u.u+"','"+u.u+"',"+n+")")}).join('')+row('Pilot',pil,P.filter(isp).reduce((a,p)=>a+rv(p),0),'#D4AF37',tot,"fg('pilot','true','Pilot projects',"+pil+")")+'</div>';
-  html+='</div>';
-  html+='<div class="ds"><div class="dt"><i class="ti ti-users" style="font-size:16px;color:var(--gd)"></i> Projects per PM <span style="font-size:13px;font-weight:400;color:var(--t3);font-family:Inter,sans-serif"> &mdash; click to jump</span></div>';
-  html+=PML.map(pm=>{const pp=P.filter(p=>p.pm===pm);const n=pp.length,r=pp.reduce((a,p)=>a+rv(p),0);const z=n===0;return '<div class="dbrow'+(z?' z':'')+'"'+((!z)?(' onclick="fgpm(''+pm+'','+n+')"'):'')+'>'+
-    '<div class="dbrl"><span style="width:9px;height:9px;border-radius:50%;background:#4a9abe;flex-shrink:0;display:inline-block"></span>'+pm+(pm==='Mary'?' &#9733;':'')+'</div>'+
-    '<div class="dbrb"><div class="dbrf" style="width:'+(tot>0?Math.round(n/tot*100):0)+'%;background:#4a9abe"></div></div>'+
-    '<div class="dbrc">'+n+'</div><div class="dbrr">'+fr(r)+'</div><i class="ti ti-arrow-right darr"></i></div>';}).join('');
-  const u=P.filter(p=>!p.pm);if(u.length>0)html+=row('Unassigned',u.length,u.reduce((a,p)=>a+rv(p),0),'#9CA3AF',tot,"fg('pm','','Unassigned',"+u.length+")");
-  html+='</div>';
-  document.getElementById('n-dashboard').innerHTML=html;
+
+  const el=document.getElementById('n-dashboard');
+  el.innerHTML=`
+    <div class="ts">Last updated: ${now} &nbsp;·&nbsp; <span style="color:var(--gd)">Click any row to filter projects</span></div>
+    <div class="dbs" id="db-top"></div>
+    <div class="d2c">
+      <div class="ds"><div class="dt"><i class="ti ti-activity" style="font-size:16px;color:var(--gd)"></i> Portal status</div><div id="db-ps"></div></div>
+      <div class="ds"><div class="dt"><i class="ti ti-message-report" style="font-size:16px;color:var(--gd)"></i> Correction status</div><div id="db-cs"></div></div>
+    </div>
+    <div class="d2c">
+      <div class="ds"><div class="dt"><i class="ti ti-calendar" style="font-size:16px;color:var(--gd)"></i> Program year</div><div id="db-py"></div></div>
+      <div class="ds"><div class="dt"><i class="ti ti-plug" style="font-size:16px;color:var(--gd)"></i> Utility</div><div id="db-ut"></div></div>
+    </div>
+    <div class="ds"><div class="dt"><i class="ti ti-users" style="font-size:16px;color:var(--gd)"></i> Projects per PM <span style="font-size:13px;font-weight:400;color:var(--t3)"> &mdash; click to jump</span></div><div id="db-pm"></div></div>`;
+
+  // Top stat cards with event listeners
+  const topStats=[
+    {cls:'g',n:tot,l:'Total projects',s:fr(tr),sc:'var(--gd)',fn:()=>fg('all','all','All projects',tot)},
+    {cls:'gr',n:app,l:'Part II approved',s:(tot?Math.round(app/tot*100):0)+'%',sc:'var(--ot)',fn:()=>fg('ps','Approved','Approved',app)},
+    {cls:'b',n:ui,l:'Under inspection',s:(tot?Math.round(ui/tot*100):0)+'%',sc:'#4a9abe',fn:()=>fg('ps','Under Inspection','Under inspection',ui)},
+    {cls:'r',n:fi,l:'Correction requested',s:(tot?Math.round(fi/tot*100):0)+'%',sc:'var(--et)',fn:()=>fg('ps','Further Part II information requested','Correction requested',fi)},
+  ];
+  const dbTop=document.getElementById('db-top');
+  dbTop.innerHTML=topStats.map((s,i)=>`<div class="dbc ${s.cls}" data-tsi="${i}"><div class="dbn">${s.n}</div><div style="font-size:11px;color:var(--t3);font-weight:500">${s.l}</div><div style="font-size:13px;font-weight:600;margin-top:4px;color:${s.sc}">${s.s}</div></div>`).join('');
+  topStats.forEach((s,i)=>{const d=dbTop.querySelector(`[data-tsi="${i}"]`);if(d)d.addEventListener('click',s.fn);});
+
+  document.getElementById('db-ps').innerHTML=sl.map(s=>{const n=P.filter(p=>p.ps===s.k).length,r=P.filter(p=>p.ps===s.k).reduce((a,p)=>a+rv(p),0);return dbRow(s.l,n,r,s.c,tot,()=>fg('ps',s.k,s.l,n));}).join('');
+  document.getElementById('db-cs').innerHTML=cl.map(c=>{const n=P.filter(p=>p.cs===c.k).length,r=P.filter(p=>p.cs===c.k).reduce((a,p)=>a+rv(p),0);return dbRow(c.l,n,r,c.c,tot,()=>fg('cs',c.k,c.l,n));}).join('');
+  document.getElementById('db-py').innerHTML=pl.map(py=>{const n=P.filter(p=>p.py===py).length,r=P.filter(p=>p.py===py).reduce((a,p)=>a+rv(p),0);return dbRow(py,n,r,pc[py],Math.max(...pl.map(x=>P.filter(p=>p.py===x).length),1),()=>fg('py',py,py,n));}).join('');
+  document.getElementById('db-ut').innerHTML=ul.map(u=>{const n=P.filter(p=>p.ut===u.u).length,r=P.filter(p=>p.ut===u.u).reduce((a,p)=>a+rv(p),0);return dbRow(u.u,n,r,u.c,tot,()=>fg('ut',u.u,u.u,n));}).join('')+dbRow('Pilot',pil,P.filter(isp).reduce((a,p)=>a+rv(p),0),'#D4AF37',tot,()=>fg('pilot','true','Pilot projects',pil));
+  document.getElementById('db-pm').innerHTML=PML.map(pm=>{const pp=P.filter(p=>p.pm===pm);const n=pp.length,r=pp.reduce((a,p)=>a+rv(p),0);return dbRow(pm+(pm===MGR?' ★':''),n,r,'#4a9abe',tot,()=>fgpm(pm,n));}).join('')+((()=>{const u=P.filter(p=>!p.pm);return u.length>0?dbRow('Unassigned',u.length,u.reduce((a,p)=>a+rv(p),0),'#9CA3AF',tot,()=>fg('pm','','Unassigned',u.length)):''})());
+
+  // Attach event listeners to all dbrow elements
+  document.querySelectorAll('#n-dashboard .dbrow:not(.z)').forEach(el=>{
+    // listeners already attached via dbRow fn parameter
+  });
+}
+
+// The dbRow function above creates elements with innerHTML, so listeners need to be added after
+// Let me fix this by using a different approach for db sections
+function attachDbListeners(){
+  // Already handled inline via element.addEventListener in dbRow and topStats
 }
 
 function cih(pid,it){
   const d=cdone(pid,it.id);const s=cst(pid,it.id);
-  const ch=it.hs?('<div class="cch">'+
-    '<button class="sch'+(s==='ns'?' ns':'')+'" onclick="tcs(''+pid+'',''+it.id+'','ns');event.stopPropagation()">Not started</button>'+
-    '<button class="sch'+(s==='ip'?' ip':'')+'" onclick="tcs(''+pid+'',''+it.id+'','ip');event.stopPropagation()">In progress</button>'+
-    '<button class="sch'+(s==='up'?' up':'')+'" onclick="tcs(''+pid+'',''+it.id+'','up');event.stopPropagation()"><i class="ti ti-check" style="font-size:11px"></i> Uploaded</button>'+
-    '</div>'):'';
-  return '<div class="ci'+(d?' dn':'')+'" onclick="tcl(''+pid+'',''+it.id+'')">'+
-    '<div class="ccb">'+(d?'<i class="ti ti-check" style="font-size:12px;color:var(--ot)"></i>':'')+'</div>'+
-    '<div class="cnum">'+it.n+'</div>'+
-    '<div class="cbody"><div class="ctit">'+it.t+'</div><div class="cnote">'+it.note+'</div>'+ch+'</div>'+
-    '<span class="badge '+BC[it.b]+'">'+BM[it.b]+'</span></div>';
+  const ch=it.hs?`<div class="cch">
+    <button class="sch${s==='ns'?' ns':''}" onclick="tcs('${pid}','${it.id}','ns');event.stopPropagation()">Not started</button>
+    <button class="sch${s==='ip'?' ip':''}" onclick="tcs('${pid}','${it.id}','ip');event.stopPropagation()">In progress</button>
+    <button class="sch${s==='up'?' up':''}" onclick="tcs('${pid}','${it.id}','up');event.stopPropagation()"><i class="ti ti-check" style="font-size:11px"></i> Uploaded</button>
+    </div>`:'';
+  return `<div class="ci${d?' dn':''}" onclick="tcl('${pid}','${it.id}')">
+    <div class="ccb">${d?'<i class="ti ti-check" style="font-size:12px;color:var(--ot)"></i>':''}</div>
+    <div class="cnum">${it.n}</div>
+    <div class="cbody"><div class="ctit">${it.t}</div><div class="cnote">${it.note}</div>${ch}</div>
+    <span class="badge ${BC[it.b]}">${BM[it.b]}</span></div>`;
 }
 
 function clh(pid){
   const ai=gas(pid);
-  const tabs=CLS.map((s,i)=>{const d=s.items.filter(x=>cdone(pid,x.id)||(x.hs&&cst(pid,x.id)==='up')).length;return '<button class="ct'+(i===ai?' a':'')+'" onclick="sas(''+pid+'','+i+');event.stopPropagation()"><i class="ti '+s.ic+'" style="font-size:13px"></i>'+s.title.split(' ')[0]+'<span class="tp">'+d+'/'+s.items.length+(d===s.items.length?' ✓':'')+'</span></button>';}).join('');
+  const tabs=CLS.map((s,i)=>{const d=s.items.filter(x=>cdone(pid,x.id)||(x.hs&&cst(pid,x.id)==='up')).length;
+    return `<button class="ct${i===ai?' a':''}" onclick="sas('${pid}',${i});event.stopPropagation()"><i class="ti ${s.ic}" style="font-size:13px"></i>${s.title.split(' ')[0]}<span class="tp">${d}/${s.items.length}${d===s.items.length?' ✓':''}</span></button>`;
+  }).join('');
   const{d,t,pct}=ppx(pid);
-  return '<div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span style="font-size:14px;font-weight:600;color:var(--nv)">Submission checklist</span><span style="font-size:13px;color:var(--t3)">'+d+'/'+t+'</span></div>'+
-    '<div style="height:4px;background:var(--bd);border-radius:2px;overflow:hidden;margin-bottom:12px"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--gd),var(--gl));transition:width .4s"></div></div>'+
-    '<div class="cls-tabs">'+tabs+'</div>'+
-    CLS[ai].items.map(i=>cih(pid,i)).join('')+'</div>';
+  return `<div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <span style="font-size:14px;font-weight:600;color:var(--nv)">Submission checklist</span>
+      <span style="font-size:13px;color:var(--t3)">${d}/${t}</span>
+    </div>
+    <div style="height:4px;background:var(--bd);border-radius:2px;overflow:hidden;margin-bottom:13px">
+      <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--gd),var(--gl));transition:width .4s"></div>
+    </div>
+    <div class="cls-tabs">${tabs}</div>
+    ${CLS[ai].items.map(i=>cih(pid,i)).join('')}
+    </div>`;
 }
 
-function pmOpts(sel){return '<option value="">— Unassigned —</option>'+PML.map(n=>'<option value="'+n+'"'+(sel===n?' selected':'')+'>'+n+(n===MGR?' (Mgr)':'')+'</option>').join('');}
+function pmOpts(sel){return '<option value="">— Unassigned —</option>'+PML.map(n=>`<option value="${n}"${sel===n?' selected':''}>${n}${n===MGR?' (Mgr)':''}</option>`).join('');}
 
 function spc(p){
   const o=openCards[p.id]!==false;const pm=p.pm||'';
   const{fa}=gprs(p.id);const{d,t,pct}=ppx(p.id);
-  const pmb=pm?'<span class="badge bp2">'+pm+'</span>':'<span class="badge" style="background:var(--s2);color:var(--t3)">Unassigned</span>';
-  const ub=p.ut?'<span class="badge bn">'+p.ut+'</span>':'';
-  const prb=fa>0?'<span class="badge br">'+fa+' PR failed</span>':'<span class="badge bw">Pending review</span>';
-  let html='<div class="card"><div class="card-hd" onclick="tp(''+p.id+'')">'+
-    '<div style="flex:1">'+
-    '<div style="font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+p.id+' '+(isp(p)?'<span class="badge bw">Pilot</span>':'')+
-    '<span style="font-size:13px;font-weight:400;color:var(--t3)">'+p.py+'</span>'+pmb+' '+ub+'</div>'+
-    '<div style="font-size:13px;color:var(--t3);margin-top:3px">'+p.sub+' &nbsp;·&nbsp; '+p.recs+' &nbsp;·&nbsp; Team: <span style="font-weight:600;color:'+(pct===100?'var(--ot)':'var(--t3)')+'">'+d+'/'+t+'</span></div></div>'+
-    '<span class="badge" style="background:'+(p.ps==='Approved'?'var(--ok)':p.ps==='Further Part II information requested'?'var(--er)':p.ps==='Under Inspection'?'rgba(212,175,55,.1)':'var(--wn)')+''+
-    ';color:'+(p.ps==='Approved'?'var(--ot)':p.ps==='Further Part II information requested'?'var(--et)':p.ps==='Under Inspection'?'#7a5500':'var(--wt)')+'">'+
-    (p.ps==='Further Part II information requested'?'Corr. req.':p.ps)+'</span>'+
-    '<span class="badge '+csc(p.cs)+'" style="margin-left:4px">'+p.cs+'</span>'+
-    prb+
-    '<button class="db2" onclick="rmP(''+p.id+'');event.stopPropagation()"><i class="ti ti-trash" style="font-size:12px"></i></button>'+
-    '<button style="background:none;border:none;cursor:pointer;padding:5px" onclick="tp(''+p.id+'');event.stopPropagation()"><i class="ti ti-chevron-down" style="font-size:14px;color:var(--t3);transform:rotate('+(o?180:0)+'deg);transition:transform .2s"></i></button>'+
-    '</div>';
+  const pmb=pm?`<span class="badge bp2">${pm}</span>`:'<span class="badge" style="background:var(--s2);color:var(--t3)">Unassigned</span>';
+  const ub=p.ut?`<span class="badge bn">${p.ut}</span>`:'';
+  const prb=fa>0?`<span class="badge br">${fa} PR failed</span>`:'<span class="badge bw">Pending review</span>';
+  const psCls=p.ps==='Approved'?'bo':p.ps==='Further Part II information requested'?'br':p.ps==='Under Inspection'?'bd2':'bw';
+  const psLabel=p.ps==='Further Part II information requested'?'Corr. req.':p.ps;
+  let html=`<div class="card">
+    <div class="card-hd" onclick="tp('${p.id}')">
+      <div style="flex:1">
+        <div style="font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          ${p.id} ${isp(p)?'<span class="badge bw">Pilot</span>':''}
+          <span style="font-size:13px;font-weight:400;color:var(--t3)">${p.py}</span>${pmb} ${ub}
+        </div>
+        <div style="font-size:13px;color:var(--t3);margin-top:3px">${p.sub} &nbsp;·&nbsp; ${p.recs} &nbsp;·&nbsp; Team: <span style="font-weight:600;color:${pct===100?'var(--ot)':'var(--t3)'}">${d}/${t}</span></div>
+      </div>
+      <span class="badge ${psCls}">${psLabel}</span>
+      <span class="badge ${csc(p.cs)}" style="margin-left:4px">${p.cs}</span>
+      ${prb}
+      <button class="db2" onclick="rmP('${p.id}');event.stopPropagation()"><i class="ti ti-trash" style="font-size:12px"></i></button>
+      <button style="background:none;border:none;cursor:pointer;padding:5px" onclick="tp('${p.id}');event.stopPropagation()">
+        <i class="ti ti-chevron-down" style="font-size:14px;color:var(--t3);transform:rotate(${o?180:0}deg);transition:transform .2s"></i>
+      </button>
+    </div>`;
   if(o){
-    html+='<div class="card-bd">'+
-      '<div class="tps"><span style="font-size:13px;font-weight:500;color:var(--t2);flex-shrink:0">Team checklist</span><div class="tpb"><div class="tpf" style="width:'+pct+'%"></div></div><span style="font-size:13px;font-weight:600;color:var(--t2);min-width:34px;text-align:right">'+pct+'%</span></div>'+
-      '<div class="sg">'+
-      '<div class="sf2"><label>Assigned PM</label><select class="sel" onchange="spp(''+p.id+'',this.value);event.stopPropagation()">'+pmOpts(pm)+'</select></div>'+
-      '<div class="sf2"><label>Utility</label><select class="sel" onchange="upf(''+p.id+'','ut',this.value);event.stopPropagation()"><option value="">—</option><option value="ComEd"'+(p.ut==='ComEd'?' selected':'')+'>ComEd</option><option value="Ameren"'+(p.ut==='Ameren'?' selected':'')+'>Ameren</option></select></div>'+
-      '<div class="sf2"><label>ILSFA portal status</label><select class="sel '+ssc(p.ps)+'" onchange="upf(''+p.id+'','ps',this.value);event.stopPropagation()"><option value="Under Inspection"'+(p.ps==='Under Inspection'?' selected':'')+'>Under Inspection</option><option value="Part II Submitted"'+(p.ps==='Part II Submitted'?' selected':'')+'>Part II Submitted</option><option value="Further Part II information requested"'+(p.ps==='Further Part II information requested'?' selected':'')+'>Further Part II info requested</option><option value="Approved"'+(p.ps==='Approved'?' selected':'')+'>Approved</option></select></div>'+
-      '<div class="sf2"><label>Correction status</label><select class="sel '+csc(p.cs)+'" onchange="upf(''+p.id+'','cs',this.value);event.stopPropagation()"><option value="No feedback"'+(p.cs==='No feedback'?' selected':'')+'>No feedback</option><option value="Pending"'+(p.cs==='Pending'?' selected':'')+'>Pending</option><option value="Partially addressed"'+(p.cs==='Partially addressed'?' selected':'')+'>Partially addressed</option><option value="Addressed"'+(p.cs==='Addressed'?' selected':'')+'>Addressed</option></select></div>'+
-      '<div class="sf2"><label>Program year</label><select class="sel" onchange="upf(''+p.id+'','py',this.value);event.stopPropagation()"><option value="PY7"'+(p.py==='PY7'?' selected':'')+'>PY7</option><option value="PY8"'+(p.py==='PY8'?' selected':'')+'>PY8</option><option value="PY8-2025"'+(p.py==='PY8-2025'?' selected':'')+'>PY8-2025</option></select></div>'+
-      '<div class="sf2"><label>Pilot</label><select class="sel" onchange="upf(''+p.id+'','pilot',this.value==='yes');event.stopPropagation()"><option value="no"'+(!isp(p)?' selected':'')+'>No</option><option value="yes"'+(isp(p)?' selected':'')+'>Yes</option></select></div>'+
-      '</div>'+
-      '<div style="margin-bottom:11px"><label style="font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.09em;display:block;margin-bottom:5px">Correction details</label><textarea class="ni" id="cn-'+p.id+'">'+( p.corr||'')+'</textarea></div>'+
-      '<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.09em;display:block;margin-bottom:5px">Comments / SPL notes</label><textarea class="ni" id="mn-'+p.id+'">'+(p.cmt||'')+'</textarea></div>'+
-      '<button class="snb" onclick="spn(''+p.id+'');event.stopPropagation()"><i class="ti ti-device-floppy" style="font-size:12px"></i> Save notes</button>'+
-      '<div style="margin-top:10px"><button class="prb" onclick="gpr(''+p.id+'');event.stopPropagation()"><i class="ti ti-zoom-check" style="font-size:13px"></i> Open post-review</button></div>'+
-      '</div>';
+    html+=`<div class="card-bd">
+      <div class="tps">
+        <span style="font-size:13px;font-weight:500;color:var(--t2);flex-shrink:0">Team checklist</span>
+        <div class="tpb"><div class="tpf" style="width:${pct}%"></div></div>
+        <span style="font-size:13px;font-weight:600;color:var(--t2);min-width:34px;text-align:right">${pct}%</span>
+      </div>
+      <div class="sg">
+        <div class="sf2"><label>Assigned PM</label><select class="sel" onchange="spp('${p.id}',this.value);event.stopPropagation()">${pmOpts(pm)}</select></div>
+        <div class="sf2"><label>Utility</label><select class="sel" onchange="upf('${p.id}','ut',this.value);event.stopPropagation()"><option value="">—</option><option value="ComEd"${p.ut==='ComEd'?' selected':''}>ComEd</option><option value="Ameren"${p.ut==='Ameren'?' selected':''}>Ameren</option></select></div>
+        <div class="sf2"><label>ILSFA portal status</label><select class="sel ${ssc(p.ps)}" onchange="upf('${p.id}','ps',this.value);event.stopPropagation()"><option value="Under Inspection"${p.ps==='Under Inspection'?' selected':''}>Under Inspection</option><option value="Part II Submitted"${p.ps==='Part II Submitted'?' selected':''}>Part II Submitted</option><option value="Further Part II information requested"${p.ps==='Further Part II information requested'?' selected':''}>Further Part II info requested</option><option value="Approved"${p.ps==='Approved'?' selected':''}>Approved</option></select></div>
+        <div class="sf2"><label>Correction status</label><select class="sel ${csc(p.cs)}" onchange="upf('${p.id}','cs',this.value);event.stopPropagation()"><option value="No feedback"${p.cs==='No feedback'?' selected':''}>No feedback</option><option value="Pending"${p.cs==='Pending'?' selected':''}>Pending</option><option value="Partially addressed"${p.cs==='Partially addressed'?' selected':''}>Partially addressed</option><option value="Addressed"${p.cs==='Addressed'?' selected':''}>Addressed</option></select></div>
+        <div class="sf2"><label>Program year</label><select class="sel" onchange="upf('${p.id}','py',this.value);event.stopPropagation()"><option value="PY7"${p.py==='PY7'?' selected':''}>PY7</option><option value="PY8"${p.py==='PY8'?' selected':''}>PY8</option><option value="PY8-2025"${p.py==='PY8-2025'?' selected':''}>PY8-2025</option></select></div>
+        <div class="sf2"><label>Pilot</label><select class="sel" onchange="upf('${p.id}','pilot',this.value==='yes');event.stopPropagation()"><option value="no"${!isp(p)?' selected':''}>No</option><option value="yes"${isp(p)?' selected':''}>Yes</option></select></div>
+      </div>
+      <div style="margin-bottom:11px"><label style="font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.09em;display:block;margin-bottom:5px">Correction details</label><textarea class="ni" id="cn-${p.id}">${p.corr||''}</textarea></div>
+      <div style="margin-bottom:12px"><label style="font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.09em;display:block;margin-bottom:5px">Comments / SPL notes</label><textarea class="ni" id="mn-${p.id}">${p.cmt||''}</textarea></div>
+      <button class="snb" onclick="spn('${p.id}');event.stopPropagation()"><i class="ti ti-device-floppy" style="font-size:12px"></i> Save notes</button>
+      <div style="margin-top:10px"><button class="prb" onclick="gpr('${p.id}');event.stopPropagation()"><i class="ti ti-zoom-check" style="font-size:13px"></i> Open post-review</button></div>
+      </div>`;
   }
   html+='</div>';
   return html;
@@ -604,116 +651,166 @@ function spc(p){
 
 function afh(){
   if(!showAF)return '<button class="ab" onclick="showAF=true;rp()"><i class="ti ti-plus" style="font-size:14px"></i> Add new project</button>';
-  return '<div class="af2"><div style="font-family:Cormorant Garamond,serif;font-size:18px;font-weight:600;color:var(--nv);margin-bottom:14px"><i class="ti ti-plus"></i> Add new project</div>'+
-    '<div class="g2">'+
-    '<div class="fl"><label>Project ID *</label><input id="ni-id" placeholder="e.g. P-14500"/></div>'+
-    '<div class="fl"><label>Assign to PM</label><select id="ni-pm"><option value="">— Unassigned —</option>'+PML.map(n=>'<option value="'+n+'">'+n+'</option>').join('')+'</select></div>'+
-    '<div class="fl"><label>Program year</label><select id="ni-py"><option value="PY7">PY7</option><option value="PY8">PY8</option><option value="PY8-2025" selected>PY8-2025</option></select></div>'+
-    '<div class="fl"><label>Utility</label><select id="ni-ut"><option value="">—</option><option value="ComEd">ComEd</option><option value="Ameren">Ameren</option></select></div>'+
-    '<div class="fl"><label>Submit date</label><input id="ni-sub" placeholder="e.g. Jun 1, 2026"/></div>'+
-    '<div class="fl"><label>Est. RECs</label><input id="ni-r" placeholder="e.g. $45,000"/></div>'+
-    '<div class="fl"><label>Portal status</label><select id="ni-ps"><option value="Under Inspection">Under Inspection</option><option value="Part II Submitted">Part II Submitted</option><option value="Further Part II information requested">Further Part II info requested</option><option value="Approved">Approved</option></select></div>'+
-    '<div class="fl"><label>Correction status</label><select id="ni-cs"><option value="No feedback">No feedback</option><option value="Pending">Pending</option><option value="Partially addressed">Partially addressed</option><option value="Addressed">Addressed</option></select></div>'+
-    '<div class="fl"><label>Pilot?</label><select id="ni-pi"><option value="no">No</option><option value="yes">Yes</option></select></div>'+
-    '</div>'+
-    '<div class="fl" style="margin-bottom:11px"><label>Correction details</label><textarea id="ni-corr"></textarea></div>'+
-    '<div class="fl" style="margin-bottom:14px"><label>Comments</label><textarea id="ni-cmt"></textarea></div>'+
-    '<div style="display:flex;gap:10px"><button class="btn" onclick="aP()"><i class="ti ti-check" style="font-size:13px"></i> Add project</button><button class="btn2" onclick="showAF=false;rp()">Cancel</button></div></div>';
+  return `<div class="af2">
+    <div style="font-family:Cormorant Garamond,serif;font-size:18px;font-weight:600;color:var(--nv);margin-bottom:14px"><i class="ti ti-plus"></i> Add new project</div>
+    <div class="g2">
+      <div class="fl"><label>Project ID *</label><input id="ni-id" placeholder="e.g. P-14500"/></div>
+      <div class="fl"><label>Assign to PM</label><select id="ni-pm"><option value="">— Unassigned —</option>${PML.map(n=>`<option value="${n}">${n}</option>`).join('')}</select></div>
+      <div class="fl"><label>Program year</label><select id="ni-py"><option value="PY7">PY7</option><option value="PY8">PY8</option><option value="PY8-2025" selected>PY8-2025</option></select></div>
+      <div class="fl"><label>Utility</label><select id="ni-ut"><option value="">—</option><option value="ComEd">ComEd</option><option value="Ameren">Ameren</option></select></div>
+      <div class="fl"><label>Submit date</label><input id="ni-sub" placeholder="e.g. Jun 1, 2026"/></div>
+      <div class="fl"><label>Est. RECs</label><input id="ni-r" placeholder="e.g. $45,000"/></div>
+      <div class="fl"><label>Portal status</label><select id="ni-ps"><option value="Under Inspection">Under Inspection</option><option value="Part II Submitted">Part II Submitted</option><option value="Further Part II information requested">Further Part II info requested</option><option value="Approved">Approved</option></select></div>
+      <div class="fl"><label>Correction status</label><select id="ni-cs"><option value="No feedback">No feedback</option><option value="Pending">Pending</option><option value="Partially addressed">Partially addressed</option><option value="Addressed">Addressed</option></select></div>
+      <div class="fl"><label>Pilot?</label><select id="ni-pi"><option value="no">No</option><option value="yes">Yes</option></select></div>
+    </div>
+    <div class="fl" style="margin-bottom:11px"><label>Correction details</label><textarea id="ni-corr"></textarea></div>
+    <div class="fl" style="margin-bottom:14px"><label>Comments</label><textarea id="ni-cmt"></textarea></div>
+    <div style="display:flex;gap:10px"><button class="btn" onclick="aP()"><i class="ti ti-check" style="font-size:13px"></i> Add project</button><button class="btn2" onclick="showAF=false;rp()">Cancel</button></div>
+    </div>`;
 }
 
 function rp(){
   const fp=fpg();const tr=P.reduce((a,p)=>a+rv(p),0);const ua=P.filter(p=>!p.pm).length;
-  const banner=AF?'<div class="fb"><i class="ti ti-filter" style="font-size:15px;color:var(--gd)"></i><span style="font-size:14px;font-weight:500;flex:1">Showing: <strong>'+AF.label+'</strong> &nbsp;·&nbsp; '+fp.length+' project'+(fp.length!==1?'s':'')+'</span><button onclick="cf()"><i class="ti ti-x" style="font-size:12px"></i> Clear filter</button></div>':'';
-  const info=!AF?'<div class="hint">PY7: '+P.filter(p=>p.py==='PY7').length+' &nbsp;·&nbsp; PY8: '+P.filter(p=>p.py==='PY8').length+' &nbsp;·&nbsp; PY8-2025: '+P.filter(p=>p.py==='PY8-2025').length+' &nbsp;·&nbsp; RECs: $'+tr.toLocaleString()+(ua>0?' &nbsp;·&nbsp; <span style="color:var(--wt)">'+ua+' unassigned</span>':'')+'</div>':'';
+  const banner=AF?`<div class="fb"><i class="ti ti-filter" style="font-size:15px;color:var(--gd)"></i><span style="font-size:14px;font-weight:500;flex:1">Showing: <strong>${AF.label}</strong> &nbsp;&middot;&nbsp; ${fp.length} project${fp.length!==1?'s':''}</span><button onclick="cf()"><i class="ti ti-x" style="font-size:12px"></i> Clear filter</button></div>`:'';
+  const info=!AF?`<div class="hint">PY7: ${P.filter(p=>p.py==='PY7').length} &nbsp;&middot;&nbsp; PY8: ${P.filter(p=>p.py==='PY8').length} &nbsp;&middot;&nbsp; PY8-2025: ${P.filter(p=>p.py==='PY8-2025').length} &nbsp;&middot;&nbsp; RECs: $${tr.toLocaleString()}${ua>0?` &nbsp;&middot;&nbsp; <span style="color:var(--wt)">${ua} unassigned</span>`:''}</div>`:'';
   document.getElementById('n-projects').innerHTML=afh()+banner+info+(fp.length?fp.map(p=>spc(p)).join(''):'<div class="hint">No projects match this filter.</div>');
 }
 
 function tpc(p){
   const o=openCards[p.id]!==false;const{d,t,pct}=ppx(p.id);
-  const ub=p.ut?'<span class="badge bn">'+p.ut+'</span>':'';
-  const ch=p.corr?'<div style="background:var(--wn);border-left:3px solid var(--wb);border-radius:var(--r);padding:10px 14px;margin-bottom:12px;font-size:14px;color:var(--wt);line-height:1.7"><strong>Action needed:</strong> '+p.corr+'</div>':'';
-  const cm=p.cmt?'<div style="background:rgba(212,175,55,.04);border-left:3px solid rgba(212,175,55,.4);border-radius:var(--r);padding:10px 14px;margin-bottom:12px;font-size:14px;color:var(--nm);line-height:1.7"><strong>Note:</strong> '+p.cmt+'</div>':'';
-  return '<div class="card"><div class="card-hd" onclick="tp(''+p.id+'')">'+
-    '<div style="flex:1">'+
-    '<div style="font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+p.id+' '+(isp(p)?'<span class="badge bw">Pilot</span>':'')+
-    '<span style="font-size:13px;font-weight:400;color:var(--t3)">'+p.py+'</span>'+ub+'</div>'+
-    '<div style="font-size:13px;color:var(--t3);margin-top:3px">'+p.sub+' &nbsp;·&nbsp; '+p.recs+' &nbsp;·&nbsp; <span style="font-weight:600;color:'+(pct===100?'var(--ot)':'var(--t3)')+'">'+d+'/'+t+'</span></div></div>'+
-    '<span class="badge '+(p.ps==='Approved'?'bo':p.ps==='Further Part II information requested'?'br':p.ps==='Under Inspection'?'bd2':'bw')+'">'+(p.ps==='Further Part II information requested'?'Corr. req.':p.ps)+'</span>'+
-    '<span class="badge '+csc(p.cs)+'" style="margin-left:4px">'+p.cs+'</span>'+
-    '<button style="background:none;border:none;cursor:pointer;padding:5px" onclick="tp(''+p.id+'');event.stopPropagation()"><i class="ti ti-chevron-down" style="font-size:14px;color:var(--t3);transform:rotate('+(o?180:0)+'deg);transition:transform .2s"></i></button>'+
-    '</div>'+
-    (o?'<div class="card-bd">'+ch+cm+'<div class="hint" style="margin-bottom:12px"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:5px"></i>Upload all documents in the <strong>ILSFA portal</strong> and <strong>Zoho</strong>. Check off each item once done.</div>'+clh(p.id)+'</div>':'')+
-    '</div>';
+  const ub=p.ut?`<span class="badge bn">${p.ut}</span>`:'';
+  const ch=p.corr?`<div style="background:var(--wn);border-left:3px solid var(--wb);border-radius:var(--r);padding:10px 14px;margin-bottom:12px;font-size:14px;color:var(--wt);line-height:1.7"><strong>Action needed:</strong> ${p.corr}</div>`:'';
+  const cm=p.cmt?`<div style="background:rgba(212,175,55,.04);border-left:3px solid rgba(212,175,55,.4);border-radius:var(--r);padding:10px 14px;margin-bottom:12px;font-size:14px;color:var(--nm);line-height:1.7"><strong>Note:</strong> ${p.cmt}</div>`:'';
+  const psCls=p.ps==='Approved'?'bo':p.ps==='Further Part II information requested'?'br':p.ps==='Under Inspection'?'bd2':'bw';
+  return `<div class="card">
+    <div class="card-hd" onclick="tp('${p.id}')">
+      <div style="flex:1">
+        <div style="font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          ${p.id} ${isp(p)?'<span class="badge bw">Pilot</span>':''}
+          <span style="font-size:13px;font-weight:400;color:var(--t3)">${p.py}</span>${ub}
+        </div>
+        <div style="font-size:13px;color:var(--t3);margin-top:3px">${p.sub} &nbsp;·&nbsp; ${p.recs} &nbsp;·&nbsp; <span style="font-weight:600;color:${pct===100?'var(--ot)':'var(--t3)'}">${d}/${t}</span></div>
+      </div>
+      <span class="badge ${psCls}">${p.ps==='Further Part II information requested'?'Corr. req.':p.ps}</span>
+      <span class="badge ${csc(p.cs)}" style="margin-left:4px">${p.cs}</span>
+      <button style="background:none;border:none;cursor:pointer;padding:5px" onclick="tp('${p.id}');event.stopPropagation()">
+        <i class="ti ti-chevron-down" style="font-size:14px;color:var(--t3);transform:rotate(${o?180:0}deg);transition:transform .2s"></i>
+      </button>
+    </div>
+    ${o?`<div class="card-bd">${ch}${cm}<div class="hint" style="margin-bottom:12px"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:5px"></i>Upload all documents in the <strong>ILSFA portal</strong> and <strong>Zoho</strong>. Check off each item once done.</div>${clh(p.id)}</div>`:''}
+    </div>`;
 }
 
 function rtv(){
-  document.getElementById('sb-pm').innerHTML=
-    '<div class="sb-lbl" style="margin-top:0">Project Managers</div>'+
-    PML.map(pm=>{const c=P.filter(p=>p.pm===pm).length;const m=pm===MGR;return '<button class="sb-pm'+(pm===activePM?' a':'')+'" onclick="activePM=''+pm+'';rtv()">'+
-      '<div class="pmav">'+pm.charAt(0)+'</div>'+
-      '<span style="flex:1">'+pm+(m?'<span class="mgr">MGR</span>':'')+'</span>'+
-      (c>0?'<span style="font-size:11px;padding:1px 6px;border-radius:10px;background:rgba(212,175,55,.15);color:var(--gd);font-weight:600">'+c+'</span>':'')+'</button>';}).join('')+
-    '<div class="sbdiv"></div>'+
-    '<button class="sb-pm'+(activePM==='__n'?' a':'')+'" onclick="activePM='__n';rtv()"><i class="ti ti-notes" style="font-size:15px"></i> Doc notes</button>';
+  const sb=document.getElementById('sb-pm');
+  sb.innerHTML=`<div class="sb-lbl" style="margin-top:0">Project Managers</div>`+
+    PML.map((pm,i)=>{const c=P.filter(p=>p.pm===pm).length;const m=pm===MGR;return `<button class="sb-pm${pm===activePM?' a':''}" data-pm="${i}" onclick="activePM=this.dataset.pmname;rtv()"><div class="pmav">${pm.charAt(0)}</div><span style="flex:1">${pm}${m?'<span class="mgr">MGR</span>':''}</span>${c>0?`<span style="font-size:11px;padding:1px 6px;border-radius:10px;background:rgba(212,175,55,.15);color:var(--gd);font-weight:600">${c}</span>`:''}</button>`;}).join('')+
+    `<div class="sbdiv"></div><button class="sb-pm${activePM==='__n'?' a':''}" onclick="activePM='__n';rtv()"><i class="ti ti-notes" style="font-size:15px"></i> Doc notes</button>`;
+  // Set pmname data attribute properly
+  PML.forEach((pm,i)=>{const btn=sb.querySelector(`[data-pm="${i}"]`);if(btn)btn.dataset.pmname=pm;});
+
   if(activePM==='__n'){rtn();return;}
   const mp=P.filter(p=>p.pm===activePM);const m=activePM===MGR;
   document.getElementById('pmc').innerHTML=
-    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:14px 17px;background:var(--glass);border:1px solid var(--gborder);border-radius:var(--rl);box-shadow:var(--gshadow)">'+
-    '<div class="pma">'+activePM.charAt(0)+'</div>'+
-    '<div style="flex:1"><div style="font-size:16px;font-weight:600">'+activePM+(m?' <span class="mgr">Manager</span>':'')+'</div>'+
-    '<div style="font-size:13.5px;color:var(--t3);margin-top:2px">'+mp.length+' project'+(mp.length!==1?'s':'')+' assigned</div></div></div>'+
+    `<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:14px 17px;background:var(--glass);border:1px solid var(--gborder);border-radius:var(--rl);box-shadow:var(--gshadow)">
+      <div class="pma">${activePM.charAt(0)}</div>
+      <div style="flex:1"><div style="font-size:16px;font-weight:600">${activePM}${m?' <span class="mgr">Manager</span>':''}</div>
+      <div style="font-size:13.5px;color:var(--t3);margin-top:2px">${mp.length} project${mp.length!==1?'s':''} assigned</div></div>
+    </div>`+
     (mp.length?mp.map(p=>tpc(p)).join(''):'<div style="text-align:center;padding:48px 20px;color:var(--t3)"><i class="ti ti-folder" style="font-size:36px;display:block;margin-bottom:12px;opacity:.35"></i><div style="font-size:15px;font-weight:500;margin-bottom:5px">No projects assigned yet</div></div>');
 }
 
 function rtn(){
   const docs=[{n:'[1]',t:'Permit',v:'Officially approved permit only. Not a draft or expired version.'},{n:'[2]',t:'PTO / COC',v:'Must include date of approval AND ComEd representative signature. Both required.'},{n:'[3]',t:'Net metering',v:'Correct document matching project address and utility account.'},{n:'[4]',t:'PJM / SO SS',v:'Compile multiple photos into ONE PDF before uploading.'},{n:'[5]',t:'JCO (site suitability)',v:'All photos complete and accurate. Escalate missing/unclear to Yen.'},{n:'[6]',t:'Inverter & module label photos',v:'Upload clear separate photos, then merge into a single file.'},{n:'[7]',t:'Complete array photos',v:'Separate complete array photos for each project.'},{n:'[8]',t:'Updated SSR',v:'Reflect all mitigations in pipeline review, plan set, and installation work.'},{n:'[9]',t:'Upgrade photos',v:'If applicable, submit separately to ILSFA portal — not just JCO photos.'},{n:'[10]',t:'Mitigation final invoice',v:'Pilot only. Electrical scope must match Part I Initial Invoice.'},{n:'[11]',t:'Shading study',v:'Must be consistent with installed system — panel count, layout, orientation.'},{n:'[12]',t:'System design',v:'Plan set must match installed system and final shade study.'},{n:'[13]',t:'ACF',v:'Update ONLY if revised value is LOWER than original.'},{n:'[14]',t:'Arrays',v:'Part I arrays must NOT be edited or deleted.'},{n:'[15]',t:'REC table',v:'All Part II Submitted values must match the final shade study.'},{n:'[16]',t:'Inspection document',v:'Correct approved inspection document only.'},{n:'[17]',t:'JCO (post construction)',v:'All photos complete and accurate. Escalate to Yen if needed.'},{n:'[18]',t:'SS from Fox / Tesla monitoring app',v:'System must NOT show 0 production. If offline — notify PM immediately.'},{n:'[19]',t:'Shadi / Qais affidavit',v:'Upload in the correct field under the Staff Info tab.'},{n:'[20]',t:'Start / end dates',v:'Start = day BEFORE install. End = actual install completion date.'}];
-  document.getElementById('pmc').innerHTML='<div class="hint">Detailed instructions for each of the 20 required documents.</div>'+docs.map(x=>'<div class="sc-card"><div class="sc-hd"><span style="font-size:12px;font-weight:600;color:var(--gd);min-width:32px">'+x.n+'</span><span style="font-size:14.5px;font-weight:600;flex:1">'+x.t+'</span></div><div class="sc-bd"><span style="font-size:14px;color:var(--t2);line-height:1.75">'+x.v+'</span></div></div>').join('');
+  document.getElementById('pmc').innerHTML='<div class="hint">Detailed instructions for each of the 20 required documents.</div>'+docs.map(x=>`<div class="sc-card"><div class="sc-hd"><span style="font-size:12px;font-weight:600;color:var(--gd);min-width:32px">${x.n}</span><span style="font-size:14.5px;font-weight:600;flex:1">${x.t}</span></div><div class="sc-bd"><span style="font-size:14px;color:var(--t2);line-height:1.75">${x.v}</span></div></div>`).join('');
 }
 
 function rpr(){
   const pid=prPid||(P.length?P[0].id:'');
   if(!pid){document.getElementById('n-postreview').innerHTML='<div class="hint">No projects.</div>';return;}
   const{t,pa,fa,re}=gprs(pid);const pct=Math.round(pa/t*100);const{pct:cp,d:cd,t:ct}=ppx(pid);
-  const sel='<div class="prsel"><label>Select project to review</label><select onchange="prPid=this.value;rpr()">'+P.map(p=>{const{fa:f}=gprs(p.id);const{pct:cp2}=ppx(p.id);return '<option value="'+p.id+'"'+(p.id===pid?' selected':'')+'>'+p.id+(p.pm?' ('+p.pm+')':'')+' — team '+cp2+'%'+(f>0?' ⚠':'')+'</option>';}).join('')+'</select></div>';
-  const wfl='<div class="wf"><div class="wb d">Team submits</div><div class="wa">›</div><div class="wb a">Post-review</div><div class="wa">›</div><div class="wb">ILSFA review</div><div class="wa">›</div><div class="wb">Approved</div></div>';
-  const cls='<div style="background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.15);border-radius:var(--rl);padding:14px;margin-bottom:14px;display:flex;align-items:center;gap:14px">'+
-    '<div style="flex:1"><div style="font-size:13.5px;font-weight:600;margin-bottom:7px;color:var(--nv)">Team checklist — '+pid+'</div><div class="pbar"><div class="pfil" style="width:'+cp+'%"></div></div></div>'+
-    '<div style="text-align:right;flex-shrink:0"><div style="font-family:Cormorant Garamond,serif;font-size:22px;font-weight:600">'+cp+'%</div><div style="font-size:13px;color:var(--t3)">'+cd+'/'+ct+'</div></div></div>';
-  const sm='<div class="prsb"><div style="font-family:Cormorant Garamond,serif;font-size:18px;font-weight:600">'+pid+' — Post-review summary</div>'+
-    '<div class="prg"><div class="prs"><div class="prn" style="color:var(--ot)">'+pa+'</div><div class="prl">Passed</div></div>'+
-    '<div class="prs"><div class="prn" style="color:var(--et)">'+fa+'</div><div class="prl">Failed</div></div>'+
-    '<div class="prs"><div class="prn">'+re+'</div><div class="prl">Not reviewed</div></div></div>'+
-    '<div style="margin-top:13px"><div class="pbar"><div class="pfil" style="width:'+pct+'%"></div></div><div style="font-size:13px;color:var(--t3);margin-top:4px">'+pct+'% passed</div></div></div>';
-  const sects=PRS.map(s=>{
+  const el=document.getElementById('n-postreview');
+  el.innerHTML=`
+    <div class="prsel"><label>Select project to review</label>
+      <select id="pr-sel"><option value="">—</option>${P.map(p=>{const{fa:f}=gprs(p.id);const{pct:cp2}=ppx(p.id);return `<option value="${p.id}"${p.id===pid?' selected':''}>${p.id}${p.pm?' ('+p.pm+')':''} — team ${cp2}%${f>0?' ⚠':''}</option>`;}).join('')}</select>
+    </div>
+    <div class="wf"><div class="wb d">Team submits</div><div class="wa">›</div><div class="wb a">Post-review</div><div class="wa">›</div><div class="wb">ILSFA review</div><div class="wa">›</div><div class="wb">Approved</div></div>
+    <div style="background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.15);border-radius:var(--rl);padding:14px;margin-bottom:14px;display:flex;align-items:center;gap:14px">
+      <div style="flex:1"><div style="font-size:13.5px;font-weight:600;margin-bottom:7px;color:var(--nv)">Team checklist — ${pid}</div><div class="pbar"><div class="pfil" style="width:${cp}%"></div></div></div>
+      <div style="text-align:right;flex-shrink:0"><div style="font-family:Cormorant Garamond,serif;font-size:22px;font-weight:600">${cp}%</div><div style="font-size:13px;color:var(--t3)">${cd}/${ct}</div></div>
+    </div>
+    <div class="prsb">
+      <div style="font-family:Cormorant Garamond,serif;font-size:18px;font-weight:600">${pid} — Post-review summary</div>
+      <div class="prg">
+        <div class="prs"><div class="prn" style="color:var(--ot)">${pa}</div><div class="prl">Passed</div></div>
+        <div class="prs"><div class="prn" style="color:var(--et)">${fa}</div><div class="prl">Failed</div></div>
+        <div class="prs"><div class="prn">${re}</div><div class="prl">Not reviewed</div></div>
+      </div>
+      <div style="margin-top:13px"><div class="pbar"><div class="pfil" style="width:${pct}%"></div></div><div style="font-size:13px;color:var(--t3);margin-top:4px">${pct}% passed</div></div>
+    </div>
+    <div id="pr-sects"></div>`;
+
+  document.getElementById('pr-sel').addEventListener('change',function(){prPid=this.value;rpr();});
+
+  PRS.forEach(s=>{
     const sp=s.items.filter(i=>prSt(pid,i.id)==='pass').length;
     const sf=s.items.filter(i=>prSt(pid,i.id)==='fail').length;
     const op=openCards['_pr_'+s.id]!==false;
-    return '<div style="margin-bottom:12px;border:1px solid var(--gborder);border-radius:var(--rl);overflow:hidden;box-shadow:var(--gshadow)">'+
-      '<div style="display:flex;align-items:center;gap:10px;padding:13px 17px;cursor:pointer;background:rgba(248,250,252,.78)" onclick="tprs(''+s.id+'')">'+
-      '<i class="ti '+s.ic+'" style="font-size:17px;color:var(--gd)"></i>'+
-      '<span style="font-size:14.5px;font-weight:600;flex:1">'+s.t+'</span>'+
-      '<span style="display:flex;gap:6px;align-items:center">'+(sp>0?'<span class="badge bo">'+sp+'</span>':'')+(sf>0?'<span class="badge br">'+sf+' failed</span>':'')+'<span style="font-size:13px;color:var(--t3)">'+s.items.length+'</span></span>'+
-      '<i class="ti ti-chevron-down" style="font-size:14px;color:var(--t3);transform:rotate('+(op?180:0)+'deg);margin-left:6px"></i></div>'+
-      '<div class="pbar"><div class="pfil" style="width:'+Math.round(sp/s.items.length*100)+'%"></div></div>'+
-      (op?'<div style="padding:10px 17px 15px;background:rgba(255,255,255,.88)">'+s.items.map(it=>{const st=prSt(pid,it.id);return '<div class="fi">'+
-        '<div style="flex:1"><div style="font-size:14px;font-weight:500">'+it.t+'</div><div style="font-size:13.5px;color:var(--t2);margin-top:3px;line-height:1.6">'+it.n+'</div></div>'+
-        '<div style="display:flex;gap:5px;flex-shrink:0;margin-top:2px">'+
-        '<button class="fb2'+(st==='pass'?' pass':'')+'" onclick="setPR(''+pid+'',''+it.id+'',''+(st==='pass'?'none':'pass')+'')"><i class="ti ti-check" style="font-size:12px"></i> Pass</button>'+
-        '<button class="fb2'+(st==='fail'?' fail':'')+'" onclick="setPR(''+pid+'',''+it.id+'',''+(st==='fail'?'none':'fail')+'')"><i class="ti ti-x" style="font-size:12px"></i> Fail</button>'+
-        '</div></div>';}).join('')+'</div>':'')+'</div>';}).join('');
-  document.getElementById('n-postreview').innerHTML=sel+wfl+cls+sm+sects;
+    const div=document.createElement('div');
+    div.style.cssText='margin-bottom:12px;border:1px solid var(--gborder);border-radius:var(--rl);overflow:hidden;box-shadow:var(--gshadow)';
+    div.innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px;padding:13px 17px;cursor:pointer;background:rgba(248,250,252,.78)" data-sid="${s.id}">
+        <i class="ti ${s.ic}" style="font-size:17px;color:var(--gd)"></i>
+        <span style="font-size:14.5px;font-weight:600;flex:1">${s.t}</span>
+        <span style="display:flex;gap:6px;align-items:center">${sp>0?`<span class="badge bo">${sp}</span>`:''}${sf>0?`<span class="badge br">${sf} failed</span>`:''}<span style="font-size:13px;color:var(--t3)">${s.items.length}</span></span>
+        <i class="ti ti-chevron-down" style="font-size:14px;color:var(--t3);transform:rotate(${op?180:0}deg);margin-left:6px" id="chv-${s.id}"></i>
+      </div>
+      <div class="pbar"><div class="pfil" style="width:${Math.round(sp/s.items.length*100)}%"></div></div>
+      <div id="prs-${s.id}" style="display:${op?'block':'none'};padding:10px 17px 15px;background:rgba(255,255,255,.88)"></div>`;
+    
+    const hdr=div.querySelector(`[data-sid="${s.id}"]`);
+    hdr.addEventListener('click',()=>{
+      openCards['_pr_'+s.id]=openCards['_pr_'+s.id]===false?true:false;
+      const body=div.querySelector(`#prs-${s.id}`);
+      const chv=div.querySelector(`#chv-${s.id}`);
+      const isOpen=openCards['_pr_'+s.id]!==false;
+      body.style.display=isOpen?'block':'none';
+      chv.style.transform=`rotate(${isOpen?180:0}deg)`;
+    });
+
+    const body=div.querySelector(`#prs-${s.id}`);
+    body.innerHTML=s.items.map(it=>{
+      const st=prSt(pid,it.id);
+      return `<div class="fi">
+        <div style="flex:1"><div style="font-size:14px;font-weight:500">${it.t}</div><div style="font-size:13.5px;color:var(--t2);margin-top:3px;line-height:1.6">${it.n}</div></div>
+        <div style="display:flex;gap:5px;flex-shrink:0;margin-top:2px">
+          <button class="fb2${st==='pass'?' pass':''}" data-pid="${pid}" data-iid="${it.id}" data-cur="${st}" data-action="pass"><i class="ti ti-check" style="font-size:12px"></i> Pass</button>
+          <button class="fb2${st==='fail'?' fail':''}" data-pid="${pid}" data-iid="${it.id}" data-cur="${st}" data-action="fail"><i class="ti ti-x" style="font-size:12px"></i> Fail</button>
+        </div></div>`;
+    }).join('');
+
+    body.querySelectorAll('.fb2').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const newVal=btn.dataset.cur===btn.dataset.action?'none':btn.dataset.action;
+        setPR(btn.dataset.pid,btn.dataset.iid,newVal);
+      });
+    });
+
+    document.getElementById('pr-sects').appendChild(div);
+  });
 }
 
 function gpr(pid){prPid=pid;ntid('n-postreview');document.querySelectorAll('#v-spl .nb').forEach((b,i)=>b.classList.toggle('a',i===2));rpr();}
 
 function rstd(){
-  document.getElementById('n-standards').innerHTML=STDS.map(s=>'<div class="sc-card"><div class="sc-hd"><i class="ti '+s.ic+'" style="font-size:16px;color:var(--gd)"></i><span style="font-size:15px;font-weight:600;flex:1;margin-left:8px">'+s.t+'</span></div><div class="sc-bd">'+s.rows.map(r=>'<div class="rw"><span class="rl">'+r.l+'</span><span class="rv">'+r.v+'</span></div>').join('')+'</div></div>').join('');
+  document.getElementById('n-standards').innerHTML=STDS.map(s=>`<div class="sc-card"><div class="sc-hd"><i class="ti ${s.ic}" style="font-size:16px;color:var(--gd)"></i><span style="font-size:15px;font-weight:600;flex:1;margin-left:8px">${s.t}</span></div><div class="sc-bd">${s.rows.map(r=>`<div class="rw"><span class="rl">${r.l}</span><span class="rv">${r.v}</span></div>`).join('')}</div></div>`).join('');
 }
 
 function rset(){
-  const af=showPMAF?'<div class="pmaf"><div style="font-family:Cormorant Garamond,serif;font-size:18px;font-weight:600;margin-bottom:13px;color:var(--nv)">Add new PM</div><div class="fl" style="margin-bottom:13px"><label>Full name</label><input id="npm" placeholder="e.g. Katrina Santos"/></div><div style="display:flex;gap:10px"><button class="btn" onclick="apm()"><i class="ti ti-check" style="font-size:13px"></i> Add PM</button><button class="btn2" onclick="showPMAF=false;rset()">Cancel</button></div></div>':'<button class="ab" onclick="showPMAF=true;rset()"><i class="ti ti-plus" style="font-size:14px"></i> Add new PM</button>';
+  const af=showPMAF?`<div class="pmaf"><div style="font-family:Cormorant Garamond,serif;font-size:18px;font-weight:600;margin-bottom:13px;color:var(--nv)">Add new PM</div><div class="fl" style="margin-bottom:13px"><label>Full name</label><input id="npm" placeholder="e.g. Katrina Santos"/></div><div style="display:flex;gap:10px"><button class="btn" onclick="apm()"><i class="ti ti-check" style="font-size:13px"></i> Add PM</button><button class="btn2" onclick="showPMAF=false;rset()">Cancel</button></div></div>`:'<button class="ab" onclick="showPMAF=true;rset()"><i class="ti ti-plus" style="font-size:14px"></i> Add new PM</button>';
   document.getElementById('n-settings').innerHTML='<div class="div2">Project manager list</div>'+af+
-    PML.map(n=>{const c=P.filter(p=>p.pm===n).length;const m=n===MGR;return '<div class="pmc"><div class="pma">'+n.substring(0,2).toUpperCase()+'</div><div style="flex:1"><div style="font-size:15px;font-weight:600">'+n+(m?' <span class="mgr">Manager</span>':'')+'</div><div style="font-size:13.5px;color:var(--t3);margin-top:2px">'+c+' project'+(c!==1?'s':'')+' assigned</div></div>'+((!m)?'<button class="pmr" onclick="dpm(''+n+'')"><i class="ti ti-trash" style="font-size:12px"></i> Remove</button>':'<span style="font-size:13px;color:var(--t3)">Protected</span>')+'</div>';}).join('')+
+    PML.map(n=>{const c=P.filter(p=>p.pm===n).length;const m=n===MGR;return `<div class="pmc"><div class="pma">${n.substring(0,2).toUpperCase()}</div><div style="flex:1"><div style="font-size:15px;font-weight:600">${n}${m?' <span class="mgr">Manager</span>':''}</div><div style="font-size:13.5px;color:var(--t3);margin-top:2px">${c} project${c!==1?'s':''} assigned</div></div>${(!m)?`<button class="pmr" onclick="dpm('${n}')"><i class="ti ti-trash" style="font-size:12px"></i> Remove</button>`:'<span style="font-size:13px;color:var(--t3)">Protected</span>'}</div>`;}).join('')+
     '<div class="hint" style="margin-top:13px"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:5px"></i>Mary is protected as PM Manager and cannot be removed.</div>';
 }
 
@@ -724,11 +821,13 @@ function hs(q){
   const w=document.getElementById('srw');
   if(t.length<2){w.classList.remove('v');return;}
   const ql=t.toLowerCase();const rs=[];
-  P.forEach(p=>{if([p.id,p.py,p.sub,p.recs,p.ps,p.cs,p.ut||'',p.corr,p.cmt,p.pm||''].join(' ').toLowerCase().includes(ql)){rs.push({ic:'ti-folder',t:p.id+' — '+p.py+(p.pm?' ('+p.pm+')':''),s:p.ps+' · '+p.recs,fn:'op2(''+p.id+'')'});}});
-  PML.forEach(pm=>{if(pm.toLowerCase().includes(ql)){rs.push({ic:'ti-user',t:pm+(pm===MGR?' (Manager)':''),s:P.filter(p=>p.pm===pm).length+' projects assigned',fn:'fgpm(''+pm+'','+P.filter(p=>p.pm===pm).length+')'});}});
+  P.forEach(p=>{if([p.id,p.py,p.sub,p.recs,p.ps,p.cs,p.ut||'',p.corr,p.cmt,p.pm||''].join(' ').toLowerCase().includes(ql)){rs.push({ic:'ti-folder',t:`${p.id} — ${p.py}${p.pm?' ('+p.pm+')':''}`,s:`${p.ps} · ${p.recs}`,fn:()=>op2(p.id)});}});
+  PML.forEach(pm=>{if(pm.toLowerCase().includes(ql)){rs.push({ic:'ti-user',t:pm+(pm===MGR?' (Manager)':''),s:P.filter(p=>p.pm===pm).length+' projects',fn:()=>fgpm(pm,P.filter(p=>p.pm===pm).length)});}});
   w.classList.add('v');document.getElementById('src').textContent=rs.length+' result'+(rs.length!==1?'s':'');
-  if(!rs.length){document.getElementById('srb').innerHTML='<div style="padding:20px;text-align:center;color:var(--t3);font-size:14px">No results</div>';return;}
-  document.getElementById('srb').innerHTML=rs.map(r=>'<div class="sri" onclick="'+r.fn+';cs()"><i class="ti '+r.ic+'" style="font-size:15px;color:var(--gd);flex-shrink:0;margin-top:1px"></i><div style="flex:1"><div style="font-size:14px;font-weight:500;margin-bottom:1px">'+hl(r.t,t)+'</div><div style="font-size:13px;color:var(--t2)">'+hl(r.s,t)+'</div></div></div>').join('');
+  const srb=document.getElementById('srb');
+  if(!rs.length){srb.innerHTML=`<div style="padding:20px;text-align:center;color:var(--t3);font-size:14px">No results</div>`;return;}
+  srb.innerHTML=rs.map((r,i)=>`<div class="sri" data-ri="${i}"><i class="ti ${r.ic}" style="font-size:15px;color:var(--gd);flex-shrink:0;margin-top:1px"></i><div style="flex:1"><div style="font-size:14px;font-weight:500;margin-bottom:1px">${hl(r.t,t)}</div><div style="font-size:13px;color:var(--t2)">${hl(r.s,t)}</div></div></div>`).join('');
+  rs.forEach((r,i)=>{const el=srb.querySelector(`[data-ri="${i}"]`);if(el)el.addEventListener('click',()=>{r.fn();cs();});});
 }
 
 function cs(){document.getElementById('gs').value='';document.getElementById('srw').classList.remove('v');document.getElementById('gsc').classList.remove('v');}
@@ -761,6 +860,7 @@ function svid(v){
 }
 function ra(){rss();rdb();rp();rpr();rstd();rset();rtv();}
 loadData();
+
 </script>
 </body>
 </html>
