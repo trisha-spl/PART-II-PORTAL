@@ -3,91 +3,127 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ILSFA Part II Submission Portal</title>
+<title>ILSFA Part II Portal · Liaison Department</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--nv:#0d1f3c;--nm:#163660;--gd:#c9a84c;--gl:#e8c97a;--bb:#7ec8e3;--bl:#b8e4f2;--bp:#e8f6fb;--bm:#4a9abe;--tx:#0d1f3c;--t2:#3a5070;--t3:#7a92aa;--bd:rgba(13,31,60,.12);--b2:rgba(13,31,60,.22);--cd:#fff;--sf:#f4f8fc;--s2:#e8f1f8;--ok:#edf7ee;--ot:#1a5c1f;--ob:#2e8b35;--wn:#fdf4e3;--wt:#7a4a00;--wb:#c9870a;--er:#fdf0f0;--et:#7a1a1a;--eb:#c93030;--r:8px;--rl:14px;--sh:0 1px 6px rgba(13,31,60,.1);--sb:220px}
-@media(prefers-color-scheme:dark){:root{--gd:#e8c97a;--bb:#5ab4d4;--bl:#89c8e0;--bp:rgba(126,200,227,.12);--bm:#3a8aab;--tx:#ddeaf5;--t2:#8aaac4;--t3:#5a7a94;--bd:rgba(126,200,227,.12);--b2:rgba(126,200,227,.22);--cd:#0f1e32;--sf:#091628;--s2:#0d1e30;--ok:#0d2e10;--ot:#7ec882;--ob:#2e8b35;--wn:#2e1e00;--wt:#f5c842;--wb:#c9870a;--er:#2e0d0d;--et:#f09090;--eb:#c93030}}
+:root{
+  --nv:#0F172A;--nm:#1E293B;--nl:#334155;
+  --gd:#D4AF37;--gl:#E8C84A;--gp:rgba(212,175,55,.12);
+  --bb:#7ec8e3;--bl:#b8e4f2;--bp:rgba(126,200,227,.08);--bm:#4a9abe;
+  --tx:#111827;--t2:#374151;--t3:#9CA3AF;
+  --bd:rgba(15,23,42,.08);--b2:rgba(15,23,42,.14);
+  --cd:#FFFFFF;--sf:#F8FAFC;--s2:#F1F5F9;
+  --ok:#F0FDF4;--ot:#166534;--ob:#16a34a;
+  --wn:#FFFBEB;--wt:#92400E;--wb:#D97706;
+  --er:#FEF2F2;--et:#991B1B;--eb:#DC2626;
+  --r:10px;--rl:14px;--sh:0 1px 3px rgba(15,23,42,.06),0 4px 16px rgba(15,23,42,.04);
+  --hh:66px;--sb:220px;--max:1280px;
+  --glass-bg:rgba(255,255,255,0.7);
+  --glass-border:rgba(255,255,255,0.5);
+  --glass-shadow:0 8px 32px rgba(15,23,42,.08),0 2px 8px rgba(15,23,42,.04);
+  --gold-glow:0 0 20px rgba(212,175,55,.15)
+}
+@media(prefers-color-scheme:dark){:root{
+  --gd:#E8C84A;--gl:#F0D060;--gp:rgba(232,200,74,.12);
+  --bb:#5ab4d4;--bl:#89c8e0;--bp:rgba(126,200,227,.08);--bm:#3a8aab;
+  --tx:#F1F5F9;--t2:#CBD5E1;--t3:#64748B;
+  --bd:rgba(255,255,255,.08);--b2:rgba(255,255,255,.12);
+  --cd:#1E293B;--sf:#0F172A;--s2:#162032;
+  --ok:#052e16;--ot:#4ade80;--ob:#16a34a;
+  --wn:#2d1b00;--wt:#fbbf24;--wb:#D97706;
+  --er:#2d0a0a;--et:#f87171;--eb:#DC2626;
+  --glass-bg:rgba(30,41,59,0.7);
+  --glass-border:rgba(255,255,255,0.08);
+  --glass-shadow:0 8px 32px rgba(0,0,0,.3),0 2px 8px rgba(0,0,0,.2)
+}}
 html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--sf);color:var(--tx);font-size:14px;line-height:1.5}
+body{background-image:radial-gradient(ellipse at 20% 0%,rgba(212,175,55,.04) 0%,transparent 60%),radial-gradient(ellipse at 80% 100%,rgba(15,23,42,.03) 0%,transparent 60%)}
 
-/* ── HEADER ── */
-.hd{background:linear-gradient(135deg,#0d1f3c,#163660,#1e4a82);padding:0;position:relative;overflow:hidden;flex-shrink:0}
-@media(prefers-color-scheme:dark){.hd{background:linear-gradient(135deg,#060f1e,#0d1f3c,#163660)}}
-.hd::before{content:'';position:absolute;top:-60px;right:-40px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(126,200,227,.15),transparent 70%);pointer-events:none}
-.hd-inner{display:flex;align-items:center;gap:16px;padding:14px 20px;position:relative;z-index:1}
-.hd-logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#fff;white-space:nowrap;flex-shrink:0}
-.hd-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:1px}
-.hd-divider{width:1px;height:32px;background:rgba(255,255,255,.15);flex-shrink:0}
-.hd-stats{display:flex;gap:20px;flex:1}
-.hd-stat{text-align:center}
-.hd-stat-n{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#fff;line-height:1}
-.hd-stat-l{font-size:10px;color:rgba(255,255,255,.45);letter-spacing:.06em;text-transform:uppercase;margin-top:1px}
-.hd-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.hd-view-btn{font-size:12px;font-weight:500;padding:7px 16px;border:none;background:rgba(255,255,255,.1);cursor:pointer;color:rgba(255,255,255,.65);border-radius:var(--r);display:flex;align-items:center;gap:6px;transition:all .2s;border:1px solid transparent}
-.hd-view-btn.a{background:rgba(255,255,255,.18);color:#fff;border-color:rgba(201,168,76,.5)}
-.hd-view-btn:hover:not(.a){background:rgba(255,255,255,.14);color:#fff}
-.hd-refresh{font-size:11px;color:rgba(255,255,255,.4);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:4px;padding:6px 10px;border-radius:var(--r);transition:all .2s}
-.hd-refresh:hover{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)}
+/* ── STICKY HEADER ── */
+.top-header{
+  position:sticky;top:0;z-index:200;
+  background:rgba(15,23,42,0.88);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid rgba(212,175,55,.18);
+  box-shadow:0 1px 0 rgba(212,175,55,.1),0 4px 24px rgba(0,0,0,.25);
+}
+@media(prefers-color-scheme:dark){.top-header{background:rgba(10,15,28,0.92)}}
+.top-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gd),rgba(212,175,55,.3),transparent);pointer-events:none}
+.header-inner{max-width:var(--max);margin:0 auto;padding:0 24px;height:var(--hh);display:flex;align-items:center;gap:16px}
+.logo-block{flex-shrink:0}
+.logo-dept{font-size:10px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--gd);margin-bottom:2px;opacity:.9}
+.logo-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;color:#fff;letter-spacing:.03em;line-height:1.1;text-shadow:0 0 30px rgba(212,175,55,.2)}
+.logo-title span{color:var(--bb)}
+.header-divider{width:1px;height:30px;background:rgba(255,255,255,.15);flex-shrink:0}
+.header-search-wrap{flex:1;max-width:420px;position:relative}
+.header-search{width:100%;padding:8px 14px 8px 36px;border-radius:var(--rl);border:1px solid rgba(212,175,55,.15);background:rgba(255,255,255,.06);color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:all .2s}
+.header-search:focus{border-color:rgba(212,175,55,.4);background:rgba(255,255,255,.1);box-shadow:0 0 0 3px rgba(212,175,55,.08),var(--gold-glow)}
+.header-search::placeholder{color:rgba(255,255,255,.35)}
+.header-search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:15px;color:rgba(255,255,255,.4);pointer-events:none}
+.header-search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(255,255,255,.4);font-size:14px;padding:3px;display:none}
+.header-search-clear.v{display:block}
+.header-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.hd-stat{text-align:center;padding:0 10px}
+.hd-stat-n{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:#fff;line-height:1}
+.hd-stat-l{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;margin-top:1px}
+.view-btn{font-size:12px;font-weight:500;padding:6px 14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);cursor:pointer;color:rgba(255,255,255,.6);border-radius:var(--r);display:flex;align-items:center;gap:5px;transition:all .2s;font-family:'DM Sans',sans-serif}
+.view-btn.a{background:rgba(212,175,55,.14);border-color:rgba(212,175,55,.45);color:var(--gd);box-shadow:var(--gold-glow)}
+.view-btn:hover:not(.a){background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2)}
+.refresh-btn{font-size:11px;color:rgba(255,255,255,.35);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:4px;padding:6px 8px;border-radius:var(--r);transition:all .2s}
+.refresh-btn:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)}
 
-/* ── LAYOUT ── */
-.app-body{display:flex;min-height:calc(100vh - 60px)}
-
-/* ── SIDEBAR ── */
-.sidebar{width:var(--sb);flex-shrink:0;background:var(--cd);border-right:0.5px solid var(--bd);display:flex;flex-direction:column;position:sticky;top:0;height:calc(100vh - 60px);overflow-y:auto}
-.sb-section{padding:14px 12px 8px}
-.sb-label{font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;padding:0 4px}
-.sb-nav-btn{width:100%;text-align:left;font-size:13px;padding:8px 10px;border:none;background:none;cursor:pointer;color:var(--t2);border-radius:var(--r);display:flex;align-items:center;gap:8px;transition:all .15s;font-family:'DM Sans',sans-serif;margin-bottom:2px}
-.sb-nav-btn:hover:not(.a){background:var(--bp);color:var(--nm)}
-.sb-nav-btn.a{background:linear-gradient(135deg,var(--nv),var(--nm));color:#fff;font-weight:500;box-shadow:0 2px 10px rgba(13,31,60,.2)}
-.sb-nav-btn i{font-size:15px;flex-shrink:0}
-.sb-divider{height:0.5px;background:var(--bd);margin:8px 12px}
-.sb-stat{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;border-radius:var(--r);cursor:pointer;transition:background .15s;margin-bottom:2px}
-.sb-stat:hover{background:var(--bp)}
-.sb-stat-label{font-size:12px;color:var(--t2);display:flex;align-items:center;gap:6px}
-.sb-stat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.sb-stat-val{font-size:12px;font-weight:500}
-
-/* PM sidebar tabs */
-.sb-pm-btn{width:100%;text-align:left;font-size:12px;padding:7px 10px;border:none;background:none;cursor:pointer;color:var(--t2);border-radius:var(--r);display:flex;align-items:center;gap:8px;transition:all .15s;font-family:'DM Sans',sans-serif;margin-bottom:2px}
-.sb-pm-btn:hover:not(.a){background:var(--bp);color:var(--nm)}
-.sb-pm-btn.a{background:linear-gradient(135deg,var(--nv),var(--nm));color:#fff;font-weight:500}
-.sb-pm-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--nv),var(--bm));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:#fff;flex-shrink:0}
-.mgr{font-size:9px;padding:1px 5px;border-radius:10px;background:rgba(201,168,76,.22);color:var(--gd);font-weight:500;letter-spacing:.04em;text-transform:uppercase;margin-left:2px}
-
-/* ── MAIN CONTENT ── */
-.main-content{flex:1;overflow-y:auto;padding:20px;min-width:0}
-
-/* Search */
-.search-wrap{position:relative;margin-bottom:16px}
-.search-input{width:100%;padding:10px 16px 10px 40px;border-radius:var(--rl);border:1.5px solid var(--bb);background:var(--cd);color:var(--tx);font-size:13px;font-family:'DM Sans',sans-serif;box-shadow:0 2px 12px rgba(126,200,227,.12);outline:none}
-.search-input:focus{box-shadow:0 2px 20px rgba(126,200,227,.25)}
-.search-input::placeholder{color:var(--t3)}
-.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--bm);pointer-events:none}
-.search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);font-size:14px;padding:3px;display:none}
-.search-clear.v{display:block}
-.sr-wrap{background:var(--cd);border:0.5px solid var(--bd);border-radius:var(--rl);box-shadow:0 8px 32px rgba(13,31,60,.14);margin-bottom:14px;overflow:hidden;display:none}
-.sr-wrap.v{display:block}
+/* Search results dropdown */
+.sr-dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:rgba(255,255,255,.95);border:1px solid rgba(212,175,55,.15);border-radius:var(--rl);box-shadow:0 16px 48px rgba(15,23,42,.15),0 4px 16px rgba(15,23,42,.08);overflow:hidden;display:none;z-index:300;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.sr-dropdown.v{display:block}
 .sr-item{display:flex;align-items:flex-start;gap:10px;padding:9px 14px;cursor:pointer;border-bottom:0.5px solid var(--bd)}
 .sr-item:last-child{border-bottom:none}
 .sr-item:hover{background:var(--sf)}
 
-/* Tabs */
+/* ── PAGE WRAPPER ── */
+.page-wrap{max-width:var(--max);margin:0 auto;padding:0 24px;display:flex;gap:0;min-height:calc(100vh - var(--hh))}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sb);flex-shrink:0;padding:20px 0 40px;border-right:1px solid rgba(212,175,55,.1);position:sticky;top:var(--hh);height:calc(100vh - var(--hh));overflow-y:auto;padding-right:8px;background:rgba(15,23,42,.02)}
+.sb-label{font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin:16px 0 6px 6px}
+.sb-label:first-child{margin-top:0}
+.sb-btn{width:100%;text-align:left;font-size:13px;padding:8px 10px;border:none;background:none;cursor:pointer;color:var(--t2);border-radius:var(--r);display:flex;align-items:center;gap:8px;transition:all .15s;font-family:'DM Sans',sans-serif;margin-bottom:2px}
+.sb-btn:hover:not(.a){background:rgba(212,175,55,.06);color:var(--nv)}
+.sb-btn.a{background:linear-gradient(135deg,rgba(212,175,55,.12),rgba(212,175,55,.06));color:var(--nv);font-weight:600;box-shadow:none;border-left:3px solid var(--gd);border-radius:0 var(--r) var(--r) 0;padding-left:9px}
+.sb-btn i{font-size:15px;flex-shrink:0;opacity:.6}
+.sb-btn.a i{opacity:1;color:var(--gd)}
+.sb-divider{height:0.5px;background:var(--bd);margin:10px 6px}
+.sb-stat{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:var(--r);cursor:pointer;transition:background .12s;margin-bottom:1px}
+.sb-stat:hover{background:rgba(212,175,55,.06)}
+.sb-stat-lbl{font-size:12px;color:var(--t2);display:flex;align-items:center;gap:6px}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sb-stat-val{font-size:12px;font-weight:600}
+.sb-pm-btn{width:100%;text-align:left;font-size:12px;padding:7px 10px;border:none;background:none;cursor:pointer;color:var(--t2);border-radius:var(--r);display:flex;align-items:center;gap:8px;transition:all .15s;font-family:'DM Sans',sans-serif;margin-bottom:2px}
+.sb-pm-btn:hover:not(.a){background:rgba(212,175,55,.06);color:var(--nv)}
+.sb-pm-btn.a{background:linear-gradient(135deg,rgba(212,175,55,.12),rgba(212,175,55,.06));color:var(--nv);font-weight:600;border-left:3px solid var(--gd);border-radius:0 var(--r) var(--r) 0;padding-left:9px}
+.pm-av{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--nv),var(--nm));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--gd);flex-shrink:0;border:1px solid rgba(212,175,55,.2)}
+.mgr{font-size:9px;padding:1px 5px;border-radius:10px;background:rgba(201,168,76,.22);color:var(--gd);font-weight:500;letter-spacing:.04em;text-transform:uppercase;margin-left:2px}
+
+/* ── MAIN CONTENT ── */
+.main{flex:1;padding:20px 0 40px 24px;min-width:0}
+
+/* Tabs/Views */
 .tab{display:none}.tab.a{display:block}
 .view{display:none}.view.a{display:block}
 
-/* Cards */
-.card{border:0.5px solid var(--bd);border-radius:var(--rl);background:var(--cd);margin-bottom:12px;box-shadow:var(--sh);overflow:hidden}
-.card-hd{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--sf);cursor:pointer;position:relative}
-.card-hd::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--bm),var(--gd))}
-.card-hd:hover{background:var(--s2)}
-.card-bd{padding:16px;border-top:0.5px solid var(--bd)}
+/* ── CARDS ── */
+.card{border:1px solid var(--glass-border);border-radius:var(--rl);background:var(--glass-bg);margin-bottom:10px;box-shadow:var(--glass-shadow);overflow:hidden;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:box-shadow .2s,transform .15s}
+.card:hover{box-shadow:0 12px 40px rgba(15,23,42,.1),0 2px 8px rgba(15,23,42,.06);transform:translateY(-1px)}
+.card-hd{display:flex;align-items:center;gap:8px;padding:11px 14px;background:rgba(248,250,252,.6);cursor:pointer;position:relative}
+.card-hd::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--gd),rgba(212,175,55,.3))}
+.card-hd:hover{background:rgba(212,175,55,.04)}
+.card-bd{padding:14px;border-top:1px solid rgba(15,23,42,.06)}
 
 /* Badges */
 .badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;white-space:nowrap;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0}
-.bo{background:var(--ok);color:var(--ot)}.br{background:var(--er);color:var(--et)}.bw{background:var(--wn);color:var(--wt)}.bd2{background:var(--bp);color:var(--bm)}.bp2{background:#eeedfe;color:#3c3489}
-@media(prefers-color-scheme:dark){.bd2{background:rgba(126,200,227,.15);color:var(--bb)}.bp2{background:rgba(127,119,221,.15);color:#afa9ec}}
+.bo{background:var(--ok);color:var(--ot)}.br{background:var(--er);color:var(--et)}.bw{background:var(--wn);color:var(--wt)}.bd2{background:rgba(212,175,55,.1);color:#7a5500}.bp2{background:#eeedfe;color:#3c3489}
+@media(prefers-color-scheme:dark){.bd2{background:rgba(212,175,55,.15);color:var(--gd)}.bp2{background:rgba(127,119,221,.15);color:#afa9ec}}
 .bn{background:var(--bp);color:var(--nm)}@media(prefers-color-scheme:dark){.bn{background:rgba(126,200,227,.12);color:var(--bl)}}
 
 /* Selects */
@@ -96,41 +132,41 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--sf);colo
 .sel.sa{background:var(--ok);color:var(--ot);border-color:var(--ob)}.sel.sc{background:var(--er);color:var(--et);border-color:var(--eb)}.sel.si{background:var(--bp);color:var(--bm);border-color:rgba(126,200,227,.4)}.sel.sw{background:var(--wn);color:var(--wt);border-color:var(--wb)}.sel.ca{background:var(--ok);color:var(--ot);border-color:var(--ob)}.sel.cp{background:var(--er);color:var(--et);border-color:var(--eb)}.sel.cpa{background:var(--wn);color:var(--wt);border-color:var(--wb)}.sel.cn{background:var(--s2);color:var(--t2)}
 
 /* Misc */
-.hint{font-size:12px;color:var(--t2);padding:10px 14px;background:var(--sf);border:0.5px solid var(--bd);border-radius:var(--r);margin-bottom:12px;line-height:1.7}
-.fb{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(126,200,227,.08);border:1.5px solid var(--bb);border-radius:var(--rl);margin-bottom:12px}
-.fb button{font-size:11px;padding:4px 12px;border-radius:var(--r);border:0.5px solid var(--bb);background:transparent;cursor:pointer;color:var(--bm);font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:4px}
-.fb button:hover{background:var(--bp)}
-.section-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.hint{font-size:12px;color:var(--t2);padding:9px 12px;background:rgba(248,250,252,.8);border:1px solid rgba(15,23,42,.06);border-radius:var(--r);margin-bottom:10px;line-height:1.7}
+.fb{display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(212,175,55,.05);border:1.5px solid rgba(212,175,55,.25);border-radius:var(--rl);margin-bottom:10px;backdrop-filter:blur(8px)}
+.fb button{font-size:11px;padding:4px 10px;border-radius:var(--r);border:1px solid rgba(212,175,55,.3);background:transparent;cursor:pointer;color:var(--nv);font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:4px;font-weight:500}
+.fb button:hover{background:rgba(212,175,55,.1)}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .sf3{display:flex;flex-direction:column;gap:4px}
 .sf3 label{font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
-.ni{width:100%;font-size:12px;padding:8px 10px;border-radius:var(--r);border:0.5px solid var(--b2);background:var(--cd);color:var(--tx);resize:vertical;min-height:50px;font-family:'DM Sans',sans-serif}
+.ni{width:100%;font-size:12px;padding:7px 9px;border-radius:var(--r);border:0.5px solid var(--b2);background:var(--cd);color:var(--tx);resize:vertical;min-height:48px;font-family:'DM Sans',sans-serif}
 .ni:focus{outline:none;border-color:var(--bb)}
-.snb{font-size:11px;padding:4px 12px;border-radius:var(--r);border:0.5px solid var(--bb);background:transparent;cursor:pointer;color:var(--bm);font-family:'DM Sans',sans-serif;margin-top:4px}
-.snb:hover{background:var(--bp)}
-.prb{font-size:12px;padding:7px 14px;border-radius:var(--r);border:1px solid var(--bb);background:transparent;cursor:pointer;color:var(--bm);display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-weight:500;margin-top:10px}
-.prb:hover{background:var(--bp)}
-.db2{font-size:11px;padding:3px 7px;border-radius:var(--r);border:0.5px solid var(--eb);background:transparent;cursor:pointer;color:var(--et);display:flex;align-items:center;gap:3px;flex-shrink:0}
-.db2:hover{background:var(--er)}
-.tps{background:var(--sf);border-radius:var(--r);padding:7px 12px;margin-bottom:12px;display:flex;align-items:center;gap:10px;border:0.5px solid var(--bd)}
+.snb{font-size:11px;padding:4px 11px;border-radius:var(--r);border:1px solid rgba(212,175,55,.3);background:rgba(212,175,55,.05);cursor:pointer;color:var(--nv);font-family:'DM Sans',sans-serif;margin-top:4px;font-weight:500}
+.snb:hover{background:rgba(212,175,55,.1)}
+.prb{font-size:12px;padding:7px 14px;border-radius:var(--r);border:1px solid rgba(212,175,55,.3);background:rgba(212,175,55,.05);cursor:pointer;color:var(--nv);display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-weight:500;margin-top:8px}
+.prb:hover{background:rgba(212,175,55,.1)}
+.tps{background:rgba(248,250,252,.7);border-radius:var(--r);padding:7px 10px;margin-bottom:10px;display:flex;align-items:center;gap:10px;border:1px solid rgba(212,175,55,.1)}
 .tpb{flex:1;height:4px;background:var(--bd);border-radius:3px;overflow:hidden}
-.tpf{height:100%;background:linear-gradient(90deg,var(--bm),var(--gd));border-radius:3px;transition:width .4s}
-.btn{font-size:12px;padding:8px 18px;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--nv),var(--nm));color:var(--bl);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
-.btn2{font-size:12px;padding:8px 14px;border-radius:var(--r);border:0.5px solid var(--b2);background:transparent;cursor:pointer;color:var(--t2);font-family:'DM Sans',sans-serif}
-.ab{font-size:12px;padding:7px 14px;border-radius:var(--r);border:1px solid var(--bb);background:transparent;cursor:pointer;color:var(--bm);display:flex;align-items:center;gap:6px;font-weight:500;margin-bottom:14px;font-family:'DM Sans',sans-serif}
-.ab:hover{background:var(--bp)}
-.af2{border:0.5px solid var(--bb);border-radius:var(--rl);background:var(--bp);padding:14px;margin-bottom:14px}
+.tpf{height:100%;background:linear-gradient(90deg,var(--gd),var(--gl));border-radius:3px;transition:width .4s;box-shadow:0 0 6px rgba(212,175,55,.25)}
+.btn{font-size:12px;padding:8px 16px;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--gd),var(--gl));color:#1a1000;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;box-shadow:0 2px 12px rgba(212,175,55,.25);letter-spacing:.02em}
+.btn2{font-size:12px;padding:8px 12px;border-radius:var(--r);border:0.5px solid var(--b2);background:transparent;cursor:pointer;color:var(--t2);font-family:'DM Sans',sans-serif}
+.ab{font-size:12px;padding:7px 14px;border-radius:var(--r);border:1px solid rgba(212,175,55,.3);background:rgba(212,175,55,.05);cursor:pointer;color:var(--nv);display:flex;align-items:center;gap:6px;font-weight:500;margin-bottom:12px;font-family:'DM Sans',sans-serif}
+.ab:hover{background:rgba(212,175,55,.1);border-color:rgba(212,175,55,.5)}
+.af2{border:1px solid rgba(212,175,55,.2);border-radius:var(--rl);background:rgba(212,175,55,.03);padding:14px;margin-bottom:12px}
 @media(prefers-color-scheme:dark){.af2{background:rgba(126,200,227,.07)}}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .fl{display:flex;flex-direction:column;gap:4px}
 .fl label{font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
 .fl input,.fl select,.fl textarea{font-size:13px;padding:7px 10px;border-radius:var(--r);border:0.5px solid var(--b2);background:var(--cd);color:var(--tx);width:100%;font-family:'DM Sans',sans-serif}
 .fl textarea{resize:vertical;min-height:50px}
+.db2{font-size:11px;padding:3px 7px;border-radius:var(--r);border:0.5px solid var(--eb);background:transparent;cursor:pointer;color:var(--et);display:flex;align-items:center;gap:3px;flex-shrink:0}
+.db2:hover{background:var(--er)}
 
 /* Checklist */
 .cls-tabs{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
 .ct2{font-size:11px;font-weight:500;padding:6px 10px;border-radius:var(--r);border:0.5px solid var(--bd);background:var(--sf);cursor:pointer;color:var(--t2);display:flex;align-items:center;gap:5px;white-space:nowrap;font-family:'DM Sans',sans-serif;transition:all .15s}
 .ct2:hover{border-color:var(--bb);background:var(--bp)}
-.ct2.a{background:linear-gradient(135deg,var(--nv),var(--nm));color:var(--bl);border-color:transparent}
+.ct2.a{background:linear-gradient(135deg,var(--nv),var(--nm));color:var(--gd);border-color:rgba(212,175,55,.2);box-shadow:0 2px 8px rgba(15,23,42,.15)}
 .ct2 .tp{font-size:10px;padding:1px 5px;border-radius:10px;background:rgba(255,255,255,.15);margin-left:2px}
 .ct2:not(.a) .tp{background:var(--s2);color:var(--t3)}
 .ci{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-radius:var(--r);margin-bottom:3px;cursor:pointer;border:0.5px solid transparent;transition:all .15s}
@@ -138,159 +174,149 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--sf);colo
 .ci.dn{opacity:.7}.ci.dn .ctit{text-decoration:line-through}
 .ccb{width:17px;height:17px;border:1.5px solid var(--b2);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center}
 .ci.dn .ccb{background:var(--ok);border-color:var(--ob)}
-.cnum{font-size:10px;font-weight:500;color:var(--bm);min-width:22px;margin-top:3px;flex-shrink:0;letter-spacing:.04em}
+.cnum{font-size:10px;font-weight:500;color:var(--bm);min-width:22px;margin-top:3px;flex-shrink:0}
 .cbody{flex:1}
 .ctit{font-size:13px;font-weight:500;margin-bottom:2px}
-.cnote{font-size:12px;color:var(--t2);line-height:1.6;background:var(--bp);border-radius:var(--r);padding:5px 8px;margin-top:3px;border-left:2px solid var(--bb)}
+.cnote{font-size:12px;color:var(--t2);line-height:1.6;background:rgba(212,175,55,.04);border-radius:var(--r);padding:5px 8px;margin-top:3px;border-left:2px solid rgba(212,175,55,.4)}
 .cch{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
 .sch{font-size:11px;padding:3px 10px;border-radius:20px;border:0.5px solid var(--b2);cursor:pointer;font-weight:500;background:var(--sf);color:var(--t2);transition:all .15s;font-family:'DM Sans',sans-serif}
 .sch:hover{border-color:var(--bb);background:var(--bp)}
 .sch.ns{background:var(--er);color:var(--et);border-color:var(--eb)}.sch.ip{background:var(--wn);color:var(--wt);border-color:var(--wb)}.sch.up{background:var(--ok);color:var(--ot);border-color:var(--ob)}
 
 /* Dashboard */
-.db-row{display:flex;align-items:center;gap:10px;padding:7px 10px;border-bottom:0.5px solid var(--bd);cursor:pointer;border-radius:var(--r);margin:1px 0;transition:background .12s,transform .1s}
+.db-row{display:flex;align-items:center;gap:10px;padding:7px 8px;border-bottom:0.5px solid var(--bd);cursor:pointer;border-radius:var(--r);margin:1px 0;transition:background .12s,transform .1s}
 .db-row:last-child{border-bottom:none}
-.db-row:not(.z):hover{background:var(--bp);transform:translateX(3px)}
+.db-row:not(.z):hover{background:rgba(212,175,55,.05);transform:translateX(3px)}
 .db-row:not(.z):hover .db-arr{opacity:1}
 .db-row.z{cursor:default}
-.db-row-label{font-size:12px;font-weight:500;min-width:160px;flex-shrink:0;display:flex;align-items:center;gap:7px}
-.db-row-bar{flex:1;height:7px;background:var(--s2);border-radius:4px;overflow:hidden}
-.db-row-fill{height:100%;border-radius:4px;transition:width .5s}
-.db-row-count{font-size:12px;font-weight:500;min-width:26px;text-align:right;flex-shrink:0}
-.db-row-recs{font-size:11px;color:var(--t3);min-width:65px;text-align:right;flex-shrink:0}
+.drl{font-size:12px;font-weight:500;min-width:155px;flex-shrink:0;display:flex;align-items:center;gap:7px}
+.drb{flex:1;height:7px;background:var(--s2);border-radius:4px;overflow:hidden}
+.drf{height:100%;border-radius:4px;transition:width .5s}
+.drc{font-size:12px;font-weight:600;min-width:26px;text-align:right;flex-shrink:0}
+.drr{font-size:11px;color:var(--t3);min-width:65px;text-align:right;flex-shrink:0}
 .db-arr{font-size:12px;color:var(--bm);flex-shrink:0;opacity:0;transition:opacity .12s}
-.ds{background:var(--cd);border:0.5px solid var(--bd);border-radius:var(--rl);padding:14px;margin-bottom:12px;box-shadow:var(--sh)}
-.dt{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.d2c{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.db-top-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
-.db-sc{background:var(--cd);border:0.5px solid var(--bd);border-radius:var(--rl);padding:12px;text-align:center;box-shadow:var(--sh);position:relative;overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .15s}
-.db-sc:hover{box-shadow:0 4px 18px rgba(13,31,60,.14);transform:translateY(-1px)}
-.db-sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.db-sc.g::before{background:linear-gradient(90deg,var(--gd),var(--gl))}.db-sc.gr::before{background:linear-gradient(90deg,#2e8b35,#7ec882)}.db-sc.b::before{background:linear-gradient(90deg,var(--bm),var(--bl))}.db-sc.r::before{background:linear-gradient(90deg,#c93030,#f09090)}
-.db-sn{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;line-height:1;margin-bottom:3px}
+.ds{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--rl);padding:14px;margin-bottom:12px;box-shadow:var(--glass-shadow);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.dt{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.d2c{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.dbs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.dbc{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--rl);padding:12px;text-align:center;box-shadow:var(--glass-shadow);position:relative;overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .15s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.dbc:hover{box-shadow:0 12px 40px rgba(15,23,42,.12),var(--gold-glow);transform:translateY(-2px)}
+.dbc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.dbc.g::before{background:linear-gradient(90deg,var(--gd),var(--gl))}.dbc.gr::before{background:linear-gradient(90deg,#2e8b35,#7ec882)}.dbc.b::before{background:linear-gradient(90deg,var(--bm),var(--bl))}.dbc.r::before{background:linear-gradient(90deg,#c93030,#f09090)}
+.dbn{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;line-height:1;margin-bottom:3px}
+.ts2{font-size:11px;color:var(--t3);text-align:right;margin-bottom:12px;font-style:italic}
 
 /* Post review */
-.pbar{height:2px;background:var(--bd)}
-.pfil{height:100%;background:linear-gradient(90deg,var(--bm),var(--gd));transition:width .4s}
-.fi{display:flex;align-items:flex-start;gap:10px;padding:7px 10px;border-radius:var(--r);margin-bottom:3px;transition:background .15s}
+.pbar{height:2px;background:rgba(15,23,42,.06)}
+.pfil{height:100%;background:linear-gradient(90deg,var(--gd),var(--gl));transition:width .4s;box-shadow:0 0 8px rgba(212,175,55,.3)}
+.fi{display:flex;align-items:flex-start;gap:10px;padding:7px 8px;border-radius:var(--r);margin-bottom:2px;transition:background .15s}
 .fi:hover{background:var(--bp)}
 .fb2{font-size:11px;padding:3px 9px;border-radius:20px;border:0.5px solid var(--b2);background:transparent;cursor:pointer;color:var(--t2);font-family:'DM Sans',sans-serif;font-weight:500;transition:all .15s}
-.fb2.pass{background:var(--ok);color:var(--ot);border-color:var(--ob)}.fb2.fail{background:var(--er);color:var(--et);border-color:var(--eb)}
-.prsel{margin-bottom:14px}
+.fb2.pass{background:rgba(212,175,55,.1);color:#7a5500;border-color:rgba(212,175,55,.4)}.fb2.fail{background:var(--er);color:var(--et);border-color:var(--eb)}
+.prsel{margin-bottom:12px}
 .prsel label{font-size:11px;font-weight:500;color:var(--t3);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em}
 .prsel select{font-size:13px;padding:8px 12px;border-radius:var(--r);border:0.5px solid var(--b2);background:var(--cd);color:var(--tx);width:100%;font-family:'DM Sans',sans-serif}
-.wf{display:flex;align-items:center;overflow-x:auto;padding-bottom:4px;margin-bottom:16px}
-.wb{padding:8px 12px;border-radius:var(--r);border:0.5px solid var(--bd);background:var(--sf);font-size:11px;font-weight:500;color:var(--t2);text-align:center;min-width:90px;line-height:1.4;flex-shrink:0}
+.wf{display:flex;align-items:center;overflow-x:auto;padding-bottom:4px;margin-bottom:14px}
+.wb{padding:8px 10px;border-radius:var(--r);border:0.5px solid var(--bd);background:var(--sf);font-size:11px;font-weight:500;color:var(--t2);text-align:center;min-width:88px;line-height:1.4;flex-shrink:0}
 .wb.a{background:linear-gradient(135deg,var(--nv),var(--nm));color:var(--bl);border-color:transparent}.wb.d{background:var(--ok);color:var(--ot);border-color:var(--ob)}
-.wa{font-size:18px;color:var(--bm);padding:0 4px;flex-shrink:0;opacity:.6}
-.prsbox{border:0.5px solid var(--bd);border-radius:var(--rl);padding:14px;background:var(--cd);margin-bottom:14px;box-shadow:var(--sh)}
+.wa{font-size:16px;color:var(--bm);padding:0 4px;flex-shrink:0;opacity:.5}
+.prsbox{border:1px solid var(--glass-border);border-radius:var(--rl);padding:14px;background:var(--glass-bg);margin-bottom:12px;box-shadow:var(--glass-shadow);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .prgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
 .prs2{background:var(--sf);border-radius:var(--r);padding:10px;text-align:center;border:0.5px solid var(--bd)}
 .prn{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600}
 
 /* Standards */
-.sc-card{margin-bottom:10px;border:0.5px solid var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh)}
-.sc-hd{padding:11px 14px;background:var(--sf);display:flex;align-items:center;gap:8px}
-.sc-bd{padding:11px 14px;background:var(--cd)}
+.sc-card{margin-bottom:10px;border:1px solid var(--glass-border);border-radius:var(--rl);overflow:hidden;box-shadow:var(--glass-shadow);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.sc-hd{padding:10px 14px;background:rgba(248,250,252,.7);display:flex;align-items:center;gap:8px}
+.sc-bd{padding:10px 14px;background:rgba(255,255,255,.8)}
 .rw{display:flex;gap:12px;padding:7px 0;border-bottom:0.5px solid var(--bd)}
 .rw:last-child{border-bottom:none}
-.rl2{font-size:12px;font-weight:500;width:190px;flex-shrink:0;padding-top:1px}
+.rl2{font-size:12px;font-weight:500;width:185px;flex-shrink:0;padding-top:1px}
 .rv{font-size:12px;color:var(--t2);flex:1;line-height:1.6}
 
 /* Settings */
-.pmc{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--cd);border:0.5px solid var(--bd);border-radius:var(--rl);margin-bottom:8px;box-shadow:var(--sh)}
-.pma{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--nv),var(--bm));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#fff;flex-shrink:0}
+.pmc{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--rl);margin-bottom:8px;box-shadow:var(--glass-shadow);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.pma{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--nv),var(--nm));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--gd);flex-shrink:0;border:1px solid rgba(212,175,55,.2)}
 .pmr{font-size:11px;padding:3px 9px;border-radius:var(--r);border:0.5px solid var(--eb);background:transparent;cursor:pointer;color:var(--et);font-family:'DM Sans',sans-serif}
 .pmr:hover{background:var(--er)}
-.pmaf{border:0.5px solid var(--bb);border-radius:var(--rl);padding:14px;margin-bottom:14px;background:var(--bp)}
+.pmaf{border:1px solid rgba(212,175,55,.2);border-radius:var(--rl);padding:14px;margin-bottom:12px;background:rgba(212,175,55,.03)}
 @media(prefers-color-scheme:dark){.pmaf{background:rgba(126,200,227,.07)}}
-.div2{display:flex;align-items:center;gap:10px;margin:16px 0 12px;font-size:10px;font-weight:500;color:var(--bm);text-transform:uppercase;letter-spacing:.1em}
+.div2{display:flex;align-items:center;gap:10px;margin:16px 0 10px;font-size:10px;font-weight:500;color:var(--bm);text-transform:uppercase;letter-spacing:.1em}
 .div2::before,.div2::after{content:'';flex:1;height:0.5px;background:linear-gradient(90deg,transparent,var(--bm),transparent)}
-
-/* Team view intro */
-.ti2{border-left:3px solid var(--bb);border-radius:var(--rl);padding:12px 16px;margin-bottom:14px;font-size:13px;line-height:1.7;border:0.5px solid rgba(126,200,227,.3);background:var(--bp)}
+.ti2{border-left:3px solid var(--gd);border-radius:var(--rl);padding:12px 14px;margin-bottom:12px;font-size:13px;line-height:1.7;border:1px solid rgba(212,175,55,.15);background:rgba(212,175,55,.03)}
 
 /* Loading */
-#loading{position:fixed;inset:0;background:var(--sf);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:14px}
-.spin{width:32px;height:32px;border:3px solid var(--bd);border-top-color:var(--bm);border-radius:50%;animation:spin .8s linear infinite}
+#loading{position:fixed;inset:0;background:#0F172A;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:14px;background-image:radial-gradient(ellipse at center,rgba(212,175,55,.06) 0%,transparent 70%)}
+.spin{width:32px;height:32px;border:2px solid rgba(212,175,55,.15);border-top-color:var(--gd);border-radius:50%;animation:spin .8s linear infinite;box-shadow:0 0 20px rgba(212,175,55,.2)}
 @keyframes spin{to{transform:rotate(360deg)}}
-#sync{position:fixed;bottom:16px;right:16px;font-size:11px;padding:5px 12px;background:var(--cd);border:0.5px solid var(--bd);border-radius:20px;box-shadow:var(--sh);display:none;align-items:center;gap:6px;color:var(--t2)}
+#sync{position:fixed;bottom:16px;right:16px;font-size:11px;padding:5px 12px;background:var(--cd);border:0.5px solid var(--bd);border-radius:20px;box-shadow:var(--sh);display:none;align-items:center;gap:6px;color:var(--t2);z-index:100}
 #sync.show{display:flex}
 #sync.ok{color:var(--ot)}#sync.err{color:var(--et)}
-#setup-banner{background:var(--er);border:1.5px solid var(--eb);border-radius:var(--rl);padding:14px;margin-bottom:14px}
-.ts2{font-size:11px;color:var(--t3);text-align:right;margin-bottom:12px;font-style:italic}
+#setup-banner{background:var(--er);border:1px solid var(--eb);border-radius:var(--rl);padding:12px 14px;margin-bottom:12px}
 </style>
 </head>
 <body>
 
 <div id="loading">
   <div class="spin"></div>
-  <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--nv)">Loading portal data...</div>
-  <div style="font-size:12px;color:var(--t3)">Connecting to Google Sheets</div>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:rgba(255,255,255,.9);letter-spacing:.02em">Loading portal data...</div>
+  <div style="font-size:11px;color:rgba(212,175,55,.6);letter-spacing:.1em;text-transform:uppercase">Connecting to Google Sheets</div>
 </div>
-
 <div id="sync"></div>
 
-<div id="app" style="display:none;display:flex;flex-direction:column;height:100vh">
+<div id="app" style="display:none">
 
-<!-- HEADER -->
-<div class="hd">
-  <div class="hd-inner">
-    <div>
-      <div class="hd-logo">Part II Submission Portal</div>
-      <div class="hd-sub">Illinois Solar for All · Senior Project Liaison</div>
+<!-- STICKY HEADER -->
+<header class="top-header">
+  <div class="header-inner">
+    <div class="logo-block">
+      <div class="logo-dept">Liaison Department</div>
+      <div class="logo-title">ILSFA Projects &nbsp;<span>·</span>&nbsp; Part II Portal</div>
     </div>
-    <div class="hd-divider"></div>
-    <div class="hd-stats" id="hd-stats"></div>
-    <div class="hd-right">
-      <button class="hd-view-btn a" onclick="sv('spl',this)"><i class="ti ti-lock" style="font-size:13px"></i> SPL view</button>
-      <button class="hd-view-btn" onclick="sv('team',this)"><i class="ti ti-users" style="font-size:13px"></i> Team view</button>
-      <button class="hd-refresh" onclick="reloadData()"><i class="ti ti-refresh" style="font-size:12px"></i> Refresh</button>
+    <div class="header-divider"></div>
+    <div class="header-search-wrap">
+      <i class="ti ti-search header-search-icon"></i>
+      <input class="header-search" id="gs" type="text" placeholder="Search projects, PMs, status..." oninput="hs(this.value)" autocomplete="off">
+      <button class="header-search-clear" id="gsc" onclick="cs()"><i class="ti ti-x"></i></button>
+      <div class="sr-dropdown" id="srw">
+        <div style="padding:8px 12px;background:var(--sf);border-bottom:0.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:11px;font-weight:500;color:var(--t2);text-transform:uppercase;letter-spacing:.04em">Results</span>
+          <span style="font-size:11px;color:var(--bm);font-weight:500" id="src2"></span>
+        </div>
+        <div id="srb"></div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="hd-stat" id="hd-s1" style="cursor:pointer" onclick="fg('all','all','All projects',0)"></div>
+      <div class="hd-stat" id="hd-s2"></div>
+      <div class="hd-stat" id="hd-s3" style="cursor:pointer"></div>
+      <div class="header-divider"></div>
+      <button class="view-btn a" onclick="sv('spl',this)"><i class="ti ti-lock" style="font-size:12px"></i> SPL</button>
+      <button class="view-btn" onclick="sv('team',this)"><i class="ti ti-users" style="font-size:12px"></i> Team</button>
+      <button class="refresh-btn" onclick="reloadData()"><i class="ti ti-refresh" style="font-size:12px"></i></button>
     </div>
   </div>
-</div>
+</header>
 
-<!-- BODY -->
-<div class="app-body">
+<!-- PAGE CONTENT -->
+<div class="page-wrap">
 
   <!-- SPL VIEW -->
-  <div id="v-spl" class="view a" style="display:flex;width:100%">
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <div class="sb-section">
-        <div class="sb-label">Navigation</div>
-        <button class="sb-nav-btn a" onclick="nt('dashboard',this)"><i class="ti ti-chart-bar"></i> Dashboard</button>
-        <button class="sb-nav-btn" onclick="nt('projects',this)"><i class="ti ti-folder"></i> Projects</button>
-        <button class="sb-nav-btn" onclick="nt('postreview',this)"><i class="ti ti-zoom-check"></i> Post-review</button>
-        <button class="sb-nav-btn" onclick="nt('standards',this)"><i class="ti ti-shield-check"></i> Standards</button>
-        <button class="sb-nav-btn" onclick="nt('settings',this)"><i class="ti ti-settings"></i> Settings</button>
-      </div>
+  <div id="v-spl" class="view a" style="display:flex;width:100%;gap:0">
+    <nav class="sidebar">
+      <div class="sb-label" style="margin-top:0">Navigation</div>
+      <button class="sb-btn a" onclick="nt('dashboard',this)"><i class="ti ti-chart-bar"></i> Dashboard</button>
+      <button class="sb-btn" onclick="nt('projects',this)"><i class="ti ti-folder"></i> Projects</button>
+      <button class="sb-btn" onclick="nt('postreview',this)"><i class="ti ti-zoom-check"></i> Post-review</button>
+      <button class="sb-btn" onclick="nt('standards',this)"><i class="ti ti-shield-check"></i> Standards</button>
+      <button class="sb-btn" onclick="nt('settings',this)"><i class="ti ti-settings"></i> Settings</button>
       <div class="sb-divider"></div>
-      <div class="sb-section">
-        <div class="sb-label">Quick stats</div>
-        <div id="sb-quick-stats"></div>
-      </div>
-      <div class="sb-divider"></div>
-      <div class="sb-section">
-        <div class="sb-label">Search</div>
-        <div class="search-wrap" style="margin-bottom:0">
-          <i class="ti ti-search search-icon"></i>
-          <input class="search-input" id="gs" type="text" placeholder="Search projects, PMs..." oninput="hs(this.value)" autocomplete="off">
-          <button class="search-clear" id="gsc" onclick="cs()"><i class="ti ti-x"></i></button>
-        </div>
-        <div class="sr-wrap" id="srw">
-          <div style="padding:8px 12px;background:var(--sf);border-bottom:0.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
-            <span style="font-size:11px;font-weight:500;color:var(--t2);text-transform:uppercase;letter-spacing:.04em">Results</span>
-            <span style="font-size:11px;color:var(--bm);font-weight:500" id="src2"></span>
-          </div>
-          <div id="srb"></div>
-        </div>
-      </div>
-    </div>
-    <!-- Main -->
-    <div class="main-content">
+      <div class="sb-label">Quick stats</div>
+      <div id="sb-stats"></div>
+    </nav>
+    <main class="main">
       <div id="setup-banner" style="display:none">
-        <div style="font-size:13px;font-weight:600;color:var(--et);margin-bottom:4px"><i class="ti ti-alert-circle"></i> Script URL not configured — running in demo mode</div>
+        <div style="font-size:13px;font-weight:600;color:var(--et);margin-bottom:3px"><i class="ti ti-alert-circle"></i> Script URL not configured — running in demo mode</div>
         <div style="font-size:12px;color:var(--t2)">Open the HTML file, find <code>SCRIPT_URL</code> and paste your Apps Script deployment URL.</div>
       </div>
       <div id="n-dashboard" class="tab a"></div>
@@ -298,22 +324,19 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--sf);colo
       <div id="n-postreview" class="tab"></div>
       <div id="n-standards" class="tab"></div>
       <div id="n-settings" class="tab"></div>
-    </div>
+    </main>
   </div>
 
   <!-- TEAM VIEW -->
-  <div id="v-team" class="view" style="display:none;width:100%">
-    <!-- Sidebar -->
-    <div class="sidebar" id="pm-sidebar">
-    </div>
-    <!-- Main -->
-    <div class="main-content">
+  <div id="v-team" class="view" style="display:none;width:100%;gap:0">
+    <nav class="sidebar" id="pm-sidebar"></nav>
+    <main class="main">
       <div class="ti2" style="color:var(--nm)"><strong>Team submission guide</strong> — Select your name to see your assigned projects and checklist.<br><span style="font-size:12px;opacity:.8">All uploads happen in the <strong>ILSFA portal</strong> and <strong>Zoho</strong>.</span></div>
       <div id="pmc"></div>
-    </div>
+    </main>
   </div>
 
-</div><!-- end app-body -->
+</div><!-- end page-wrap -->
 </div><!-- end app -->
 
 <script>
@@ -333,18 +356,18 @@ const DEFAULT_PROJECTS=[
 const DEFAULT_PMS=['Mary','Allaiza','Genneva','Francheska','Angelica','May'];
 const MGR='Mary';
 
-let P=[],CL={},PR={},PML=[],AF=null,prPid='',showAF=false,showPMAF=false,openCards={},clSections={},activePMTab='';
+let P=[],CL={},PR={},PML=[],AF=null,prPid='',showAF=false,showPMAF=false,openCards={},clSec={},activePM='';
 const configured=SCRIPT_URL!=='YOUR_SCRIPT_URL_HERE'&&SCRIPT_URL.length>10;
 
-async function api(params){if(!configured)return null;const url=SCRIPT_URL+'?'+Object.entries(params).map(([k,v])=>k+'='+encodeURIComponent(v)).join('&');try{const r=await fetch(url);return await r.json();}catch(e){return null;}}
-function syncIndicator(msg,type){const el=document.getElementById('sync');el.textContent=msg;el.className='show '+(type||'');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2500);}
+async function api(p){if(!configured)return null;const url=SCRIPT_URL+'?'+Object.entries(p).map(([k,v])=>k+'='+encodeURIComponent(v)).join('&');try{const r=await fetch(url);return await r.json();}catch(e){return null;}}
+function syncInd(msg,type){const el=document.getElementById('sync');el.textContent=msg;el.className='show '+(type||'');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2500);}
 async function reloadData(){document.getElementById('loading').style.display='flex';document.getElementById('app').style.display='none';await loadData();}
 
 async function loadData(){
   if(!configured){P=DEFAULT_PROJECTS.map(p=>({...p}));CL={};PR={};PML=[...DEFAULT_PMS];document.getElementById('setup-banner').style.display='block';}
   else{
     const data=await api({action:'getAll'});
-    if(!data||data.error){P=DEFAULT_PROJECTS.map(p=>({...p}));CL={};PR={};PML=[...DEFAULT_PMS];syncIndicator('⚠ Could not reach sheet — demo mode','err');}
+    if(!data||data.error){P=DEFAULT_PROJECTS.map(p=>({...p}));CL={};PR={};PML=[...DEFAULT_PMS];syncInd('⚠ Could not reach sheet — demo mode','err');}
     else{
       P=(data.projects||[]).map(p=>({...p,pilot:p.pilot==='true'||p.pilot===true}));
       if(!P.length)P=DEFAULT_PROJECTS.map(p=>({...p,pilot:false}));
@@ -352,22 +375,22 @@ async function loadData(){
       PR={};(data.postReview||[]).forEach(r=>{PR[r.pid+'_'+r.iid]=r.val||'none';});
       const pmRow=(data.settings||[]).find(r=>r.key==='pmList');
       PML=pmRow?pmRow.val.split(',').filter(Boolean):[...DEFAULT_PMS];
-      syncIndicator('✓ Loaded from Google Sheets','ok');
+      syncInd('✓ Loaded from Google Sheets','ok');
     }
   }
-  if(!activePMTab)activePMTab=PML[0];
+  if(!activePM)activePM=PML[0];
   document.getElementById('loading').style.display='none';
-  document.getElementById('app').style.display='flex';
+  document.getElementById('app').style.display='block';
   ra();
 }
 
 function cdone(p,i){return CL[p+'_'+i]?.done||false;}
 function cst(p,i){return CL[p+'_'+i]?.st||'';}
-function gas(p){return clSections[p]||0;}
-function sas(p,i){clSections[p]=i;rtv();}
+function gas(p){return clSec[p]||0;}
+function sas(p,i){clSec[p]=i;rtv();}
 function ppx(pid){const d=ACI.filter(i=>cdone(pid,i.id)||(i.hs&&cst(pid,i.id)==='up')).length;return{d,t:ACI.length,pct:Math.round(d/ACI.length*100)};}
-function tcl(pid,iid){const key=pid+'_'+iid;CL[key]={done:!(CL[key]?.done||false),st:CL[key]?.st||''};ra();api({action:'setCL',pid,iid,done:CL[key].done,st:CL[key].st});}
-function tcs(pid,iid,v){const key=pid+'_'+iid;const nst=(CL[key]?.st||'')=== v?'':v;CL[key]={done:CL[key]?.done||false,st:nst};ra();api({action:'setCL',pid,iid,done:CL[key].done,st:nst});}
+function tcl(pid,iid){const k=pid+'_'+iid;CL[k]={done:!(CL[k]?.done||false),st:CL[k]?.st||''};ra();api({action:'setCL',pid,iid,done:CL[k].done,st:CL[k].st});}
+function tcs(pid,iid,v){const k=pid+'_'+iid;const ns=(CL[k]?.st||'')=== v?'':v;CL[k]={done:CL[k]?.done||false,st:ns};ra();api({action:'setCL',pid,iid,done:CL[k].done,st:ns});}
 function prSt(p,i){return PR[p+'_'+i]||'none';}
 function gprs(pid){return{t:APRI.length,pa:APRI.filter(i=>prSt(pid,i.id)==='pass').length,fa:APRI.filter(i=>prSt(pid,i.id)==='fail').length,re:APRI.filter(i=>prSt(pid,i.id)==='none').length};}
 function setPR(pid,iid,val){PR[pid+'_'+iid]=val;rpr();api({action:'setPR',pid,iid,val});}
@@ -382,38 +405,38 @@ function apm(){const n=document.getElementById('npm').value.trim();if(!n)return;
 function dpm(n){if(n===MGR){alert('Mary cannot be removed.');return;}if(!confirm('Remove '+n+'?'))return;PML=PML.filter(x=>x!==n);P.filter(p=>p.pm===n).forEach(p=>{p.pm='';api({action:'upsertProject',data:JSON.stringify(p)});});rset();rtv();api({action:'setPMs',data:JSON.stringify(PML)});}
 
 function fpg(){if(!AF)return P;const{t,v}=AF;if(t==='all')return P;if(t==='ps')return P.filter(p=>p.ps===v);if(t==='cs')return P.filter(p=>p.cs===v);if(t==='py')return P.filter(p=>p.py===v);if(t==='pilot')return P.filter(p=>String(p.pilot)===v);if(t==='ut')return P.filter(p=>(p.ut||'')===v);if(t==='pm')return P.filter(p=>p.pm===v);return P;}
-function fg(t,v,label,count){if(count===0)return;AF={t,v,label};ntid('n-projects');document.querySelectorAll('#v-spl .sb-nav-btn').forEach((b,i)=>b.classList.toggle('a',i===1));rp();}
+function fg(t,v,label,count){if(count===0&&t!=='all')return;AF={t,v,label};ntid('n-projects');document.querySelectorAll('#v-spl .sb-btn').forEach((b,i)=>b.classList.toggle('a',i===1));rp();}
 function cf(){AF=null;rp();}
-function fgpm(pm,c){if(c===0)return;svid('team');activePMTab=pm;rtv();}
+function fgpm(pm,c){if(c===0)return;svid('team');activePM=pm;rtv();}
 
 const CLS=[
   {id:'ss',title:'Site suitability',ic:'ti-home',items:[
-    {id:'i1',n:'[1]',t:'Permit',note:'Ensure the accurate and officially approved permit is uploaded. Not a draft or expired version.',b:'doc',hs:false},
-    {id:'i2',n:'[2]',t:'PTO / COC',note:'Must include date of approval AND ComEd representative signature. Both required.',b:'req',hs:false},
+    {id:'i1',n:'[1]',t:'Permit',note:'Ensure the accurate and officially approved permit is uploaded.',b:'doc',hs:false},
+    {id:'i2',n:'[2]',t:'PTO / COC',note:'Must include date of approval AND ComEd representative signature.',b:'req',hs:false},
     {id:'i3',n:'[3]',t:'Net metering',note:'Correct net metering document matching project address and utility account.',b:'doc',hs:false},
     {id:'i4',n:'[4]',t:'PJM / SO SS',note:'Multiple photos — compile into ONE PDF before uploading.',b:'doc',hs:true},
-    {id:'i5',n:'[5]',t:'JCO',note:'All JCO photos complete and accurate. Missing or unclear — escalate to Install Team (Yen).',b:'doc',hs:true},
+    {id:'i5',n:'[5]',t:'JCO',note:'All JCO photos complete and accurate. Missing or unclear — escalate to Yen.',b:'doc',hs:true},
   ]},
   {id:'sd',title:'System design',ic:'ti-bolt',items:[
     {id:'i6',n:'[6]',t:'Inverter & module label photos',note:'Upload clear separate photos, then merge into a single file.',b:'doc',hs:true},
-    {id:'i7',n:'[7]',t:'Complete array photos',note:'Separate complete array photos for each project. Count must match system design.',b:'doc',hs:true},
-    {id:'i8',n:'[8]',t:'Updated SSR (if applicable)',note:'Must reflect ALL mitigations from pipeline review, plan set, and installation work.',b:'warn',hs:false},
+    {id:'i7',n:'[7]',t:'Complete array photos',note:'Separate complete array photos for each project.',b:'doc',hs:true},
+    {id:'i8',n:'[8]',t:'Updated SSR (if applicable)',note:'Must reflect ALL mitigations from pipeline review, plan set, and installation.',b:'warn',hs:false},
     {id:'i9',n:'[9]',t:'Upgrade photos (if applicable)',note:'Submit SEPARATELY to ILSFA portal — not just JCO photos.',b:'warn',hs:false},
     {id:'i10',n:'[10]',t:'Mitigation — final invoice (pilot only)',note:'Electrical scope must match Initial Invoice from Part I.',b:'warn',hs:false},
   ]},
   {id:'add',title:'Additional',ic:'ti-sun',items:[
-    {id:'i11',n:'[11]',t:'Shading study',note:'All details must be consistent with installed system — panel count, layout, orientation.',b:'req',hs:false},
+    {id:'i11',n:'[11]',t:'Shading study',note:'All details must be consistent with installed system.',b:'req',hs:false},
     {id:'i12',n:'[12]',t:'System design',note:'Plan set must match installed system and final shade study.',b:'req',hs:false},
-    {id:'i13',n:'[13]',t:'ACF',note:'Update ONLY if revised value is LOWER than original. If higher — enter approved ACF from Part I.',b:'req',hs:false},
-    {id:'i14',n:'[14]',t:'Arrays',note:'Part I arrays must NOT be edited or deleted. Update Part II arrays per final shade study.',b:'req',hs:false},
+    {id:'i13',n:'[13]',t:'ACF',note:'Update ONLY if revised value is LOWER than original.',b:'req',hs:false},
+    {id:'i14',n:'[14]',t:'Arrays',note:'Part I arrays must NOT be edited or deleted.',b:'req',hs:false},
     {id:'i15',n:'[15]',t:'REC table',note:'All values in Part II Submitted section must match the final shade study.',b:'req',hs:false},
   ]},
   {id:'pc',title:'Post construction',ic:'ti-camera',items:[
     {id:'i16',n:'[16]',t:'Inspection document',note:'Ensure the correct and officially approved inspection document is uploaded.',b:'doc',hs:false},
     {id:'i17',n:'[17]',t:'JCO (Staff info tab)',note:'All JCO photos complete and accurate. Missing or unclear — escalate to Yen.',b:'doc',hs:true},
-    {id:'i18',n:'[18]',t:'SS from Fox / Tesla monitoring app',note:'CRITICAL: System must NOT show 0 production. If offline — notify PM immediately.',b:'req',hs:true},
+    {id:'i18',n:'[18]',t:'SS from Fox / Tesla monitoring app',note:'CRITICAL: System must NOT show 0 production.',b:'req',hs:true},
     {id:'i19',n:'[19]',t:'Shadi / Qais affidavit',note:'Signed affidavit must be in the correct field under the Staff Info tab.',b:'doc',hs:false},
-    {id:'i20',n:'[20]',t:'Start / end dates',note:'Start = day BEFORE install. End = actual install completion date. Very common error.',b:'req',hs:false},
+    {id:'i20',n:'[20]',t:'Start / end dates',note:'Start = day BEFORE install. End = actual install completion date.',b:'req',hs:false},
   ]},
 ];
 const ACI=CLS.flatMap(s=>s.items);
@@ -421,16 +444,16 @@ const PRS=[
   {id:'pr_d',t:'Document review',ic:'ti-files',items:[
     {id:'pr1',t:'All 20 documents uploaded and present in ILSFA portal',n:'Confirm every required document is uploaded.'},
     {id:'pr2',t:'Permit is officially approved version',n:'Final approved copy only.'},
-    {id:'pr3',t:'PTO / COC includes approval date and ComEd signature',n:'Both elements required or ILSFA will flag it.'},
+    {id:'pr3',t:'PTO / COC includes approval date and ComEd signature',n:'Both elements required.'},
     {id:'pr4',t:'Net metering document is correct and current',n:'Matches project address and utility account.'},
     {id:'pr5',t:'PJM / SO photos compiled into one PDF',n:'Multiple photos must be merged.'},
-    {id:'pr6',t:'JCO photos complete, clear, and accurate',n:'Review every photo. Missing or unclear — send back to PM.'},
+    {id:'pr6',t:'JCO photos complete, clear, and accurate',n:'Review every photo.'},
     {id:'pr7',t:'Inverter and module label photos merged into single file',n:'Both labels clearly visible.'},
     {id:'pr8',t:'Array photos are separate and complete',n:'Each array has its own complete photo.'},
     {id:'pr9',t:'Monitoring screenshot shows system online and producing',n:'System must NOT show 0 production.'},
-    {id:'pr10',t:'Affidavit in correct portal field (Staff Info tab)',n:'Not uploaded elsewhere — specifically in Staff Info.'},
+    {id:'pr10',t:'Affidavit in correct portal field (Staff Info tab)',n:'Specifically in Staff Info.'},
     {id:'pr11',t:'Inspection document is the correct approved version',n:'Officially approved only.'},
-    {id:'pr12',t:'SSR updated to reflect all mitigations (if applicable)',n:'All pipeline review mitigations and installation changes reflected.'},
+    {id:'pr12',t:'SSR updated to reflect all mitigations (if applicable)',n:'All pipeline review mitigations reflected.'},
     {id:'pr13',t:'Upgrade photos submitted separately (if applicable)',n:'Pilot — upgrade photos separate from JCO.'},
     {id:'pr14',t:'Mitigation final invoice correct (pilot only)',n:'Electrical scope matches Part I Initial Invoice.'},
   ]},
@@ -440,31 +463,31 @@ const PRS=[
     {id:'pr17',t:'REC table values match final shade study',n:'Every value must match.'},
     {id:'pr18',t:'Arrays updated per final shade study (Part II only)',n:'Part I arrays untouched.'},
     {id:'pr19',t:'ACF is correct — lower value only',n:'If revised higher — must revert to Part I value.'},
-    {id:'pr20',t:'System size matches interconnection / PTO documents',n:'kW DC must exactly match utility paperwork.'},
+    {id:'pr20',t:'System size matches interconnection / PTO documents',n:'kW DC must exactly match.'},
     {id:'pr21',t:'Customer information matches Zoho records',n:'Name, address, utility account.'},
     {id:'pr22',t:'Utility information accurate and consistent',n:'Territory, account number, service details.'},
   ]},
   {id:'pr_c',t:'Compliance check',ic:'ti-shield-check',items:[
-    {id:'pr23',t:'Final shade study consistent with installed system',n:'Panel count, layout, orientation match actual installation.'},
-    {id:'pr24',t:'Plan set matches installed system and shade study',n:'Updated if any changes occurred during install.'},
-    {id:'pr25',t:'Part I arrays not edited or deleted',n:'Verify Part I array data is intact and unchanged.'},
-    {id:'pr26',t:'Income qualification documents present and valid',n:'Each subscriber has proper income verification on file.'},
+    {id:'pr23',t:'Final shade study consistent with installed system',n:'Panel count, layout, orientation match.'},
+    {id:'pr24',t:'Plan set matches installed system and shade study',n:'Updated if any changes occurred.'},
+    {id:'pr25',t:'Part I arrays not edited or deleted',n:'Verify Part I array data is intact.'},
+    {id:'pr26',t:'Income qualification documents present and valid',n:'Each subscriber has proper income verification.'},
     {id:'pr27',t:'No conflicting data between portal, Zoho, and documents',n:'Final cross-check.'},
     {id:'pr28',t:'No 0-production or offline system in monitoring photos',n:'ILSFA will flag immediately.'},
   ]},
   {id:'pr_i',t:'Internal correction check',ic:'ti-message-report',items:[
-    {id:'pr29',t:'All internal corrections from pre-submission review resolved',n:'Every item from internal correction notice addressed.'},
-    {id:'pr30',t:'PM confirmed all changes are uploaded in portal',n:'Confirm directly — do not assume.'},
+    {id:'pr29',t:'All internal corrections from pre-submission review resolved',n:'Every item addressed.'},
+    {id:'pr30',t:'PM confirmed all changes are uploaded in portal',n:'Confirm directly.'},
     {id:'pr31',t:'Zoho updated to reflect current submission status',n:'Stage updated to SPL post-review.'},
-    {id:'pr32',t:'No outstanding discrepancies remain',n:'If any unresolved — hold and send internal correction notice.'},
+    {id:'pr32',t:'No outstanding discrepancies remain',n:'If any unresolved — hold and send correction notice.'},
   ]},
 ];
 const APRI=PRS.flatMap(s=>s.items);
 const STDS=[
-  {t:'Submission standards',ic:'ti-list-check',rows:[{l:'Same-day submission',v:'Once confirmed ready, Part II must be submitted the same day.'},{l:'Post-review required',v:'Every project must go through SPL post-review. No exceptions.'},{l:'Accuracy',v:'Double-check all submissions. Accuracy minimizes corrections and delays.'},{l:'Zero unattended corrections',v:'ILSFA correction requests must never remain unattended.'}]},
-  {t:'Post-review standards',ic:'ti-zoom-check',rows:[{l:'32-point review',v:'Covers documents, portal data accuracy, compliance, and internal correction check.'},{l:'Trigger',v:'Begins after team submits to ILSFA portal — before ILSFA reviewers see it.'},{l:'Hold rule',v:'If any item fails — send internal correction notice and hold until resolved.'}]},
-  {t:'Zoho CRM standards',ic:'ti-database',rows:[{l:'Real-time accuracy',v:'Zoho must always reflect current project status.'},{l:'Daily review',v:'Review Install, Inspection, PTO, Corrections, and Approval stages daily.'},{l:'NON ID entry',v:'Retrieve from PJM, enter in Zoho, verify. Covers PY7, PY8, PY8-2025.'}]},
-  {t:'Reporting schedule',ic:'ti-calendar',rows:[{l:'Daily (Ragheed)',v:'Submission progress, post-review status, REC estimates. Via team chat.'},{l:'Weekly (Ms. Jhai, Mary)',v:'Part II Correction Report — assigned PM, total corrections, correction details per project.'},{l:'Bi-weekly (ILSFA Team)',v:'Pending Part II Approval Report. Via email.'},{l:'Monthly (Ahmad, Hssen, Ragheed, ILSFA)',v:'Part II Approval Report — project list, total RECs submitted/approved, utility distribution.'}]},
+  {t:'Submission standards',ic:'ti-list-check',rows:[{l:'Same-day submission',v:'Once confirmed ready, Part II must be submitted the same day.'},{l:'Post-review required',v:'Every project must go through SPL post-review. No exceptions.'},{l:'Accuracy',v:'Double-check all submissions.'},{l:'Zero unattended corrections',v:'ILSFA correction requests must never remain unattended.'}]},
+  {t:'Post-review standards',ic:'ti-zoom-check',rows:[{l:'32-point review',v:'Covers documents, portal data accuracy, compliance, and internal correction check.'},{l:'Trigger',v:'Begins after team submits to ILSFA portal.'},{l:'Hold rule',v:'If any item fails — send internal correction notice and hold until resolved.'}]},
+  {t:'Zoho CRM standards',ic:'ti-database',rows:[{l:'Real-time accuracy',v:'Zoho must always reflect current project status.'},{l:'Daily review',v:'Review Install, Inspection, PTO, Corrections, and Approval stages daily.'},{l:'NON ID entry',v:'Retrieve from PJM, enter in Zoho, verify.'}]},
+  {t:'Reporting schedule',ic:'ti-calendar',rows:[{l:'Daily (Ragheed)',v:'Submission progress, post-review status, REC estimates. Via team chat.'},{l:'Weekly (Ms. Jhai, Mary)',v:'Part II Correction Report.'},{l:'Bi-weekly (ILSFA Team)',v:'Pending Part II Approval Report. Via email.'},{l:'Monthly (Ahmad, Hssen, Ragheed, ILSFA)',v:'Part II Approval Report — project list, total RECs, utility distribution.'}]},
 ];
 
 const BM={req:'Required',doc:'Document',warn:'If appl.'};
@@ -479,79 +502,75 @@ function isPilot(p){return p.pilot===true||p.pilot==='true';}
 function rss(){
   const tr=P.reduce((a,p)=>a+rv(p),0);
   const app=P.filter(p=>p.ps==='Approved').length;
-  const ui=P.filter(p=>p.ps==='Under Inspection').length;
   const nc=P.filter(p=>p.ps==='Further Part II information requested').length;
+  const ui=P.filter(p=>p.ps==='Under Inspection').length;
   // Header stats
-  document.getElementById('hd-stats').innerHTML=`
-    <div class="hd-stat"><div class="hd-stat-n">${P.length}</div><div class="hd-stat-l">Projects</div></div>
-    <div class="hd-stat"><div class="hd-stat-n">$${(tr/1000).toFixed(0)}K</div><div class="hd-stat-l">Total RECs</div></div>
-    <div class="hd-stat"><div class="hd-stat-n">${app}</div><div class="hd-stat-l">Approved</div></div>
-    <div class="hd-stat"><div class="hd-stat-n">${nc}</div><div class="hd-stat-l">Need correction</div></div>`;
-  // Sidebar quick stats
-  document.getElementById('sb-quick-stats').innerHTML=`
-    <div class="sb-stat" onclick="fg('all','all','All projects',${P.length})"><span class="sb-stat-label"><span class="sb-stat-dot" style="background:var(--bm)"></span>All projects</span><span class="sb-stat-val">${P.length}</span></div>
-    <div class="sb-stat" onclick="fg('ps','Approved','Approved',${app})"><span class="sb-stat-label"><span class="sb-stat-dot" style="background:#2e8b35"></span>Approved</span><span class="sb-stat-val" style="color:var(--ot)">${app}</span></div>
-    <div class="sb-stat" onclick="fg('ps','Under Inspection','Under inspection',${ui})"><span class="sb-stat-label"><span class="sb-stat-dot" style="background:var(--bm)"></span>Under inspection</span><span class="sb-stat-val">${ui}</span></div>
-    <div class="sb-stat" onclick="fg('ps','Further Part II information requested','Correction requested',${nc})"><span class="sb-stat-label"><span class="sb-stat-dot" style="background:#c93030"></span>Correction req.</span><span class="sb-stat-val" style="color:var(--et)">${nc}</span></div>
-    <div class="sb-stat" onclick="fg('cs','Pending','Correction pending',${P.filter(p=>p.cs==='Pending').length})"><span class="sb-stat-label"><span class="sb-stat-dot" style="background:var(--wb)"></span>Corr. pending</span><span class="sb-stat-val">${P.filter(p=>p.cs==='Pending').length}</span></div>`;}
+  document.getElementById('hd-s1').innerHTML=`<div class="hd-stat-n" style="color:#fff">${P.length}</div><div class="hd-stat-l">Projects</div>`;
+  document.getElementById('hd-s2').innerHTML=`<div class="hd-stat-n">$${(tr/1000).toFixed(0)}K</div><div class="hd-stat-l">Total RECs</div>`;
+  document.getElementById('hd-s3').innerHTML=`<div class="hd-stat-n" style="color:var(--et)">${nc}</div><div class="hd-stat-l">Need correction</div>`;
+  document.getElementById('hd-s3').onclick=()=>fg('ps','Further Part II information requested','Correction requested',nc);
+  // Sidebar stats
+  document.getElementById('sb-stats').innerHTML=`
+    <div class="sb-stat" onclick="fg('all','all','All projects',${P.length})"><span class="sb-stat-lbl"><span class="sb-dot" style="background:var(--bm)"></span>All projects</span><span class="sb-stat-val">${P.length}</span></div>
+    <div class="sb-stat" onclick="fg('ps','Approved','Approved',${app})"><span class="sb-stat-lbl"><span class="sb-dot" style="background:#2e8b35"></span>Approved</span><span class="sb-stat-val" style="color:var(--ot)">${app}</span></div>
+    <div class="sb-stat" onclick="fg('ps','Under Inspection','Under inspection',${ui})"><span class="sb-stat-lbl"><span class="sb-dot" style="background:var(--bm)"></span>Under inspection</span><span class="sb-stat-val">${ui}</span></div>
+    <div class="sb-stat" onclick="fg('ps','Further Part II information requested','Correction requested',${nc})"><span class="sb-stat-lbl"><span class="sb-dot" style="background:#c93030"></span>Correction req.</span><span class="sb-stat-val" style="color:var(--et)">${nc}</span></div>
+    <div class="sb-stat" onclick="fg('cs','Pending','Corr. pending',${P.filter(p=>p.cs==='Pending').length})"><span class="sb-stat-lbl"><span class="sb-dot" style="background:var(--wb)"></span>Corr. pending</span><span class="sb-stat-val">${P.filter(p=>p.cs==='Pending').length}</span></div>`;}
 
 function rdb(){
   const tot=P.length;if(!tot){document.getElementById('n-dashboard').innerHTML='<div class="hint">No projects yet.</div>';return;}
   const tr=P.reduce((a,p)=>a+rv(p),0);const app=P.filter(p=>p.ps==='Approved').length;const ui=P.filter(p=>p.ps==='Under Inspection').length;const fi=P.filter(p=>p.ps==='Further Part II information requested').length;const pil=P.filter(isPilot).length;
   const now=new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
   function row(label,n,recs,color,max,fn){const w=max>0?Math.round(n/max*100):0;const z=n===0;return`<div class="db-row${z?' z':''}"${!z&&fn?` onclick="${fn}" title="View ${n} project${n!==1?'s':''}"`:''}>
-    <div class="db-row-label"><span style="width:9px;height:9px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block"></span>${label}</div>
-    <div class="db-row-bar"><div class="db-row-fill" style="width:${w}%;background:${color}"></div></div>
-    <div class="db-row-count">${n}</div><div class="db-row-recs">${fr(recs)}</div><i class="ti ti-arrow-right db-arr"></i></div>`;}
+    <div class="drl"><span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block"></span>${label}</div>
+    <div class="drb"><div class="drf" style="width:${w}%;background:${color}"></div></div>
+    <div class="drc">${n}</div><div class="drr">${fr(recs)}</div><i class="ti ti-arrow-right db-arr"></i></div>`;}
   const sl=[{l:'Under inspection',k:'Under Inspection',c:'#4a9abe'},{l:'Further info requested',k:'Further Part II information requested',c:'#c93030'},{l:'Part II submitted',k:'Part II Submitted',c:'#c9870a'},{l:'Approved',k:'Approved',c:'#2e8b35'}];
   const cl=[{l:'No feedback',k:'No feedback',c:'#7a92aa'},{l:'Pending',k:'Pending',c:'#c93030'},{l:'Partially addressed',k:'Partially addressed',c:'#c9870a'},{l:'Addressed',k:'Addressed',c:'#2e8b35'}];
   const pl=['PY7','PY8','PY8-2025'];const pc={'PY7':'#c9a84c','PY8':'#4a9abe','PY8-2025':'#7ec8e3'};
   const ul=[{u:'ComEd',c:'#163660'},{u:'Ameren',c:'#4a9abe'}];const uu=P.filter(p=>!p.ut||!['ComEd','Ameren'].includes(p.ut)).length;
   document.getElementById('n-dashboard').innerHTML=`
     <div class="ts2">Last updated: ${now} · <span style="color:var(--bm)">Click any row → view filtered projects</span></div>
-    <div class="db-top-stats">
-      <div class="db-sc g" onclick="fg('all','all','All projects',${tot})"><div class="db-sn">${tot}</div><div style="font-size:11px;color:var(--t3)">Total projects</div><div style="font-size:12px;font-weight:500;margin-top:2px;color:var(--gd)">${fr(tr)}</div></div>
-      <div class="db-sc gr" onclick="fg('ps','Approved','Approved',${app})"><div class="db-sn">${app}</div><div style="font-size:11px;color:var(--t3)">Part II approved</div><div style="font-size:12px;font-weight:500;margin-top:2px;color:var(--ot)">${tot?Math.round(app/tot*100):0}%</div></div>
-      <div class="db-sc b" onclick="fg('ps','Under Inspection','Under inspection',${ui})"><div class="db-sn">${ui}</div><div style="font-size:11px;color:var(--t3)">Under inspection</div><div style="font-size:12px;font-weight:500;margin-top:2px;color:var(--bm)">${tot?Math.round(ui/tot*100):0}%</div></div>
-      <div class="db-sc r" onclick="fg('ps','Further Part II information requested','Correction requested',${fi})"><div class="db-sn">${fi}</div><div style="font-size:11px;color:var(--t3)">Correction requested</div><div style="font-size:12px;font-weight:500;margin-top:2px;color:var(--et)">${tot?Math.round(fi/tot*100):0}%</div></div>
+    <div class="dbs">
+      <div class="dbc g" onclick="fg('all','all','All projects',${tot})"><div class="dbn">${tot}</div><div style="font-size:10px;color:var(--t3)">Total projects</div><div style="font-size:11px;font-weight:600;margin-top:2px;color:var(--gd)">${fr(tr)}</div></div>
+      <div class="dbc gr" onclick="fg('ps','Approved','Approved',${app})"><div class="dbn">${app}</div><div style="font-size:10px;color:var(--t3)">Part II approved</div><div style="font-size:11px;font-weight:600;margin-top:2px;color:var(--ot)">${tot?Math.round(app/tot*100):0}%</div></div>
+      <div class="dbc b" onclick="fg('ps','Under Inspection','Under inspection',${ui})"><div class="dbn">${ui}</div><div style="font-size:10px;color:var(--t3)">Under inspection</div><div style="font-size:11px;font-weight:600;margin-top:2px;color:var(--bm)">${tot?Math.round(ui/tot*100):0}%</div></div>
+      <div class="dbc r" onclick="fg('ps','Further Part II information requested','Correction requested',${fi})"><div class="dbn">${fi}</div><div style="font-size:10px;color:var(--t3)">Correction requested</div><div style="font-size:11px;font-weight:600;margin-top:2px;color:var(--et)">${tot?Math.round(fi/tot*100):0}%</div></div>
     </div>
-    <div class="d2c" style="margin-bottom:12px">
-      <div class="ds"><div class="dt"><i class="ti ti-activity" style="font-size:15px;color:var(--bm)"></i> Portal status</div>${sl.map(s=>{const n=P.filter(p=>p.ps===s.k).length,r=P.filter(p=>p.ps===s.k).reduce((a,p)=>a+rv(p),0);return row(s.l,n,r,s.c,tot,`fg('ps','${s.k}','${s.l}',${n})`);}).join('')}</div>
-      <div class="ds"><div class="dt"><i class="ti ti-message-report" style="font-size:15px;color:var(--bm)"></i> Correction status</div>${cl.map(c=>{const n=P.filter(p=>p.cs===c.k).length,r=P.filter(p=>p.cs===c.k).reduce((a,p)=>a+rv(p),0);return row(c.l,n,r,c.c,tot,`fg('cs','${c.k}','${c.l}',${n})`);}).join('')}</div>
+    <div class="d2c">
+      <div class="ds"><div class="dt"><i class="ti ti-activity" style="font-size:14px;color:var(--bm)"></i> Portal status</div>${sl.map(s=>{const n=P.filter(p=>p.ps===s.k).length,r=P.filter(p=>p.ps===s.k).reduce((a,p)=>a+rv(p),0);return row(s.l,n,r,s.c,tot,`fg('ps','${s.k}','${s.l}',${n})`);}).join('')}</div>
+      <div class="ds"><div class="dt"><i class="ti ti-message-report" style="font-size:14px;color:var(--bm)"></i> Correction status</div>${cl.map(c=>{const n=P.filter(p=>p.cs===c.k).length,r=P.filter(p=>p.cs===c.k).reduce((a,p)=>a+rv(p),0);return row(c.l,n,r,c.c,tot,`fg('cs','${c.k}','${c.l}',${n})`);}).join('')}</div>
     </div>
-    <div class="d2c" style="margin-bottom:12px">
-      <div class="ds"><div class="dt"><i class="ti ti-calendar" style="font-size:15px;color:var(--bm)"></i> Program year</div>${pl.map(py=>{const n=P.filter(p=>p.py===py).length,r=P.filter(p=>p.py===py).reduce((a,p)=>a+rv(p),0);return row(py,n,r,pc[py],Math.max(...pl.map(x=>P.filter(p=>p.py===x).length),1),`fg('py','${py}','${py}',${n})`);}).join('')}</div>
-      <div class="ds"><div class="dt"><i class="ti ti-plug" style="font-size:15px;color:var(--bm)"></i> Utility</div>${ul.map(u=>{const n=P.filter(p=>p.ut===u.u).length,r=P.filter(p=>p.ut===u.u).reduce((a,p)=>a+rv(p),0);return row(u.u,n,r,u.c,tot,`fg('ut','${u.u}','${u.u}',${n})`);}).join('')}${uu>0?row('Not assigned',uu,0,'#7a92aa',tot,`fg('ut','','Utility not assigned',${uu})`):''}
-      ${[{l:'Non-pilot',n:tot-pil,r:P.filter(p=>!isPilot(p)).reduce((a,p)=>a+rv(p),0),c:'#163660',v:'false'},{l:'Pilot',n:pil,r:P.filter(isPilot).reduce((a,p)=>a+rv(p),0),c:'#c9a84c',v:'true'}].map(d=>row(d.l,d.n,d.r,d.c,tot,`fg('pilot','${d.v}','${d.l}',${d.n})`)).join('')}</div>
+    <div class="d2c">
+      <div class="ds"><div class="dt"><i class="ti ti-calendar" style="font-size:14px;color:var(--bm)"></i> Program year</div>${pl.map(py=>{const n=P.filter(p=>p.py===py).length,r=P.filter(p=>p.py===py).reduce((a,p)=>a+rv(p),0);return row(py,n,r,pc[py],Math.max(...pl.map(x=>P.filter(p=>p.py===x).length),1),`fg('py','${py}','${py}',${n})`);}).join('')}</div>
+      <div class="ds"><div class="dt"><i class="ti ti-plug" style="font-size:14px;color:var(--bm)"></i> Utility & pilot</div>${ul.map(u=>{const n=P.filter(p=>p.ut===u.u).length,r=P.filter(p=>p.ut===u.u).reduce((a,p)=>a+rv(p),0);return row(u.u,n,r,u.c,tot,`fg('ut','${u.u}','${u.u}',${n})`);}).join('')}${uu>0?row('Unassigned utility',uu,0,'#7a92aa',tot,`fg('ut','','Utility not assigned',${uu})`):''}${row('Pilot',pil,P.filter(isPilot).reduce((a,p)=>a+rv(p),0),'#c9a84c',tot,`fg('pilot','true','Pilot projects',${pil})`)}</div>
     </div>
-    <div class="ds"><div class="dt"><i class="ti ti-users" style="font-size:15px;color:var(--bm)"></i> Projects per PM <span style="font-size:11px;font-weight:400;color:var(--t3);font-family:'DM Sans',sans-serif"> — click to jump to PM tab</span></div>
-      ${PML.map(pm=>{const pp3=P.filter(p=>p.pm===pm);const n=pp3.length,r=pp3.reduce((a,p)=>a+rv(p),0);const z=n===0;return`<div class="db-row${z?' z':''}"${!z?` onclick="fgpm('${pm}',${n})" title="Jump to ${pm} in Team view"`:''}>
-        <div class="db-row-label"><span style="width:9px;height:9px;border-radius:50%;background:#4a9abe;flex-shrink:0;display:inline-block"></span>${pm}${pm===MGR?' ★':''}</div>
-        <div class="db-row-bar"><div class="db-row-fill" style="width:${tot>0?Math.round(n/tot*100):0}%;background:#4a9abe"></div></div>
-        <div class="db-row-count">${n}</div><div class="db-row-recs">${fr(r)}</div><i class="ti ti-arrow-right db-arr"></i></div>`;}).join('')}
+    <div class="ds"><div class="dt"><i class="ti ti-users" style="font-size:14px;color:var(--bm)"></i> Projects per PM <span style="font-size:11px;font-weight:400;color:var(--t3);font-family:'DM Sans',sans-serif"> — click to jump to PM tab</span></div>
+      ${PML.map(pm=>{const pp3=P.filter(p=>p.pm===pm);const n=pp3.length,r=pp3.reduce((a,p)=>a+rv(p),0);const z=n===0;return`<div class="db-row${z?' z':''}"${!z?` onclick="fgpm('${pm}',${n})"`:''}>
+        <div class="drl"><span style="width:8px;height:8px;border-radius:50%;background:#4a9abe;flex-shrink:0;display:inline-block"></span>${pm}${pm===MGR?' ★':''}</div>
+        <div class="drb"><div class="drf" style="width:${tot>0?Math.round(n/tot*100):0}%;background:#4a9abe"></div></div>
+        <div class="drc">${n}</div><div class="drr">${fr(r)}</div><i class="ti ti-arrow-right db-arr"></i></div>`;}).join('')}
       ${(()=>{const u=P.filter(p=>!p.pm);return u.length>0?row('Unassigned',u.length,u.reduce((a,p)=>a+rv(p),0),'#7a92aa',tot,`fg('pm','','Unassigned',${u.length})`):''})()}
     </div>`;}
 
 function cih(pid,it){const d=cdone(pid,it.id);const s=cst(pid,it.id);const ch=it.hs?`<div class="cch"><button class="sch${s==='ns'?' ns':''}" onclick="tcs('${pid}','${it.id}','ns');event.stopPropagation()">Not started</button><button class="sch${s==='ip'?' ip':''}" onclick="tcs('${pid}','${it.id}','ip');event.stopPropagation()">In progress</button><button class="sch${s==='up'?' up':''}" onclick="tcs('${pid}','${it.id}','up');event.stopPropagation()"><i class="ti ti-check" style="font-size:10px"></i> Uploaded in portal</button></div>`:'';return`<div class="ci${d?' dn':''}" onclick="tcl('${pid}','${it.id}')"><div class="ccb">${d?'<i class="ti ti-check" style="font-size:11px;color:var(--ot)"></i>':''}</div><div class="cnum">${it.n}</div><div class="cbody"><div class="ctit">${it.t}</div><div class="cnote">${it.note}</div>${ch}</div><span class="badge ${BC[it.b]}">${BM[it.b]}</span></div>`;}
-function clh(pid){const ai=gas(pid);const tabs=CLS.map((s,i)=>{const d=s.items.filter(x=>cdone(pid,x.id)||(x.hs&&cst(pid,x.id)==='up')).length;return`<button class="ct2${i===ai?' a':''}" onclick="sas('${pid}',${i});event.stopPropagation()"><i class="ti ${s.ic}" style="font-size:12px"></i>${s.title.split(' ')[0]}<span class="tp">${d}/${s.items.length}${d===s.items.length?' ✓':''}</span></button>`;}).join('');const{d,t,pct}=ppx(pid);return`<div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;font-weight:500;color:var(--t2)">Submission checklist</span><span style="font-size:11px;color:var(--t3)">${d}/${t}</span></div><div style="height:3px;background:var(--bd);border-radius:2px;overflow:hidden;margin-bottom:10px"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--bm),var(--gd));transition:width .4s"></div></div><div class="cls-tabs">${tabs}</div><div>${CLS[ai].items.map(i=>cih(pid,i)).join('')}</div></div>`;}
+function clh(pid){const ai=gas(pid);const tabs=CLS.map((s,i)=>{const d=s.items.filter(x=>cdone(pid,x.id)||(x.hs&&cst(pid,x.id)==='up')).length;return`<button class="ct2${i===ai?' a':''}" onclick="sas('${pid}',${i});event.stopPropagation()"><i class="ti ${s.ic}" style="font-size:12px"></i>${s.title.split(' ')[0]}<span class="tp">${d}/${s.items.length}${d===s.items.length?' ✓':''}</span></button>`;}).join('');const{d,t,pct}=ppx(pid);return`<div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;font-weight:500;color:var(--t2)">Submission checklist</span><span style="font-size:11px;color:var(--t3)">${d}/${t}</span></div><div style="height:3px;background:var(--bd);border-radius:2px;overflow:hidden;margin-bottom:10px"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--gd),var(--gl));transition:width .4s"></div></div><div class="cls-tabs">${tabs}</div><div>${CLS[ai].items.map(i=>cih(pid,i)).join('')}</div></div>`;}
 
-function spc2(p){const o=openCards[p.id]!==false;const pm=p.pm||'';const{fa}=gprs(p.id);const{d,t,pct}=ppx(p.id);const prb=fa>0?`<span class="badge br">${fa} PR failed</span>`:`<span class="badge bw">Pending review</span>`;const pmb=pm?`<span class="badge bp2">${pm}</span>`:'<span class="badge" style="background:var(--s2);color:var(--t3)">Unassigned</span>';const ub=p.ut?`<span class="badge bn">${p.ut}</span>`:'';return`<div class="card"><div class="card-hd" onclick="tp('${p.id}')"><div style="flex:1"><div style="font-size:13px;font-weight:500;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${p.id} ${isPilot(p)?'<span class="badge bw">Pilot</span>':''}<span style="font-size:11px;font-weight:400;color:var(--t3)">${p.py}</span>${pmb} ${ub}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">${p.sub} · ${p.recs} · Team: <span style="font-weight:500;color:${pct===100?'var(--ot)':'var(--t3)'}">${d}/${t}</span></div></div><span class="badge ${SC2.ps[p.ps]||'bw'}">${p.ps==='Further Part II information requested'?'Correction req.':p.ps}</span><span class="badge ${SC2.cs[p.cs]||'bw'}" style="margin-left:4px">${p.cs}</span>${prb}<button class="db2" onclick="rmP('${p.id}');event.stopPropagation()"><i class="ti ti-trash" style="font-size:11px"></i></button><button style="background:none;border:none;cursor:pointer;padding:4px" onclick="tp('${p.id}');event.stopPropagation()"><i class="ti ti-chevron-down" style="font-size:13px;color:var(--t3);transform:rotate(${o?180:0}deg);transition:transform .2s"></i></button></div>${o?`<div class="card-bd"><div class="tps"><span style="font-size:11px;color:var(--t3);flex-shrink:0">Team checklist</span><div class="tpb"><div class="tpf" style="width:${pct}%"></div></div><span style="font-size:11px;font-weight:500;color:var(--t2);min-width:32px;text-align:right">${pct}%</span></div><div class="section-grid"><div class="sf3"><label>Assigned PM</label><select class="sel" onchange="spp('${p.id}',this.value);event.stopPropagation()"><option value="">— Unassigned —</option>${PML.map(n=>`<option value="${n}"${pm===n?' selected':''}>${n}${n===MGR?' (Mgr)':''}</option>`).join('')}</select></div><div class="sf3"><label>Utility</label><select class="sel" onchange="upf('${p.id}','ut',this.value);event.stopPropagation()"><option value="">—</option><option value="ComEd"${p.ut==='ComEd'?' selected':''}>ComEd</option><option value="Ameren"${p.ut==='Ameren'?' selected':''}>Ameren</option></select></div><div class="sf3"><label>ILSFA portal status</label><select class="sel ${ssc(p.ps)}" onchange="upf('${p.id}','ps',this.value);event.stopPropagation()"><option value="Under Inspection"${p.ps==='Under Inspection'?' selected':''}>Under Inspection</option><option value="Part II Submitted"${p.ps==='Part II Submitted'?' selected':''}>Part II Submitted</option><option value="Further Part II information requested"${p.ps==='Further Part II information requested'?' selected':''}>Further Part II info requested</option><option value="Approved"${p.ps==='Approved'?' selected':''}>Approved</option></select></div><div class="sf3"><label>Correction status</label><select class="sel ${csc2(p.cs)}" onchange="upf('${p.id}','cs',this.value);event.stopPropagation()"><option value="No feedback"${p.cs==='No feedback'?' selected':''}>No feedback</option><option value="Pending"${p.cs==='Pending'?' selected':''}>Pending</option><option value="Partially addressed"${p.cs==='Partially addressed'?' selected':''}>Partially addressed</option><option value="Addressed"${p.cs==='Addressed'?' selected':''}>Addressed</option></select></div><div class="sf3"><label>Program year</label><select class="sel" onchange="upf('${p.id}','py',this.value);event.stopPropagation()"><option value="PY7"${p.py==='PY7'?' selected':''}>PY7</option><option value="PY8"${p.py==='PY8'?' selected':''}>PY8</option><option value="PY8-2025"${p.py==='PY8-2025'?' selected':''}>PY8-2025</option></select></div><div class="sf3"><label>Pilot project</label><select class="sel" onchange="upf('${p.id}','pilot',this.value==='yes');event.stopPropagation()"><option value="no"${!isPilot(p)?' selected':''}>No</option><option value="yes"${isPilot(p)?' selected':''}>Yes</option></select></div></div><div style="margin-bottom:10px"><label style="font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px">Correction details</label><textarea class="ni" id="cn-${p.id}">${p.corr||''}</textarea></div><div style="margin-bottom:10px"><label style="font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px">Comments / SPL notes</label><textarea class="ni" id="mn-${p.id}">${p.cmt||''}</textarea></div><button class="snb" onclick="spn('${p.id}');event.stopPropagation()"><i class="ti ti-device-floppy" style="font-size:11px"></i> Save notes</button><div style="margin-top:10px"><button class="prb" onclick="gpr('${p.id}');event.stopPropagation()"><i class="ti ti-zoom-check" style="font-size:12px"></i> Open post-review</button></div></div>`:''}</div>`;}
+function spc2(p){const o=openCards[p.id]!==false;const pm=p.pm||'';const{fa}=gprs(p.id);const{d,t,pct}=ppx(p.id);const prb=fa>0?`<span class="badge br">${fa} PR failed</span>`:`<span class="badge bw">Pending review</span>`;const pmb=pm?`<span class="badge bp2">${pm}</span>`:'<span class="badge" style="background:var(--s2);color:var(--t3)">Unassigned</span>';const ub=p.ut?`<span class="badge bn">${p.ut}</span>`:'';return`<div class="card"><div class="card-hd" onclick="tp('${p.id}')"><div style="flex:1"><div style="font-size:13px;font-weight:500;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${p.id} ${isPilot(p)?'<span class="badge bw">Pilot</span>':''}<span style="font-size:11px;font-weight:400;color:var(--t3)">${p.py}</span>${pmb} ${ub}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">${p.sub} · ${p.recs} · Team: <span style="font-weight:500;color:${pct===100?'var(--ot)':'var(--t3)'}">${d}/${t}</span></div></div><span class="badge ${SC2.ps[p.ps]||'bw'}">${p.ps==='Further Part II information requested'?'Correction req.':p.ps}</span><span class="badge ${SC2.cs[p.cs]||'bw'}" style="margin-left:4px">${p.cs}</span>${prb}<button class="db2" onclick="rmP('${p.id}');event.stopPropagation()"><i class="ti ti-trash" style="font-size:11px"></i></button><button style="background:none;border:none;cursor:pointer;padding:4px" onclick="tp('${p.id}');event.stopPropagation()"><i class="ti ti-chevron-down" style="font-size:13px;color:var(--t3);transform:rotate(${o?180:0}deg);transition:transform .2s"></i></button></div>${o?`<div class="card-bd"><div class="tps"><span style="font-size:11px;color:var(--t3);flex-shrink:0">Team checklist</span><div class="tpb"><div class="tpf" style="width:${pct}%"></div></div><span style="font-size:11px;font-weight:500;color:var(--t2);min-width:30px;text-align:right">${pct}%</span></div><div class="sg"><div class="sf3"><label>Assigned PM</label><select class="sel" onchange="spp('${p.id}',this.value);event.stopPropagation()"><option value="">— Unassigned —</option>${PML.map(n=>`<option value="${n}"${pm===n?' selected':''}>${n}${n===MGR?' (Mgr)':''}</option>`).join('')}</select></div><div class="sf3"><label>Utility</label><select class="sel" onchange="upf('${p.id}','ut',this.value);event.stopPropagation()"><option value="">—</option><option value="ComEd"${p.ut==='ComEd'?' selected':''}>ComEd</option><option value="Ameren"${p.ut==='Ameren'?' selected':''}>Ameren</option></select></div><div class="sf3"><label>ILSFA portal status</label><select class="sel ${ssc(p.ps)}" onchange="upf('${p.id}','ps',this.value);event.stopPropagation()"><option value="Under Inspection"${p.ps==='Under Inspection'?' selected':''}>Under Inspection</option><option value="Part II Submitted"${p.ps==='Part II Submitted'?' selected':''}>Part II Submitted</option><option value="Further Part II information requested"${p.ps==='Further Part II information requested'?' selected':''}>Further Part II info requested</option><option value="Approved"${p.ps==='Approved'?' selected':''}>Approved</option></select></div><div class="sf3"><label>Correction status</label><select class="sel ${csc2(p.cs)}" onchange="upf('${p.id}','cs',this.value);event.stopPropagation()"><option value="No feedback"${p.cs==='No feedback'?' selected':''}>No feedback</option><option value="Pending"${p.cs==='Pending'?' selected':''}>Pending</option><option value="Partially addressed"${p.cs==='Partially addressed'?' selected':''}>Partially addressed</option><option value="Addressed"${p.cs==='Addressed'?' selected':''}>Addressed</option></select></div><div class="sf3"><label>Program year</label><select class="sel" onchange="upf('${p.id}','py',this.value);event.stopPropagation()"><option value="PY7"${p.py==='PY7'?' selected':''}>PY7</option><option value="PY8"${p.py==='PY8'?' selected':''}>PY8</option><option value="PY8-2025"${p.py==='PY8-2025'?' selected':''}>PY8-2025</option></select></div><div class="sf3"><label>Pilot project</label><select class="sel" onchange="upf('${p.id}','pilot',this.value==='yes');event.stopPropagation()"><option value="no"${!isPilot(p)?' selected':''}>No</option><option value="yes"${isPilot(p)?' selected':''}>Yes</option></select></div></div><div style="margin-bottom:10px"><label style="font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:3px">Correction details</label><textarea class="ni" id="cn-${p.id}">${p.corr||''}</textarea></div><div style="margin-bottom:10px"><label style="font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:3px">Comments / SPL notes</label><textarea class="ni" id="mn-${p.id}">${p.cmt||''}</textarea></div><button class="snb" onclick="spn('${p.id}');event.stopPropagation()"><i class="ti ti-device-floppy" style="font-size:11px"></i> Save notes</button><div style="margin-top:8px"><button class="prb" onclick="gpr('${p.id}');event.stopPropagation()"><i class="ti ti-zoom-check" style="font-size:12px"></i> Open post-review</button></div></div>`:''}</div>`;}
 
 function afh(){if(!showAF)return`<button class="ab" onclick="showAF=true;rp()"><i class="ti ti-plus" style="font-size:13px"></i> Add new project</button>`;const po=PML.map(n=>`<option value="${n}">${n}${n===MGR?' (Mgr)':''}</option>`).join('');return`<div class="af2"><div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--nv);margin-bottom:12px"><i class="ti ti-plus"></i> Add new project</div><div class="g2"><div class="fl"><label>Project ID *</label><input id="ni-id" placeholder="e.g. P-14500"/></div><div class="fl"><label>Assign to PM</label><select id="ni-pm"><option value="">— Unassigned —</option>${po}</select></div><div class="fl"><label>Program year</label><select id="ni-py"><option value="PY7">PY7</option><option value="PY8">PY8</option><option value="PY8-2025" selected>PY8-2025</option></select></div><div class="fl"><label>Utility</label><select id="ni-ut"><option value="">—</option><option value="ComEd">ComEd</option><option value="Ameren">Ameren</option></select></div><div class="fl"><label>Submit date</label><input id="ni-sub" placeholder="e.g. Jun 1, 2026"/></div><div class="fl"><label>Est. RECs</label><input id="ni-r" placeholder="e.g. $45,000"/></div><div class="fl"><label>Portal status</label><select id="ni-ps"><option value="Under Inspection">Under Inspection</option><option value="Part II Submitted">Part II Submitted</option><option value="Further Part II information requested">Further Part II info requested</option><option value="Approved">Approved</option></select></div><div class="fl"><label>Correction status</label><select id="ni-cs"><option value="No feedback">No feedback</option><option value="Pending">Pending</option><option value="Partially addressed">Partially addressed</option><option value="Addressed">Addressed</option></select></div><div class="fl"><label>Pilot?</label><select id="ni-pi"><option value="no">No</option><option value="yes">Yes</option></select></div></div><div class="fl" style="margin-bottom:10px"><label>Correction details</label><textarea id="ni-corr"></textarea></div><div class="fl" style="margin-bottom:12px"><label>Comments</label><textarea id="ni-cmt"></textarea></div><div style="display:flex;gap:8px"><button class="btn" onclick="aP()"><i class="ti ti-check" style="font-size:12px"></i> Add project</button><button class="btn2" onclick="showAF=false;rp()">Cancel</button></div></div>`;}
 
 function rp(){const fp=fpg();const tr=P.reduce((a,p)=>a+rv(p),0);const ua=P.filter(p=>!p.pm).length;const banner=AF?`<div class="fb"><i class="ti ti-filter" style="font-size:14px;color:var(--bm)"></i><span style="font-size:13px;font-weight:500;flex:1">Showing: <strong>${AF.label}</strong> · ${fp.length} project${fp.length!==1?'s':''}</span><button onclick="cf()"><i class="ti ti-x" style="font-size:11px"></i> Clear filter</button></div>`:'';document.getElementById('n-projects').innerHTML=`${afh()}${banner}${!AF?`<div class="hint">PY7: ${P.filter(p=>p.py==='PY7').length} · PY8: ${P.filter(p=>p.py==='PY8').length} · PY8-2025: ${P.filter(p=>p.py==='PY8-2025').length} · RECs: $${tr.toLocaleString()}${ua>0?` · <span style="color:var(--wt)">${ua} unassigned</span>`:''}</div>`:''}${fp.length?fp.map(p=>spc2(p)).join(''):'<div class="hint">No projects match this filter.</div>'}`;}
 
-function tpc(p){const o=openCards[p.id]!==false;const{d,t,pct}=ppx(p.id);const ub=p.ut?`<span class="badge bn">${p.ut}</span>`:'';const ch=p.corr?`<div style="background:var(--wn);border-left:3px solid var(--wb);border-radius:var(--r);padding:9px 12px;margin-bottom:10px;font-size:12px;color:var(--wt);line-height:1.6"><strong>Action needed:</strong> ${p.corr}</div>`:'';const cm=p.cmt?`<div style="background:var(--bp);border-left:3px solid var(--bb);border-radius:var(--r);padding:9px 12px;margin-bottom:10px;font-size:12px;color:var(--nm);line-height:1.6"><strong>Note:</strong> ${p.cmt}</div>`:'';return`<div class="card"><div class="card-hd" onclick="tp('${p.id}')"><div style="flex:1"><div style="font-size:13px;font-weight:500;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${p.id} ${isPilot(p)?'<span class="badge bw">Pilot</span>':''}<span style="font-size:11px;font-weight:400;color:var(--t3)">${p.py}</span>${ub}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">${p.sub} · ${p.recs} · <span style="font-weight:500;color:${pct===100?'var(--ot)':'var(--t3)'}">${d}/${t}</span></div></div><span class="badge ${SC2.ps[p.ps]||'bw'}">${p.ps==='Further Part II information requested'?'Correction req.':p.ps}</span><span class="badge ${SC2.cs[p.cs]||'bw'}" style="margin-left:4px">${p.cs}</span><button style="background:none;border:none;cursor:pointer;padding:4px" onclick="tp('${p.id}');event.stopPropagation()"><i class="ti ti-chevron-down" style="font-size:13px;color:var(--t3);transform:rotate(${o?180:0}deg);transition:transform .2s"></i></button></div>${o?`<div class="card-bd">${ch}${cm}<div class="hint" style="margin-bottom:10px"><i class="ti ti-info-circle" style="font-size:13px;vertical-align:-2px;margin-right:4px"></i>Upload all documents in the <strong>ILSFA portal</strong> and <strong>Zoho</strong>. Check off each item here once done.</div>${clh(p.id)}</div>`:''}</div>`;}
+function tpc(p){const o=openCards[p.id]!==false;const{d,t,pct}=ppx(p.id);const ub=p.ut?`<span class="badge bn">${p.ut}</span>`:'';const ch=p.corr?`<div style="background:var(--wn);border-left:3px solid var(--wb);border-radius:var(--r);padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--wt);line-height:1.6"><strong>Action needed:</strong> ${p.corr}</div>`:'';const cm=p.cmt?`<div style="background:var(--bp);border-left:3px solid var(--bb);border-radius:var(--r);padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--nm);line-height:1.6"><strong>Note:</strong> ${p.cmt}</div>`:'';return`<div class="card"><div class="card-hd" onclick="tp('${p.id}')"><div style="flex:1"><div style="font-size:13px;font-weight:500;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${p.id} ${isPilot(p)?'<span class="badge bw">Pilot</span>':''}<span style="font-size:11px;font-weight:400;color:var(--t3)">${p.py}</span>${ub}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">${p.sub} · ${p.recs} · <span style="font-weight:500;color:${pct===100?'var(--ot)':'var(--t3)'}">${d}/${t}</span></div></div><span class="badge ${SC2.ps[p.ps]||'bw'}">${p.ps==='Further Part II information requested'?'Correction req.':p.ps}</span><span class="badge ${SC2.cs[p.cs]||'bw'}" style="margin-left:4px">${p.cs}</span><button style="background:none;border:none;cursor:pointer;padding:4px" onclick="tp('${p.id}');event.stopPropagation()"><i class="ti ti-chevron-down" style="font-size:13px;color:var(--t3);transform:rotate(${o?180:0}deg);transition:transform .2s"></i></button></div>${o?`<div class="card-bd">${ch}${cm}<div class="hint" style="margin-bottom:10px"><i class="ti ti-info-circle" style="font-size:13px;vertical-align:-2px;margin-right:4px"></i>Upload all documents in the <strong>ILSFA portal</strong> and <strong>Zoho</strong>. Check off each item here once done.</div>${clh(p.id)}</div>`:''}</div>`;}
 
 function rtv(){
-  // Build PM sidebar
-  const pmSidebar=document.getElementById('pm-sidebar');
-  pmSidebar.innerHTML=`<div class="sb-section"><div class="sb-label">Project managers</div>${PML.map(pm=>{const c=P.filter(p=>p.pm===pm).length;const m=pm===MGR;return`<button class="sb-pm-btn${pm===activePMTab?' a':''}" onclick="activePMTab='${pm}';rtv()"><div class="sb-pm-avatar">${pm.charAt(0)}</div><span style="flex:1">${pm}${m?`<span class="mgr">MGR</span>`:''}</span>${c>0?`<span style="font-size:10px;padding:1px 5px;border-radius:10px;background:rgba(255,255,255,.25)">${c}</span>`:''}</button>`;}).join('')}<button class="sb-pm-btn${activePMTab==='__n'?' a':''}" onclick="activePMTab='__n';rtv()" style="margin-top:8px"><i class="ti ti-notes" style="font-size:14px"></i> Doc notes</button></div>`;
-  if(activePMTab==='__n'){rtn();return;}
-  const mp=P.filter(p=>p.pm===activePMTab);const m=activePMTab===MGR;
-  document.getElementById('pmc').innerHTML=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:12px 14px;background:var(--cd);border:0.5px solid var(--bd);border-radius:var(--rl);box-shadow:var(--sh)"><div class="pma">${activePMTab.charAt(0)}</div><div style="flex:1"><div style="font-size:14px;font-weight:500">${activePMTab}${m?` <span class="mgr" style="font-size:10px">PM Manager</span>`:''}</div><div style="font-size:12px;color:var(--t3)">${mp.length} project${mp.length!==1?'s':''} assigned</div></div></div>${mp.length?mp.map(p=>tpc(p)).join(''):'<div style="text-align:center;padding:40px 20px;color:var(--t3)"><i class="ti ti-folder" style="font-size:32px;display:block;margin-bottom:10px;opacity:.4"></i><div style="font-size:13px;font-weight:500;margin-bottom:4px">No projects assigned yet</div></div>'}`;}
+  document.getElementById('pm-sidebar').innerHTML=`<div class="sb-label" style="margin-top:0">Project managers</div>${PML.map(pm=>{const c=P.filter(p=>p.pm===pm).length;const m=pm===MGR;return`<button class="sb-pm-btn${pm===activePM?' a':''}" onclick="activePM='${pm}';rtv()"><div class="pm-av">${pm.charAt(0)}</div><span style="flex:1;font-size:13px">${pm}${m?`<span class="mgr">MGR</span>`:''}</span>${c>0?`<span style="font-size:10px;padding:1px 5px;border-radius:10px;background:rgba(255,255,255,.25)">${c}</span>`:''}</button>`;}).join('')}<div class="sb-divider"></div><button class="sb-pm-btn${activePM==='__n'?' a':''}" onclick="activePM='__n';rtv()"><i class="ti ti-notes" style="font-size:14px"></i> Doc notes</button>`;
+  if(activePM==='__n'){rtn();return;}
+  const mp=P.filter(p=>p.pm===activePM);const m=activePM===MGR;
+  document.getElementById('pmc').innerHTML=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:11px 14px;background:var(--cd);border:0.5px solid var(--bd);border-radius:var(--rl);box-shadow:var(--sh)"><div class="pma">${activePM.charAt(0)}</div><div style="flex:1"><div style="font-size:14px;font-weight:500">${activePM}${m?` <span class="mgr" style="font-size:10px">PM Manager</span>`:''}</div><div style="font-size:12px;color:var(--t3)">${mp.length} project${mp.length!==1?'s':''} assigned</div></div></div>${mp.length?mp.map(p=>tpc(p)).join(''):'<div style="text-align:center;padding:36px 20px;color:var(--t3)"><i class="ti ti-folder" style="font-size:30px;display:block;margin-bottom:10px;opacity:.4"></i><div style="font-size:13px;font-weight:500;margin-bottom:4px">No projects assigned yet</div></div>'}`;}
 
-function rtn(){document.getElementById('pmc').innerHTML=`<div class="hint">Detailed instructions for each of the 20 required documents.</div>${[{n:'[1]',t:'Permit',v:'Officially approved permit only.'},{n:'[2]',t:'PTO / COC',v:'Must include date of approval AND ComEd representative signature.'},{n:'[3]',t:'Net metering',v:'Correct document matching project address and utility account.'},{n:'[4]',t:'PJM / SO SS',v:'Compile multiple photos into ONE PDF before uploading.'},{n:'[5]',t:'JCO (site suitability)',v:'All photos complete and accurate. Escalate missing/unclear to Yen.'},{n:'[6]',t:'Inverter & module label photos',v:'Upload clear separate photos, then merge into a single file.'},{n:'[7]',t:'Complete array photos',v:'Separate complete array photos for each project.'},{n:'[8]',t:'Updated SSR',v:'Reflect all mitigations in pipeline review, plan set, and installation work.'},{n:'[9]',t:'Upgrade photos',v:'If applicable, submit separately to ILSFA portal — not just JCO photos.'},{n:'[10]',t:'Mitigation — final invoice',v:'Pilot only. Electrical scope must match Part I Initial Invoice.'},{n:'[11]',t:'Shading study',v:'Must be consistent with installed system — panel count, layout, orientation.'},{n:'[12]',t:'System design',v:'Plan set must match installed system and final shade study.'},{n:'[13]',t:'ACF',v:'Update ONLY if revised value is LOWER than original.'},{n:'[14]',t:'Arrays',v:'Part I arrays must NOT be edited or deleted.'},{n:'[15]',t:'REC table',v:'All Part II – Submitted values must match the final shade study.'},{n:'[16]',t:'Inspection document',v:'Correct approved inspection document only.'},{n:'[17]',t:'JCO (post construction)',v:'All photos complete and accurate. Escalate to Yen if needed.'},{n:'[18]',t:'SS from Fox / Tesla monitoring app',v:'System must NOT show 0 production. If offline — notify PM immediately.'},{n:'[19]',t:'Shadi / Qais affidavit',v:'Upload in the correct field under the Staff Info tab.'},{n:'[20]',t:'Start / end dates',v:'Start = day BEFORE install. End = actual install completion date.'}].map(x=>`<div class="sc-card"><div class="sc-hd"><span style="font-size:11px;font-weight:500;color:var(--bm);min-width:30px;letter-spacing:.04em">${x.n}</span><span style="font-size:13px;font-weight:500;flex:1">${x.t}</span></div><div class="sc-bd"><span style="font-size:12px;color:var(--t2);line-height:1.6">${x.v}</span></div></div>`).join('')}`;}
+function rtn(){document.getElementById('pmc').innerHTML=`<div class="hint">Detailed instructions for each of the 20 required documents.</div>${[{n:'[1]',t:'Permit',v:'Officially approved permit only.'},{n:'[2]',t:'PTO / COC',v:'Must include date of approval AND ComEd representative signature.'},{n:'[3]',t:'Net metering',v:'Correct document matching project address and utility account.'},{n:'[4]',t:'PJM / SO SS',v:'Compile multiple photos into ONE PDF before uploading.'},{n:'[5]',t:'JCO (site suitability)',v:'All photos complete and accurate. Escalate missing/unclear to Yen.'},{n:'[6]',t:'Inverter & module label photos',v:'Upload clear separate photos, then merge into asingle file.'},{n:'[7]',t:'Complete array photos',v:'Separate complete array photos for each project.'},{n:'[8]',t:'Updated SSR',v:'Reflect all mitigations in pipeline review, plan set, and installation work.'},{n:'[9]',t:'Upgrade photos',v:'If applicable, submit separately to ILSFA portal.'},{n:'[10]',t:'Mitigation — final invoice',v:'Pilot only. Electrical scope must match Part I Initial Invoice.'},{n:'[11]',t:'Shading study',v:'Must be consistent with installed system.'},{n:'[12]',t:'System design',v:'Plan set must match installed system and final shade study.'},{n:'[13]',t:'ACF',v:'Update ONLY if revised value is LOWER than original.'},{n:'[14]',t:'Arrays',v:'Part I arrays must NOT be edited or deleted.'},{n:'[15]',t:'REC table',v:'All Part II – Submitted values must match the final shade study.'},{n:'[16]',t:'Inspection document',v:'Correct approved inspection document only.'},{n:'[17]',t:'JCO (post construction)',v:'All photos complete and accurate.'},{n:'[18]',t:'SS from Fox / Tesla monitoring app',v:'System must NOT show 0 production.'},{n:'[19]',t:'Shadi / Qais affidavit',v:'Upload in the correct field under the Staff Info tab.'},{n:'[20]',t:'Start / end dates',v:'Start = day BEFORE install. End = actual install completion date.'}].map(x=>`<div class="sc-card"><div class="sc-hd"><span style="font-size:11px;font-weight:500;color:var(--bm);min-width:28px">${x.n}</span><span style="font-size:13px;font-weight:500;flex:1">${x.t}</span></div><div class="sc-bd"><span style="font-size:12px;color:var(--t2);line-height:1.6">${x.v}</span></div></div>`).join('')`;}
 
 function rpr(){
   const pid=prPid||(P.length?P[0].id:'');if(!pid){document.getElementById('n-postreview').innerHTML='<div class="hint">No projects.</div>';return;}
@@ -559,23 +578,23 @@ function rpr(){
   const sel=`<div class="prsel"><label>Select project to review</label><select onchange="prPid=this.value;rpr()">${P.map(p=>{const{fa:f}=gprs(p.id);const{pct:cp2}=ppx(p.id);const pm=p.pm||'';return`<option value="${p.id}"${p.id===pid?' selected':''}>${p.id}${pm?' ('+pm+')':''} — team ${cp2}%${f>0?' ⚠':''}`}).join('')}</select></div>`;
   const wfl=`<div class="wf"><div class="wb d">Team submits</div><div class="wa">›</div><div class="wb a">Post-review</div><div class="wa">›</div><div class="wb">ILSFA review</div><div class="wa">›</div><div class="wb">Approved</div></div>`;
   const cls=`<div style="background:var(--bp);border:0.5px solid rgba(126,200,227,.3);border-radius:var(--rl);padding:12px;margin-bottom:12px;display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:12px;font-weight:500;margin-bottom:5px;color:var(--bm)">Team checklist — ${pid}</div><div class="pbar"><div class="pfil" style="width:${cp}%"></div></div></div><div style="text-align:right;flex-shrink:0"><div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600">${cp}%</div><div style="font-size:11px;color:var(--t3)">${cd3}/${ct}</div></div></div>`;
-  const sm=`<div class="prsbox"><div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600">${pid} — Post-review summary</div><div class="prgrid"><div class="prs2"><div class="prn" style="color:var(--ot)">${pa}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Passed</div></div><div class="prs2"><div class="prn" style="color:var(--et)">${fa}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Failed</div></div><div class="prs2"><div class="prn">${re}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Not reviewed</div></div></div><div style="margin-top:10px"><div class="pbar"><div class="pfil" style="width:${pct}%"></div></div><div style="font-size:11px;color:var(--t3);margin-top:4px">${pct}% passed</div></div></div>`;
-  const sects=PRS.map(s=>{const sp=s.items.filter(i=>prSt(pid,i.id)==='pass').length;const sf=s.items.filter(i=>prSt(pid,i.id)==='fail').length;const op=openCards['_prs_'+s.id]!==false;return`<div style="margin-bottom:10px;border:0.5px solid var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh)"><div style="display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;background:var(--sf)" onclick="tprs('${s.id}')"><i class="ti ${s.ic}" style="font-size:15px;color:var(--bm)"></i><span style="font-size:13px;font-weight:500;flex:1">${s.t}</span><span style="display:flex;gap:5px;align-items:center">${sp>0?`<span class="badge bo">${sp}</span>`:''}${sf>0?`<span class="badge br">${sf} failed</span>`:''}<span style="font-size:11px;color:var(--t3)">${s.items.length}</span></span><i class="ti ti-chevron-down" style="font-size:13px;color:var(--t3);transform:rotate(${op?180:0}deg);margin-left:6px"></i></div><div class="pbar"><div class="pfil" style="width:${Math.round(sp/s.items.length*100)}%"></div></div>${op?`<div style="padding:8px 14px 12px;background:var(--cd)">${s.items.map(it=>{const st=prSt(pid,it.id);return`<div class="fi"><div style="flex:1"><div style="font-size:13px;font-weight:500">${it.t}</div><div style="font-size:12px;color:var(--t2);margin-top:2px;line-height:1.5">${it.n}</div></div><div style="display:flex;gap:4px;flex-shrink:0;margin-top:1px"><button class="fb2${st==='pass'?' pass':''}" onclick="setPR('${pid}','${it.id}','${st==='pass'?'none':'pass'}')"><i class="ti ti-check" style="font-size:11px"></i> Pass</button><button class="fb2${st==='fail'?' fail':''}" onclick="setPR('${pid}','${it.id}','${st==='fail'?'none':'fail'}')"><i class="ti ti-x" style="font-size:11px"></i> Fail</button></div></div>`;}).join('')}</div>`:''}</div>`;}).join('');
+  const sm=`<div class="prsbox"><div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600">${pid} — Post-review summary</div><div class="prgrid"><div class="prs2"><div class="prn" style="color:var(--ot)">${pa}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Passed</div></div><div class="prs2"><div class="prn" style="color:var(--et)">${fa}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Failed</div></div><div class="prs2"><div class="prn">${re}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Not reviewed</div></div></div><div style="margin-top:10px"><div class="pbar"><div class="pfil" style="width:${pct}%"></div></div><div style="font-size:11px;color:var(--t3);margin-top:3px">${pct}% passed</div></div></div>`;
+  const sects=PRS.map(s=>{const sp=s.items.filter(i=>prSt(pid,i.id)==='pass').length;const sf=s.items.filter(i=>prSt(pid,i.id)==='fail').length;const op=openCards['_prs_'+s.id]!==false;return`<div style="margin-bottom:10px;border:0.5px solid var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh)"><div style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;background:var(--sf)" onclick="tprs('${s.id}')"><i class="ti ${s.ic}" style="font-size:15px;color:var(--bm)"></i><span style="font-size:13px;font-weight:500;flex:1">${s.t}</span><span style="display:flex;gap:5px;align-items:center">${sp>0?`<span class="badge bo">${sp}</span>`:''}${sf>0?`<span class="badge br">${sf} failed</span>`:''}<span style="font-size:11px;color:var(--t3)">${s.items.length}</span></span><i class="ti ti-chevron-down" style="font-size:13px;color:var(--t3);transform:rotate(${op?180:0}deg);margin-left:6px"></i></div><div class="pbar"><div class="pfil" style="width:${Math.round(sp/s.items.length*100)}%"></div></div>${op?`<div style="padding:8px 14px 12px;background:var(--cd)">${s.items.map(it=>{const st=prSt(pid,it.id);return`<div class="fi"><div style="flex:1"><div style="font-size:13px;font-weight:500">${it.t}</div><div style="font-size:12px;color:var(--t2);margin-top:2px;line-height:1.5">${it.n}</div></div><div style="display:flex;gap:4px;flex-shrink:0;margin-top:1px"><button class="fb2${st==='pass'?' pass':''}" onclick="setPR('${pid}','${it.id}','${st==='pass'?'none':'pass'}')"><i class="ti ti-check" style="font-size:11px"></i> Pass</button><button class="fb2${st==='fail'?' fail':''}" onclick="setPR('${pid}','${it.id}','${st==='fail'?'none':'fail'}')"><i class="ti ti-x" style="font-size:11px"></i> Fail</button></div></div>`;}).join('')}</div>`:''}</div>`;}).join('');
   document.getElementById('n-postreview').innerHTML=sel+wfl+cls+sm+sects;}
 
-function gpr(pid){prPid=pid;ntid('n-postreview');document.querySelectorAll('#v-spl .sb-nav-btn').forEach((b,i)=>b.classList.toggle('a',i===2));rpr();}
+function gpr(pid){prPid=pid;ntid('n-postreview');document.querySelectorAll('#v-spl .sb-btn').forEach((b,i)=>b.classList.toggle('a',i===2));rpr();}
 function rstd(){document.getElementById('n-standards').innerHTML=STDS.map(s=>`<div class="sc-card"><div class="sc-hd"><i class="ti ${s.ic}" style="font-size:14px;color:var(--bm)"></i><span style="font-size:13px;font-weight:500;flex:1;margin-left:6px">${s.t}</span></div><div class="sc-bd">${s.rows.map(r=>`<div class="rw"><span class="rl2">${r.l}</span><span class="rv">${r.v}</span></div>`).join('')}</div></div>`).join('');}
-function rset(){const pc2=PML.map(n=>{const c=P.filter(p=>p.pm===n).length;const m=n===MGR;return`<div class="pmc"><div class="pma">${n.substring(0,2).toUpperCase()}</div><div style="flex:1"><div style="font-size:13px;font-weight:500">${n}${m?` <span class="mgr" style="font-size:10px">Manager</span>`:''}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">${c} project${c!==1?'s':''} assigned</div></div>${!m?`<button class="pmr" onclick="dpm('${n}')"><i class="ti ti-trash" style="font-size:11px"></i> Remove</button>`:'<span style="font-size:11px;color:var(--t3)">Protected</span>'}</div>`;}).join('');const af=showPMAF?`<div class="pmaf"><div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;margin-bottom:12px;color:var(--nv)">Add new PM</div><div class="fl" style="margin-bottom:12px"><label>Full name</label><input id="npm" placeholder="e.g. Katrina Santos"/></div><div style="display:flex;gap:8px"><button class="btn" onclick="apm()"><i class="ti ti-check" style="font-size:12px"></i> Add PM</button><button class="btn2" onclick="showPMAF=false;rset()">Cancel</button></div></div>`:`<button class="ab" onclick="showPMAF=true;rset()"><i class="ti ti-plus" style="font-size:13px"></i> Add new PM</button>`;document.getElementById('n-settings').innerHTML=`<div class="div2">Project manager list</div>${af}${pc2}<div class="hint" style="margin-top:12px"><i class="ti ti-info-circle" style="font-size:13px;vertical-align:-2px;margin-right:4px"></i>Mary is protected as PM Manager.</div>`;}
+function rset(){const pc2=PML.map(n=>{const c=P.filter(p=>p.pm===n).length;const m=n===MGR;return`<div class="pmc"><div class="pma">${n.substring(0,2).toUpperCase()}</div><div style="flex:1"><div style="font-size:13px;font-weight:500">${n}${m?` <span class="mgr" style="font-size:10px">Manager</span>`:''}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">${c} project${c!==1?'s':''} assigned</div></div>${!m?`<button class="pmr" onclick="dpm('${n}')"><i class="ti ti-trash" style="font-size:11px"></i> Remove</button>`:'<span style="font-size:11px;color:var(--t3)">Protected</span>'}</div>`;}).join('');const af=showPMAF?`<div class="pmaf"><div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;margin-bottom:10px;color:var(--nv)">Add new PM</div><div class="fl" style="margin-bottom:10px"><label>Full name</label><input id="npm" placeholder="e.g. Katrina Santos"/></div><div style="display:flex;gap:8px"><button class="btn" onclick="apm()"><i class="ti ti-check" style="font-size:12px"></i> Add PM</button><button class="btn2" onclick="showPMAF=false;rset()">Cancel</button></div></div>`:`<button class="ab" onclick="showPMAF=true;rset()"><i class="ti ti-plus" style="font-size:13px"></i> Add new PM</button>`;document.getElementById('n-settings').innerHTML=`<div class="div2">Project manager list</div>${af}${pc2}<div class="hint" style="margin-top:10px"><i class="ti ti-info-circle" style="font-size:13px;vertical-align:-2px;margin-right:4px"></i>Mary is protected as PM Manager.</div>`;}
 
-function hl(t,q){if(!q)return t;return t.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>');}
+function hl(t,q){if(!q)return t;return t.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark style="background:rgba(126,200,227,.3);color:inherit;border-radius:2px;padding:0 2px">$1</mark>');}
 function hs(q){const t=q.trim();document.getElementById('gsc').classList.toggle('v',t.length>0);const w=document.getElementById('srw');if(t.length<2){w.classList.remove('v');return;}const ql=t.toLowerCase();const rs=[];P.forEach(p=>{if([p.id,p.py,p.sub,p.recs,p.ps,p.cs,p.ut||'',p.corr,p.cmt,p.pm||''].join(' ').toLowerCase().includes(ql)){rs.push({ic:'ti-folder',t:`${p.id} — ${p.py}${p.pm?' ('+p.pm+')':''}`,s:`${p.ps} · ${p.recs}`,fn:`op2('${p.id}')`});}});PML.forEach(pm=>{if(pm.toLowerCase().includes(ql)){rs.push({ic:'ti-user',t:pm+(pm===MGR?' (Manager)':''),s:P.filter(p=>p.pm===pm).length+' projects',fn:`fgpm('${pm}',${P.filter(p=>p.pm===pm).length})`});}});w.classList.add('v');document.getElementById('src2').textContent=rs.length+' result'+(rs.length!==1?'s':'');if(!rs.length){document.getElementById('srb').innerHTML=`<div style="padding:16px;text-align:center;color:var(--t3);font-size:12px">No results</div>`;return;}document.getElementById('srb').innerHTML=rs.map(r=>`<div class="sr-item" onclick="${r.fn};cs()"><i class="ti ${r.ic}" style="font-size:14px;color:var(--bm);flex-shrink:0;margin-top:1px"></i><div style="flex:1"><div style="font-size:12px;font-weight:500;margin-bottom:1px">${hl(r.t,t)}</div><div style="font-size:11px;color:var(--t2)">${hl(r.s,t)}</div></div></div>`).join('');}
 function cs(){document.getElementById('gs').value='';document.getElementById('srw').classList.remove('v');document.getElementById('gsc').classList.remove('v');}
-function op2(pid){cs();openCards[pid]=true;const v=document.querySelector('.view.a').id;if(v==='v-spl'){ntid('n-projects');document.querySelectorAll('#v-spl .sb-nav-btn').forEach((b,i)=>b.classList.toggle('a',i===1));rp();}else{const pm=P.find(p=>p.id===pid)?.pm;if(pm){activePMTab=pm;rtv();}else rtv();}}
+function op2(pid){cs();openCards[pid]=true;const v=document.querySelector('.view.a').id;if(v==='v-spl'){ntid('n-projects');document.querySelectorAll('#v-spl .sb-btn').forEach((b,i)=>b.classList.toggle('a',i===1));rp();}else{const pm=P.find(p=>p.id===pid)?.pm;if(pm){activePM=pm;rtv();}else rtv();}}
 
-function ntid(id){document.querySelectorAll('#v-spl .tab').forEach(t=>t.classList.remove('a'));document.querySelectorAll('#v-spl .sb-nav-btn').forEach(b=>b.classList.remove('a'));document.getElementById(id).classList.add('a');const m={'n-dashboard':0,'n-projects':1,'n-postreview':2,'n-standards':3,'n-settings':4};const btns=document.querySelectorAll('#v-spl .sb-nav-btn');if(btns[m[id]])btns[m[id]].classList.add('a');}
-function nt(id,btn){document.querySelectorAll('#v-spl .tab').forEach(t=>t.classList.remove('a'));document.querySelectorAll('#v-spl .sb-nav-btn').forEach(b=>b.classList.remove('a'));document.getElementById('n-'+id).classList.add('a');btn.classList.add('a');if(id==='dashboard')rdb();}
-function sv(v,btn){document.querySelectorAll('.view').forEach(x=>{x.classList.remove('a');x.style.display='none';});document.querySelectorAll('.hd-view-btn').forEach(b=>b.classList.remove('a'));document.getElementById('v-'+v).classList.add('a');document.getElementById('v-'+v).style.display='flex';btn.classList.add('a');}
-function svid(v){document.querySelectorAll('.view').forEach(x=>{x.classList.remove('a');x.style.display='none';});document.querySelectorAll('.hd-view-btn').forEach(b=>b.classList.remove('a'));document.getElementById('v-'+v).classList.add('a');document.getElementById('v-'+v).style.display='flex';document.querySelectorAll('.hd-view-btn')[v==='spl'?0:1].classList.add('a');}
+function ntid(id){document.querySelectorAll('#v-spl .tab').forEach(t=>t.classList.remove('a'));document.querySelectorAll('#v-spl .sb-btn').forEach(b=>b.classList.remove('a'));document.getElementById(id).classList.add('a');const m={'n-dashboard':0,'n-projects':1,'n-postreview':2,'n-standards':3,'n-settings':4};const btns=document.querySelectorAll('#v-spl .sb-btn');if(btns[m[id]])btns[m[id]].classList.add('a');}
+function nt(id,btn){document.querySelectorAll('#v-spl .tab').forEach(t=>t.classList.remove('a'));document.querySelectorAll('#v-spl .sb-btn').forEach(b=>b.classList.remove('a'));document.getElementById('n-'+id).classList.add('a');btn.classList.add('a');if(id==='dashboard')rdb();}
+function sv(v,btn){document.querySelectorAll('.view').forEach(x=>{x.classList.remove('a');x.style.display='none';});document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('a'));document.getElementById('v-'+v).classList.add('a');document.getElementById('v-'+v).style.display='flex';btn.classList.add('a');}
+function svid(v){document.querySelectorAll('.view').forEach(x=>{x.classList.remove('a');x.style.display='none';});document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('a'));document.getElementById('v-'+v).classList.add('a');document.getElementById('v-'+v).style.display='flex';document.querySelectorAll('.view-btn')[v==='spl'?0:1].classList.add('a');}
 function ra(){rss();rdb();rp();rpr();rstd();rset();rtv();}
 loadData();
 </script>
