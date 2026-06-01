@@ -360,15 +360,15 @@ const MGR='Mary';
 let P=[],CL={},PR={},PML=[],AF=null,prPid='',showAF=false,showPMAF=false,openCards={},clSec={},activePM='';
 const configured=SCRIPT_URL!=='YOUR_SCRIPT_URL_HERE'&&SCRIPT_URL.length>10;
 
-async function api(p,timeout=10000){
+async function api(p){
   if(!configured)return null;
   const url=SCRIPT_URL+'?'+Object.entries(p).map(([k,v])=>k+'='+encodeURIComponent(v)).join('&');
   try{
-    const ctrl=new AbortController();
-    const tid=setTimeout(()=>ctrl.abort(),timeout);
-    const r=await fetch(url,{signal:ctrl.signal});
-    clearTimeout(tid);
-    return await r.json();
+    const r=await fetch(url,{redirect:'follow',cache:'no-cache'});
+    const txt=await r.text();
+    // Apps Script sometimes returns HTML on error
+    if(txt.trim().startsWith('<'))return null;
+    return JSON.parse(txt);
   }catch(e){return null;}
 }
 function syncInd(msg,type){const el=document.getElementById('sync');el.textContent=msg;el.className='show '+(type||'');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2500);}
@@ -437,7 +437,7 @@ async function loadData(){
     const ls=document.getElementById('load-sub');
     if(sb)sb.style.display='block';
     if(ls)ls.textContent='Taking longer than usual...';
-  },5000);
+  },8000);
   const data=await api({action:'getAll'});
   clearTimeout(skipTimer);
   if(!data||data.error){
@@ -455,7 +455,7 @@ async function loadData(){
 }
 
 async function bgRefresh(){
-  const data=await api({action:'getAll'},12000);
+  const data=await api({action:'getAll'});
   if(!data||data.error){syncInd('⚠ Sheet unreachable — showing cached data','err');return;}
   applyData(data);
   saveCache(data);
