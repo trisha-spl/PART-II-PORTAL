@@ -3,523 +3,402 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ILSFA Part II Portal · Liaison Department</title>
+<title>ILSFA Part II Portal</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --nv:#0F172A;--nm:#1E293B;--nl:#334155;
-  --gd:#D4AF37;--gl:#E8C84A;--gp:rgba(212,175,55,.12);
-  --bb:#7ec8e3;--bl:#b8e4f2;--bp:rgba(126,200,227,.08);--bm:#4a9abe;
-  --tx:#111827;--t2:#374151;--t3:#9CA3AF;
+  --gd:#D4AF37;--gl:#E8C84A;
+  --tx:#111827;--t2:#4B5563;--t3:#9CA3AF;
   --bd:rgba(15,23,42,.08);--b2:rgba(15,23,42,.14);
   --cd:#FFFFFF;--sf:#F8FAFC;--s2:#F1F5F9;
   --ok:#F0FDF4;--ot:#166534;--ob:#16a34a;
   --wn:#FFFBEB;--wt:#92400E;--wb:#D97706;
   --er:#FEF2F2;--et:#991B1B;--eb:#DC2626;
-  --r:10px;--rl:14px;--sh:0 1px 3px rgba(15,23,42,.06),0 4px 16px rgba(15,23,42,.04);
-  --hh:66px;--sb:220px;--max:1280px;
-  --glass-bg:rgba(255,255,255,0.7);
-  --glass-border:rgba(255,255,255,0.5);
-  --glass-shadow:0 8px 32px rgba(15,23,42,.08),0 2px 8px rgba(15,23,42,.04);
-  --gold-glow:0 0 20px rgba(212,175,55,.15)
+  --bm:#4a9abe;
+  --r:10px;--rl:16px;
+  --glass:rgba(255,255,255,.8);--gborder:rgba(255,255,255,.6);
+  --gshadow:0 2px 20px rgba(15,23,42,.07),0 1px 4px rgba(15,23,42,.04);
+  --hh:68px;--sb:232px;--max:1300px
 }
-@media(prefers-color-scheme:dark){:root{
-  --gd:#E8C84A;--gl:#F0D060;--gp:rgba(232,200,74,.12);
-  --bb:#5ab4d4;--bl:#89c8e0;--bp:rgba(126,200,227,.08);--bm:#3a8aab;
-  --tx:#F1F5F9;--t2:#CBD5E1;--t3:#64748B;
-  --bd:rgba(255,255,255,.08);--b2:rgba(255,255,255,.12);
-  --cd:#1E293B;--sf:#0F172A;--s2:#162032;
-  --ok:#052e16;--ot:#4ade80;--ob:#16a34a;
-  --wn:#2d1b00;--wt:#fbbf24;--wb:#D97706;
-  --er:#2d0a0a;--et:#f87171;--eb:#DC2626;
-  --glass-bg:rgba(30,41,59,0.7);
-  --glass-border:rgba(255,255,255,0.08);
-  --glass-shadow:0 8px 32px rgba(0,0,0,.3),0 2px 8px rgba(0,0,0,.2)
-}}
-html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--sf);color:var(--tx);font-size:14px;line-height:1.5}
-body{background-image:radial-gradient(ellipse at 20% 0%,rgba(212,175,55,.04) 0%,transparent 60%),radial-gradient(ellipse at 80% 100%,rgba(15,23,42,.03) 0%,transparent 60%)}
+html,body{height:100%;font-family:"Inter",sans-serif;background:var(--sf);color:var(--tx);font-size:15.5px;line-height:1.7;-webkit-font-smoothing:antialiased}
+body{background-image:radial-gradient(ellipse at 15% 0%,rgba(212,175,55,.05) 0%,transparent 55%)}
 
-/* ── STICKY HEADER ── */
-.top-header{
-  position:sticky;top:0;z-index:200;
-  background:rgba(15,23,42,0.88);
-  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border-bottom:1px solid rgba(212,175,55,.18);
-  box-shadow:0 1px 0 rgba(212,175,55,.1),0 4px 24px rgba(0,0,0,.25);
-}
-@media(prefers-color-scheme:dark){.top-header{background:rgba(10,15,28,0.92)}}
-.top-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gd),rgba(212,175,55,.3),transparent);pointer-events:none}
-.header-inner{max-width:var(--max);margin:0 auto;padding:0 24px;height:var(--hh);display:flex;align-items:center;gap:16px}
-.logo-block{flex-shrink:0}
-.logo-dept{font-size:10px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--gd);margin-bottom:2px;opacity:.9}
-.logo-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;color:#fff;letter-spacing:.03em;line-height:1.1;text-shadow:0 0 30px rgba(212,175,55,.2)}
-.logo-title span{color:var(--bb)}
-.header-divider{width:1px;height:30px;background:rgba(255,255,255,.15);flex-shrink:0}
-.header-search-wrap{flex:1;max-width:420px;position:relative}
-.header-search{width:100%;padding:8px 14px 8px 36px;border-radius:var(--rl);border:1px solid rgba(212,175,55,.15);background:rgba(255,255,255,.06);color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:all .2s}
-.header-search:focus{border-color:rgba(212,175,55,.4);background:rgba(255,255,255,.1);box-shadow:0 0 0 3px rgba(212,175,55,.08),var(--gold-glow)}
-.header-search::placeholder{color:rgba(255,255,255,.35)}
-.header-search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:15px;color:rgba(255,255,255,.4);pointer-events:none}
-.header-search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(255,255,255,.4);font-size:14px;padding:3px;display:none}
-.header-search-clear.v{display:block}
-.header-right{display:flex;align-items:center;gap:8px;margin-left:auto}
-.hd-stat{text-align:center;padding:0 10px}
-.hd-stat-n{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:#fff;line-height:1}
-.hd-stat-l{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;margin-top:1px}
-.view-btn{font-size:12px;font-weight:500;padding:6px 14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);cursor:pointer;color:rgba(255,255,255,.6);border-radius:var(--r);display:flex;align-items:center;gap:5px;transition:all .2s;font-family:'DM Sans',sans-serif}
-.view-btn.a{background:rgba(212,175,55,.14);border-color:rgba(212,175,55,.45);color:var(--gd);box-shadow:var(--gold-glow)}
-.view-btn:hover:not(.a){background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2)}
-.refresh-btn{font-size:11px;color:rgba(255,255,255,.35);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:4px;padding:6px 8px;border-radius:var(--r);transition:all .2s}
-.refresh-btn:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)}
+.top-header{position:sticky;top:0;z-index:200;background:rgba(15,23,42,.93);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(212,175,55,.15);box-shadow:0 2px 24px rgba(0,0,0,.22)}
+.top-header::after{content:"";position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.55),transparent);pointer-events:none}
+.hdr{max-width:var(--max);margin:0 auto;padding:0 28px;height:var(--hh);display:flex;align-items:center;gap:20px}
+.logo-d{font-size:10px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--gd);margin-bottom:3px;opacity:.85}
+.logo-t{font-family:"Cormorant Garamond",serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:.03em;line-height:1.1}
+.logo-t span{color:rgba(255,255,255,.3);margin:0 6px}
+.hdiv{width:1px;height:32px;background:rgba(255,255,255,.1);flex-shrink:0}
+.hsrch{flex:1;max-width:420px;position:relative}
+.hsrch input{width:100%;padding:10px 16px 10px 40px;border-radius:var(--rl);border:1px solid rgba(212,175,55,.12);background:rgba(255,255,255,.07);color:#fff;font-size:14px;font-family:"Inter",sans-serif;outline:none;transition:all .2s}
+.hsrch input:focus{border-color:rgba(212,175,55,.38);background:rgba(255,255,255,.11)}
+.hsrch input::placeholder{color:rgba(255,255,255,.25)}
+.hsrch-ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;color:rgba(255,255,255,.3);pointer-events:none}
+.hsrch-cl{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(255,255,255,.3);font-size:14px;padding:3px;display:none}
+.hsrch-cl.v{display:block}
+.srw{position:absolute;top:calc(100% + 8px);left:0;right:0;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);border:1px solid rgba(212,175,55,.12);border-radius:var(--rl);box-shadow:0 16px 48px rgba(15,23,42,.14);overflow:hidden;display:none;z-index:300}
+.srw.v{display:block}
+.sri{display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;border-bottom:.5px solid var(--bd)}
+.sri:last-child{border-bottom:none}
+.sri:hover{background:var(--sf)}
+.hst{text-align:center;padding:0 10px;cursor:pointer}
+.hst-n{font-family:"Cormorant Garamond",serif;font-size:20px;font-weight:600;color:#fff;line-height:1}
+.hst-l{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+.hr{display:flex;align-items:center;gap:10px;margin-left:auto}
+.vbtn{font-size:13px;font-weight:500;padding:8px 16px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);cursor:pointer;color:rgba(255,255,255,.55);border-radius:var(--r);display:flex;align-items:center;gap:6px;transition:all .2s;font-family:"Inter",sans-serif}
+.vbtn.a{background:rgba(212,175,55,.14);border-color:rgba(212,175,55,.42);color:var(--gd)}
+.vbtn:hover:not(.a){background:rgba(255,255,255,.1);color:#fff}
+.rfbtn{font-size:11px;color:rgba(255,255,255,.28);cursor:pointer;background:none;border:none;padding:8px;border-radius:var(--r);transition:all .2s}
+.rfbtn:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)}
 
-/* Search results dropdown */
-.sr-dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:rgba(255,255,255,.95);border:1px solid rgba(212,175,55,.15);border-radius:var(--rl);box-shadow:0 16px 48px rgba(15,23,42,.15),0 4px 16px rgba(15,23,42,.08);overflow:hidden;display:none;z-index:300;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
-.sr-dropdown.v{display:block}
-.sr-item{display:flex;align-items:flex-start;gap:10px;padding:9px 14px;cursor:pointer;border-bottom:0.5px solid var(--bd)}
-.sr-item:last-child{border-bottom:none}
-.sr-item:hover{background:var(--sf)}
-
-/* ── PAGE WRAPPER ── */
-.page-wrap{max-width:var(--max);margin:0 auto;padding:0 24px;display:flex;gap:0;min-height:calc(100vh - var(--hh))}
-
-/* ── SIDEBAR ── */
-.sidebar{width:var(--sb);flex-shrink:0;padding:20px 0 40px;border-right:1px solid rgba(212,175,55,.1);position:sticky;top:var(--hh);height:calc(100vh - var(--hh));overflow-y:auto;padding-right:8px;background:rgba(15,23,42,.02)}
-.sb-label{font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin:16px 0 6px 6px}
-.sb-label:first-child{margin-top:0}
-.sb-btn{width:100%;text-align:left;font-size:13px;padding:8px 10px;border:none;background:none;cursor:pointer;color:var(--t2);border-radius:var(--r);display:flex;align-items:center;gap:8px;transition:all .15s;font-family:'DM Sans',sans-serif;margin-bottom:2px}
-.sb-btn:hover:not(.a){background:rgba(212,175,55,.06);color:var(--nv)}
-.sb-btn.a{background:linear-gradient(135deg,rgba(212,175,55,.12),rgba(212,175,55,.06));color:var(--nv);font-weight:600;box-shadow:none;border-left:3px solid var(--gd);border-radius:0 var(--r) var(--r) 0;padding-left:9px}
-.sb-btn i{font-size:15px;flex-shrink:0;opacity:.6}
-.sb-btn.a i{opacity:1;color:var(--gd)}
-.sb-divider{height:0.5px;background:var(--bd);margin:10px 6px}
-.sb-stat{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:var(--r);cursor:pointer;transition:background .12s;margin-bottom:1px}
-.sb-stat:hover{background:rgba(212,175,55,.06)}
-.sb-stat-lbl{font-size:12px;color:var(--t2);display:flex;align-items:center;gap:6px}
-.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.sb-stat-val{font-size:12px;font-weight:600}
-.sb-pm-btn{width:100%;text-align:left;font-size:12px;padding:7px 10px;border:none;background:none;cursor:pointer;color:var(--t2);border-radius:var(--r);display:flex;align-items:center;gap:8px;transition:all .15s;font-family:'DM Sans',sans-serif;margin-bottom:2px}
-.sb-pm-btn:hover:not(.a){background:rgba(212,175,55,.06);color:var(--nv)}
-.sb-pm-btn.a{background:linear-gradient(135deg,rgba(212,175,55,.12),rgba(212,175,55,.06));color:var(--nv);font-weight:600;border-left:3px solid var(--gd);border-radius:0 var(--r) var(--r) 0;padding-left:9px}
-.pm-av{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--nv),var(--nm));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--gd);flex-shrink:0;border:1px solid rgba(212,175,55,.2)}
-.mgr{font-size:9px;padding:1px 5px;border-radius:10px;background:rgba(201,168,76,.22);color:var(--gd);font-weight:500;letter-spacing:.04em;text-transform:uppercase;margin-left:2px}
-
-/* ── MAIN CONTENT ── */
-.main{flex:1;padding:20px 0 40px 24px;min-width:0}
-
-/* Tabs/Views */
+.pw{max-width:var(--max);margin:0 auto;padding:0 28px;display:flex;min-height:calc(100vh - var(--hh))}
+.sb{width:var(--sb);flex-shrink:0;padding:22px 10px 40px 0;border-right:1px solid rgba(212,175,55,.08);position:sticky;top:var(--hh);height:calc(100vh - var(--hh));overflow-y:auto}
+.sb-lbl{font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;margin:18px 0 7px 10px}
+.sb-lbl:first-child{margin-top:0}
+.nb{width:100%;text-align:left;font-size:14px;padding:10px 12px;border:none;background:none;cursor:pointer;color:var(--t2);border-radius:var(--r);display:flex;align-items:center;gap:10px;transition:all .15s;font-family:"Inter",sans-serif;margin-bottom:3px;font-weight:400}
+.nb:hover:not(.a){background:rgba(212,175,55,.05);color:var(--nv)}
+.nb.a{background:rgba(212,175,55,.09);color:var(--nv);font-weight:600;border-left:3px solid var(--gd);border-radius:0 var(--r) var(--r) 0;padding-left:11px}
+.nb i{font-size:16px;flex-shrink:0;opacity:.5}
+.nb.a i{opacity:1;color:var(--gd)}
+.sbdiv{height:.5px;background:rgba(212,175,55,.1);margin:10px 10px}
+.sb-st{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:var(--r);cursor:pointer;transition:background .12s;margin-bottom:2px}
+.sb-st:hover{background:rgba(212,175,55,.05)}
+.sb-st-l{font-size:13px;color:var(--t2);display:flex;align-items:center;gap:8px}
+.sb-st-v{font-size:13px;font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sb-pm{width:100%;text-align:left;font-size:14px;padding:9px 12px;border:none;background:none;cursor:pointer;color:var(--t2);border-radius:var(--r);display:flex;align-items:center;gap:9px;transition:all .15s;font-family:"Inter",sans-serif;margin-bottom:3px}
+.sb-pm:hover:not(.a){background:rgba(212,175,55,.05);color:var(--nv)}
+.sb-pm.a{background:rgba(212,175,55,.09);color:var(--nv);font-weight:600;border-left:3px solid var(--gd);border-radius:0 var(--r) var(--r) 0;padding-left:11px}
+.pmav{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--nv),var(--nm));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--gd);flex-shrink:0;border:1px solid rgba(212,175,55,.22)}
+.mgr{font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(212,175,55,.15);color:var(--gd);font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-left:3px}
+.main{flex:1;padding:22px 0 40px 26px;min-width:0}
 .tab{display:none}.tab.a{display:block}
 .view{display:none}.view.a{display:block}
 
-/* ── CARDS ── */
-.card{border:1px solid var(--glass-border);border-radius:var(--rl);background:var(--glass-bg);margin-bottom:10px;box-shadow:var(--glass-shadow);overflow:hidden;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:box-shadow .2s,transform .15s}
-.card:hover{box-shadow:0 12px 40px rgba(15,23,42,.1),0 2px 8px rgba(15,23,42,.06);transform:translateY(-1px)}
-.card-hd{display:flex;align-items:center;gap:8px;padding:11px 14px;background:rgba(248,250,252,.6);cursor:pointer;position:relative}
-.card-hd::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--gd),rgba(212,175,55,.3))}
-.card-hd:hover{background:rgba(212,175,55,.04)}
-.card-bd{padding:14px;border-top:1px solid rgba(15,23,42,.06)}
+.card{border:1px solid var(--gborder);border-radius:var(--rl);background:var(--glass);margin-bottom:12px;box-shadow:var(--gshadow);overflow:hidden;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:box-shadow .2s,transform .15s}
+.card:hover{box-shadow:0 8px 32px rgba(15,23,42,.1);transform:translateY(-1px)}
+.card-hd{display:flex;align-items:center;gap:9px;padding:14px 17px;background:rgba(248,250,252,.65);cursor:pointer;position:relative}
+.card-hd::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--gd),rgba(212,175,55,.22))}
+.card-hd:hover{background:rgba(212,175,55,.03)}
+.card-bd{padding:16px;border-top:1px solid rgba(15,23,42,.05)}
 
-/* Badges */
-.badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;white-space:nowrap;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0}
-.bo{background:var(--ok);color:var(--ot)}.br{background:var(--er);color:var(--et)}.bw{background:var(--wn);color:var(--wt)}.bd2{background:rgba(212,175,55,.1);color:#7a5500}.bp2{background:#eeedfe;color:#3c3489}
-@media(prefers-color-scheme:dark){.bd2{background:rgba(212,175,55,.15);color:var(--gd)}.bp2{background:rgba(127,119,221,.15);color:#afa9ec}}
-.bn{background:var(--bp);color:var(--nm)}@media(prefers-color-scheme:dark){.bn{background:rgba(126,200,227,.12);color:var(--bl)}}
+.badge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500;white-space:nowrap;letter-spacing:.03em;text-transform:uppercase;flex-shrink:0}
+.bo{background:var(--ok);color:var(--ot)}.br{background:var(--er);color:var(--et)}.bw{background:var(--wn);color:var(--wt)}
+.bd2{background:rgba(212,175,55,.1);color:#7a5500}.bp2{background:#eeedfe;color:#3c3489}
+.bn{background:rgba(212,175,55,.08);color:var(--nv)}
 
-/* Selects */
-.sel{font-size:12px;padding:6px 8px;border-radius:var(--r);border:0.5px solid var(--b2);background:var(--cd);color:var(--tx);width:100%;font-family:'DM Sans',sans-serif;cursor:pointer}
-.sel:focus{outline:none;border-color:var(--bb)}
-.sel.sa{background:var(--ok);color:var(--ot);border-color:var(--ob)}.sel.sc{background:var(--er);color:var(--et);border-color:var(--eb)}.sel.si{background:var(--bp);color:var(--bm);border-color:rgba(126,200,227,.4)}.sel.sw{background:var(--wn);color:var(--wt);border-color:var(--wb)}.sel.ca{background:var(--ok);color:var(--ot);border-color:var(--ob)}.sel.cp{background:var(--er);color:var(--et);border-color:var(--eb)}.sel.cpa{background:var(--wn);color:var(--wt);border-color:var(--wb)}.sel.cn{background:var(--s2);color:var(--t2)}
+.sel{font-size:13px;padding:8px 10px;border-radius:var(--r);border:.5px solid var(--b2);background:var(--cd);color:var(--tx);width:100%;font-family:"Inter",sans-serif;cursor:pointer}
+.sel:focus{outline:none;border-color:var(--gd)}
+.sel.sa{background:var(--ok);color:var(--ot);border-color:var(--ob)}.sel.sc{background:var(--er);color:var(--et);border-color:var(--eb)}
+.sel.si{background:rgba(212,175,55,.08);color:#7a5500;border-color:rgba(212,175,55,.3)}.sel.sw{background:var(--wn);color:var(--wt);border-color:var(--wb)}
+.sel.ca{background:var(--ok);color:var(--ot);border-color:var(--ob)}.sel.cp{background:var(--er);color:var(--et);border-color:var(--eb)}
+.sel.cpa{background:var(--wn);color:var(--wt);border-color:var(--wb)}.sel.cn{background:var(--s2);color:var(--t2)}
 
-/* Misc */
-.hint{font-size:12px;color:var(--t2);padding:9px 12px;background:rgba(248,250,252,.8);border:1px solid rgba(15,23,42,.06);border-radius:var(--r);margin-bottom:10px;line-height:1.7}
-.fb{display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(212,175,55,.05);border:1.5px solid rgba(212,175,55,.25);border-radius:var(--rl);margin-bottom:10px;backdrop-filter:blur(8px)}
-.fb button{font-size:11px;padding:4px 10px;border-radius:var(--r);border:1px solid rgba(212,175,55,.3);background:transparent;cursor:pointer;color:var(--nv);font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:4px;font-weight:500}
+.hint{font-size:13.5px;color:var(--t2);padding:12px 15px;background:rgba(248,250,252,.88);border:1px solid rgba(15,23,42,.06);border-radius:var(--r);margin-bottom:12px;line-height:1.75}
+.fb{display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(212,175,55,.04);border:1.5px solid rgba(212,175,55,.2);border-radius:var(--rl);margin-bottom:12px}
+.fb button{font-size:12.5px;padding:6px 13px;border-radius:var(--r);border:1px solid rgba(212,175,55,.25);background:transparent;cursor:pointer;color:var(--nv);font-family:"Inter",sans-serif;display:flex;align-items:center;gap:5px;font-weight:500}
 .fb button:hover{background:rgba(212,175,55,.1)}
-.sg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.sf3{display:flex;flex-direction:column;gap:4px}
-.sf3 label{font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
-.ni{width:100%;font-size:12px;padding:7px 9px;border-radius:var(--r);border:0.5px solid var(--b2);background:var(--cd);color:var(--tx);resize:vertical;min-height:48px;font-family:'DM Sans',sans-serif}
-.ni:focus{outline:none;border-color:var(--bb)}
-.snb{font-size:11px;padding:4px 11px;border-radius:var(--r);border:1px solid rgba(212,175,55,.3);background:rgba(212,175,55,.05);cursor:pointer;color:var(--nv);font-family:'DM Sans',sans-serif;margin-top:4px;font-weight:500}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.sf2{display:flex;flex-direction:column;gap:5px}
+.sf2 label{font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.09em}
+.ni{width:100%;font-size:13.5px;padding:9px 11px;border-radius:var(--r);border:.5px solid var(--b2);background:var(--cd);color:var(--tx);resize:vertical;min-height:52px;font-family:"Inter",sans-serif;line-height:1.65}
+.ni:focus{outline:none;border-color:var(--gd)}
+.snb{font-size:13px;padding:7px 14px;border-radius:var(--r);border:1px solid rgba(212,175,55,.25);background:rgba(212,175,55,.04);cursor:pointer;color:var(--nv);font-family:"Inter",sans-serif;margin-top:6px;font-weight:500}
 .snb:hover{background:rgba(212,175,55,.1)}
-.prb{font-size:12px;padding:7px 14px;border-radius:var(--r);border:1px solid rgba(212,175,55,.3);background:rgba(212,175,55,.05);cursor:pointer;color:var(--nv);display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-weight:500;margin-top:8px}
+.prb{font-size:13px;padding:8px 16px;border-radius:var(--r);border:1px solid rgba(212,175,55,.25);background:rgba(212,175,55,.04);cursor:pointer;color:var(--nv);display:inline-flex;align-items:center;gap:7px;font-family:"Inter",sans-serif;font-weight:500;margin-top:10px}
 .prb:hover{background:rgba(212,175,55,.1)}
-.tps{background:rgba(248,250,252,.7);border-radius:var(--r);padding:7px 10px;margin-bottom:10px;display:flex;align-items:center;gap:10px;border:1px solid rgba(212,175,55,.1)}
-.tpb{flex:1;height:4px;background:var(--bd);border-radius:3px;overflow:hidden}
-.tpf{height:100%;background:linear-gradient(90deg,var(--gd),var(--gl));border-radius:3px;transition:width .4s;box-shadow:0 0 6px rgba(212,175,55,.25)}
-.btn{font-size:12px;padding:8px 16px;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--gd),var(--gl));color:#1a1000;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;box-shadow:0 2px 12px rgba(212,175,55,.25);letter-spacing:.02em}
-.btn2{font-size:12px;padding:8px 12px;border-radius:var(--r);border:0.5px solid var(--b2);background:transparent;cursor:pointer;color:var(--t2);font-family:'DM Sans',sans-serif}
-.ab{font-size:12px;padding:7px 14px;border-radius:var(--r);border:1px solid rgba(212,175,55,.3);background:rgba(212,175,55,.05);cursor:pointer;color:var(--nv);display:flex;align-items:center;gap:6px;font-weight:500;margin-bottom:12px;font-family:'DM Sans',sans-serif}
-.ab:hover{background:rgba(212,175,55,.1);border-color:rgba(212,175,55,.5)}
-.af2{border:1px solid rgba(212,175,55,.2);border-radius:var(--rl);background:rgba(212,175,55,.03);padding:14px;margin-bottom:12px}
-@media(prefers-color-scheme:dark){.af2{background:rgba(126,200,227,.07)}}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.fl{display:flex;flex-direction:column;gap:4px}
-.fl label{font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
-.fl input,.fl select,.fl textarea{font-size:13px;padding:7px 10px;border-radius:var(--r);border:0.5px solid var(--b2);background:var(--cd);color:var(--tx);width:100%;font-family:'DM Sans',sans-serif}
-.fl textarea{resize:vertical;min-height:50px}
-.db2{font-size:11px;padding:3px 7px;border-radius:var(--r);border:0.5px solid var(--eb);background:transparent;cursor:pointer;color:var(--et);display:flex;align-items:center;gap:3px;flex-shrink:0}
+.tps{background:rgba(248,250,252,.78);border-radius:var(--r);padding:10px 13px;margin-bottom:12px;display:flex;align-items:center;gap:12px;border:1px solid rgba(212,175,55,.08)}
+.tpb{flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden}
+.tpf{height:100%;background:linear-gradient(90deg,var(--gd),var(--gl));border-radius:3px;transition:width .4s}
+.btn{font-size:13.5px;padding:10px 20px;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--gd),var(--gl));color:#1a1000;cursor:pointer;font-family:"Inter",sans-serif;font-weight:600;letter-spacing:.02em}
+.btn2{font-size:13px;padding:10px 14px;border-radius:var(--r);border:.5px solid var(--b2);background:transparent;cursor:pointer;color:var(--t2);font-family:"Inter",sans-serif}
+.ab{font-size:13.5px;padding:10px 17px;border-radius:var(--r);border:1px solid rgba(212,175,55,.25);background:rgba(212,175,55,.04);cursor:pointer;color:var(--nv);display:flex;align-items:center;gap:8px;font-weight:500;margin-bottom:14px;font-family:"Inter",sans-serif}
+.ab:hover{background:rgba(212,175,55,.1)}
+.af2{border:1px solid rgba(212,175,55,.18);border-radius:var(--rl);background:rgba(212,175,55,.03);padding:18px;margin-bottom:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:12px}
+.fl{display:flex;flex-direction:column;gap:5px}
+.fl label{font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.09em}
+.fl input,.fl select,.fl textarea{font-size:13.5px;padding:9px 12px;border-radius:var(--r);border:.5px solid var(--b2);background:var(--cd);color:var(--tx);width:100%;font-family:"Inter",sans-serif;line-height:1.55}
+.fl textarea{resize:vertical;min-height:56px}
+.db2{font-size:12px;padding:4px 9px;border-radius:var(--r);border:.5px solid var(--eb);background:transparent;cursor:pointer;color:var(--et);display:flex;align-items:center;gap:3px;flex-shrink:0}
 .db2:hover{background:var(--er)}
 
-/* Checklist */
-.cls-tabs{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
-.ct2{font-size:11px;font-weight:500;padding:6px 10px;border-radius:var(--r);border:0.5px solid var(--bd);background:var(--sf);cursor:pointer;color:var(--t2);display:flex;align-items:center;gap:5px;white-space:nowrap;font-family:'DM Sans',sans-serif;transition:all .15s}
-.ct2:hover{border-color:var(--bb);background:var(--bp)}
-.ct2.a{background:linear-gradient(135deg,var(--nv),var(--nm));color:var(--gd);border-color:rgba(212,175,55,.2);box-shadow:0 2px 8px rgba(15,23,42,.15)}
-.ct2 .tp{font-size:10px;padding:1px 5px;border-radius:10px;background:rgba(255,255,255,.15);margin-left:2px}
-.ct2:not(.a) .tp{background:var(--s2);color:var(--t3)}
-.ci{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-radius:var(--r);margin-bottom:3px;cursor:pointer;border:0.5px solid transparent;transition:all .15s}
-.ci:hover{background:var(--bp);border-color:rgba(126,200,227,.3)}
-.ci.dn{opacity:.7}.ci.dn .ctit{text-decoration:line-through}
-.ccb{width:17px;height:17px;border:1.5px solid var(--b2);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center}
+.cls-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.ct{font-size:12.5px;font-weight:500;padding:8px 13px;border-radius:var(--r);border:.5px solid var(--bd);background:var(--sf);cursor:pointer;color:var(--t2);display:flex;align-items:center;gap:6px;white-space:nowrap;font-family:"Inter",sans-serif;transition:all .15s}
+.ct:hover{border-color:rgba(212,175,55,.3);background:rgba(212,175,55,.04)}
+.ct.a{background:linear-gradient(135deg,var(--nv),var(--nm));color:var(--gd);border-color:transparent;font-weight:600}
+.ct .tp{font-size:11px;padding:1px 6px;border-radius:10px;background:rgba(255,255,255,.15);margin-left:2px}
+.ct:not(.a) .tp{background:var(--s2);color:var(--t3)}
+.ci{display:flex;align-items:flex-start;gap:12px;padding:11px 12px;border-radius:var(--r);margin-bottom:4px;cursor:pointer;border:.5px solid transparent;transition:all .15s}
+.ci:hover{background:rgba(212,175,55,.04);border-color:rgba(212,175,55,.18)}
+.ci.dn{opacity:.62}.ci.dn .ctit{text-decoration:line-through}
+.ccb{width:19px;height:19px;border:1.5px solid var(--b2);border-radius:5px;flex-shrink:0;margin-top:3px;display:flex;align-items:center;justify-content:center}
 .ci.dn .ccb{background:var(--ok);border-color:var(--ob)}
-.cnum{font-size:10px;font-weight:500;color:var(--bm);min-width:22px;margin-top:3px;flex-shrink:0}
+.cnum{font-size:11px;font-weight:600;color:var(--gd);min-width:24px;margin-top:4px;flex-shrink:0}
 .cbody{flex:1}
-.ctit{font-size:13px;font-weight:500;margin-bottom:2px}
-.cnote{font-size:12px;color:var(--t2);line-height:1.6;background:rgba(212,175,55,.04);border-radius:var(--r);padding:5px 8px;margin-top:3px;border-left:2px solid rgba(212,175,55,.4)}
-.cch{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
-.sch{font-size:11px;padding:3px 10px;border-radius:20px;border:0.5px solid var(--b2);cursor:pointer;font-weight:500;background:var(--sf);color:var(--t2);transition:all .15s;font-family:'DM Sans',sans-serif}
-.sch:hover{border-color:var(--bb);background:var(--bp)}
+.ctit{font-size:14.5px;font-weight:500;margin-bottom:4px;line-height:1.45}
+.cnote{font-size:13.5px;color:var(--t2);line-height:1.7;background:rgba(212,175,55,.04);border-radius:var(--r);padding:8px 11px;margin-top:5px;border-left:2px solid rgba(212,175,55,.3)}
+.cch{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
+.sch{font-size:12.5px;padding:5px 12px;border-radius:20px;border:.5px solid var(--b2);cursor:pointer;font-weight:500;background:var(--sf);color:var(--t2);transition:all .15s;font-family:"Inter",sans-serif}
 .sch.ns{background:var(--er);color:var(--et);border-color:var(--eb)}.sch.ip{background:var(--wn);color:var(--wt);border-color:var(--wb)}.sch.up{background:var(--ok);color:var(--ot);border-color:var(--ob)}
 
-/* Dashboard */
-.db-row{display:flex;align-items:center;gap:10px;padding:7px 8px;border-bottom:0.5px solid var(--bd);cursor:pointer;border-radius:var(--r);margin:1px 0;transition:background .12s,transform .1s}
-.db-row:last-child{border-bottom:none}
-.db-row:not(.z):hover{background:rgba(212,175,55,.05);transform:translateX(3px)}
-.db-row:not(.z):hover .db-arr{opacity:1}
-.db-row.z{cursor:default}
-.drl{font-size:12px;font-weight:500;min-width:155px;flex-shrink:0;display:flex;align-items:center;gap:7px}
-.drb{flex:1;height:7px;background:var(--s2);border-radius:4px;overflow:hidden}
-.drf{height:100%;border-radius:4px;transition:width .5s}
-.drc{font-size:12px;font-weight:600;min-width:26px;text-align:right;flex-shrink:0}
-.drr{font-size:11px;color:var(--t3);min-width:65px;text-align:right;flex-shrink:0}
-.db-arr{font-size:12px;color:var(--bm);flex-shrink:0;opacity:0;transition:opacity .12s}
-.ds{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--rl);padding:14px;margin-bottom:12px;box-shadow:var(--glass-shadow);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.dt{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.d2c{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.dbs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
-.dbc{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--rl);padding:12px;text-align:center;box-shadow:var(--glass-shadow);position:relative;overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .15s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.dbc:hover{box-shadow:0 12px 40px rgba(15,23,42,.12),var(--gold-glow);transform:translateY(-2px)}
-.dbc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.dbc.g::before{background:linear-gradient(90deg,var(--gd),var(--gl))}.dbc.gr::before{background:linear-gradient(90deg,#2e8b35,#7ec882)}.dbc.b::before{background:linear-gradient(90deg,var(--bm),var(--bl))}.dbc.r::before{background:linear-gradient(90deg,#c93030,#f09090)}
-.dbn{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;line-height:1;margin-bottom:3px}
-.ts2{font-size:11px;color:var(--t3);text-align:right;margin-bottom:12px;font-style:italic}
-
-/* Post review */
+.dbrow{display:flex;align-items:center;gap:12px;padding:9px 10px;border-bottom:.5px solid var(--bd);cursor:pointer;border-radius:var(--r);margin:2px 0;transition:background .12s,transform .1s}
+.dbrow:last-child{border-bottom:none}
+.dbrow:not(.z):hover{background:rgba(212,175,55,.05);transform:translateX(4px)}
+.dbrow:not(.z):hover .darr{opacity:1}
+.dbrow.z{cursor:default}
+.dbrl{font-size:13.5px;font-weight:500;min-width:162px;flex-shrink:0;display:flex;align-items:center;gap:8px}
+.dbrb{flex:1;height:8px;background:var(--s2);border-radius:4px;overflow:hidden}
+.dbrf{height:100%;border-radius:4px;transition:width .5s}
+.dbrc{font-size:13.5px;font-weight:600;min-width:28px;text-align:right;flex-shrink:0}
+.dbrr{font-size:12.5px;color:var(--t3);min-width:70px;text-align:right;flex-shrink:0}
+.darr{font-size:13px;color:var(--gd);flex-shrink:0;opacity:0;transition:opacity .12s}
+.ds{background:var(--glass);border:1px solid var(--gborder);border-radius:var(--rl);padding:17px;margin-bottom:14px;box-shadow:var(--gshadow);backdrop-filter:blur(10px)}
+.dt{font-family:"Cormorant Garamond",serif;font-size:18px;font-weight:600;margin-bottom:13px;display:flex;align-items:center;gap:9px;letter-spacing:.01em}
+.d2c{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.dbs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.dbc{background:var(--glass);border:1px solid var(--gborder);border-radius:var(--rl);padding:15px;text-align:center;box-shadow:var(--gshadow);position:relative;overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .15s;backdrop-filter:blur(10px)}
+.dbc:hover{box-shadow:0 10px 36px rgba(15,23,42,.1);transform:translateY(-2px)}
+.dbc::before{content:"";position:absolute;top:0;left:0;right:0;height:3px}
+.dbc.g::before{background:linear-gradient(90deg,var(--gd),var(--gl))}.dbc.gr::before{background:linear-gradient(90deg,#2e8b35,#7ec882)}
+.dbc.b::before{background:linear-gradient(90deg,#4a9abe,#b8e4f2)}.dbc.r::before{background:linear-gradient(90deg,#c93030,#f09090)}
+.dbn{font-family:"Cormorant Garamond",serif;font-size:30px;font-weight:600;line-height:1;margin-bottom:4px}
+.ts{font-size:12px;color:var(--t3);text-align:right;margin-bottom:14px;font-style:italic}
 .pbar{height:2px;background:rgba(15,23,42,.06)}
-.pfil{height:100%;background:linear-gradient(90deg,var(--gd),var(--gl));transition:width .4s;box-shadow:0 0 8px rgba(212,175,55,.3)}
-.fi{display:flex;align-items:flex-start;gap:10px;padding:7px 8px;border-radius:var(--r);margin-bottom:2px;transition:background .15s}
-.fi:hover{background:var(--bp)}
-.fb2{font-size:11px;padding:3px 9px;border-radius:20px;border:0.5px solid var(--b2);background:transparent;cursor:pointer;color:var(--t2);font-family:'DM Sans',sans-serif;font-weight:500;transition:all .15s}
-.fb2.pass{background:rgba(212,175,55,.1);color:#7a5500;border-color:rgba(212,175,55,.4)}.fb2.fail{background:var(--er);color:var(--et);border-color:var(--eb)}
-.prsel{margin-bottom:12px}
-.prsel label{font-size:11px;font-weight:500;color:var(--t3);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em}
-.prsel select{font-size:13px;padding:8px 12px;border-radius:var(--r);border:0.5px solid var(--b2);background:var(--cd);color:var(--tx);width:100%;font-family:'DM Sans',sans-serif}
-.wf{display:flex;align-items:center;overflow-x:auto;padding-bottom:4px;margin-bottom:14px}
-.wb{padding:8px 10px;border-radius:var(--r);border:0.5px solid var(--bd);background:var(--sf);font-size:11px;font-weight:500;color:var(--t2);text-align:center;min-width:88px;line-height:1.4;flex-shrink:0}
-.wb.a{background:linear-gradient(135deg,var(--nv),var(--nm));color:var(--bl);border-color:transparent}.wb.d{background:var(--ok);color:var(--ot);border-color:var(--ob)}
-.wa{font-size:16px;color:var(--bm);padding:0 4px;flex-shrink:0;opacity:.5}
-.prsbox{border:1px solid var(--glass-border);border-radius:var(--rl);padding:14px;background:var(--glass-bg);margin-bottom:12px;box-shadow:var(--glass-shadow);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.prgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
-.prs2{background:var(--sf);border-radius:var(--r);padding:10px;text-align:center;border:0.5px solid var(--bd)}
-.prn{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600}
-
-/* Standards */
-.sc-card{margin-bottom:10px;border:1px solid var(--glass-border);border-radius:var(--rl);overflow:hidden;box-shadow:var(--glass-shadow);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.sc-hd{padding:10px 14px;background:rgba(248,250,252,.7);display:flex;align-items:center;gap:8px}
-.sc-bd{padding:10px 14px;background:rgba(255,255,255,.8)}
-.rw{display:flex;gap:12px;padding:7px 0;border-bottom:0.5px solid var(--bd)}
+.pfil{height:100%;background:linear-gradient(90deg,var(--gd),var(--gl));transition:width .4s}
+.fi{display:flex;align-items:flex-start;gap:12px;padding:10px 11px;border-radius:var(--r);margin-bottom:3px;transition:background .15s}
+.fi:hover{background:rgba(212,175,55,.04)}
+.fb2{font-size:12.5px;padding:5px 11px;border-radius:20px;border:.5px solid var(--b2);background:transparent;cursor:pointer;color:var(--t2);font-family:"Inter",sans-serif;font-weight:500}
+.fb2.pass{background:var(--ok);color:var(--ot);border-color:var(--ob)}.fb2.fail{background:var(--er);color:var(--et);border-color:var(--eb)}
+.prsel{margin-bottom:14px}
+.prsel label{font-size:12px;font-weight:600;color:var(--t3);display:block;margin-bottom:7px;text-transform:uppercase;letter-spacing:.09em}
+.prsel select{font-size:14px;padding:10px 13px;border-radius:var(--r);border:.5px solid var(--b2);background:var(--cd);color:var(--tx);width:100%;font-family:"Inter",sans-serif}
+.wf{display:flex;align-items:center;overflow-x:auto;padding-bottom:4px;margin-bottom:16px}
+.wb{padding:9px 13px;border-radius:var(--r);border:.5px solid var(--bd);background:var(--sf);font-size:12.5px;font-weight:500;color:var(--t2);text-align:center;min-width:96px;line-height:1.45;flex-shrink:0}
+.wb.a{background:linear-gradient(135deg,var(--nv),var(--nm));color:var(--gd);border-color:transparent}
+.wb.d{background:var(--ok);color:var(--ot);border-color:var(--ob)}
+.wa{font-size:18px;color:rgba(212,175,55,.38);padding:0 5px;flex-shrink:0}
+.prsb{border:1px solid var(--gborder);border-radius:var(--rl);padding:17px;background:var(--glass);margin-bottom:14px;box-shadow:var(--gshadow)}
+.prg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:13px}
+.prs{background:var(--sf);border-radius:var(--r);padding:13px;text-align:center;border:.5px solid var(--bd)}
+.prn{font-family:"Cormorant Garamond",serif;font-size:26px;font-weight:600}
+.prl{font-size:13px;color:var(--t3);margin-top:3px}
+.sc-card{margin-bottom:12px;border:1px solid var(--gborder);border-radius:var(--rl);overflow:hidden;box-shadow:var(--gshadow);backdrop-filter:blur(10px)}
+.sc-hd{padding:13px 17px;background:rgba(248,250,252,.78);display:flex;align-items:center;gap:9px}
+.sc-bd{padding:13px 17px;background:rgba(255,255,255,.88)}
+.rw{display:flex;gap:14px;padding:10px 0;border-bottom:.5px solid var(--bd)}
 .rw:last-child{border-bottom:none}
-.rl2{font-size:12px;font-weight:500;width:185px;flex-shrink:0;padding-top:1px}
-.rv{font-size:12px;color:var(--t2);flex:1;line-height:1.6}
-
-/* Settings */
-.pmc{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--rl);margin-bottom:8px;box-shadow:var(--glass-shadow);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.pma{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--nv),var(--nm));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--gd);flex-shrink:0;border:1px solid rgba(212,175,55,.2)}
-.pmr{font-size:11px;padding:3px 9px;border-radius:var(--r);border:0.5px solid var(--eb);background:transparent;cursor:pointer;color:var(--et);font-family:'DM Sans',sans-serif}
+.rl{font-size:13.5px;font-weight:600;width:200px;flex-shrink:0;padding-top:1px;color:var(--nv)}
+.rv{font-size:14px;color:var(--t2);flex:1;line-height:1.75}
+.pmc{display:flex;align-items:center;gap:13px;padding:14px 17px;background:var(--glass);border:1px solid var(--gborder);border-radius:var(--rl);margin-bottom:10px;box-shadow:var(--gshadow)}
+.pma{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--nv),var(--nm));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--gd);flex-shrink:0;border:1px solid rgba(212,175,55,.22)}
+.pmr{font-size:12.5px;padding:5px 12px;border-radius:var(--r);border:.5px solid var(--eb);background:transparent;cursor:pointer;color:var(--et);font-family:"Inter",sans-serif}
 .pmr:hover{background:var(--er)}
-.pmaf{border:1px solid rgba(212,175,55,.2);border-radius:var(--rl);padding:14px;margin-bottom:12px;background:rgba(212,175,55,.03)}
-@media(prefers-color-scheme:dark){.pmaf{background:rgba(126,200,227,.07)}}
-.div2{display:flex;align-items:center;gap:10px;margin:16px 0 10px;font-size:10px;font-weight:500;color:var(--bm);text-transform:uppercase;letter-spacing:.1em}
-.div2::before,.div2::after{content:'';flex:1;height:0.5px;background:linear-gradient(90deg,transparent,var(--bm),transparent)}
-.ti2{border-left:3px solid var(--gd);border-radius:var(--rl);padding:12px 14px;margin-bottom:12px;font-size:13px;line-height:1.7;border:1px solid rgba(212,175,55,.15);background:rgba(212,175,55,.03)}
-
-/* Loading */
-#loading{position:fixed;inset:0;background:#0F172A;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:14px;background-image:radial-gradient(ellipse at center,rgba(212,175,55,.06) 0%,transparent 70%)}
-.spin{width:32px;height:32px;border:2px solid rgba(212,175,55,.15);border-top-color:var(--gd);border-radius:50%;animation:spin .8s linear infinite;box-shadow:0 0 20px rgba(212,175,55,.2)}
+.pmaf{border:1px solid rgba(212,175,55,.18);border-radius:var(--rl);padding:17px;margin-bottom:14px;background:rgba(212,175,55,.03)}
+.div2{display:flex;align-items:center;gap:10px;margin:18px 0 13px;font-size:11px;font-weight:600;color:rgba(212,175,55,.5);text-transform:uppercase;letter-spacing:.14em}
+.div2::before,.div2::after{content:"";flex:1;height:.5px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.25),transparent)}
+.ti2{border-left:3px solid var(--gd);border-radius:var(--rl);padding:14px 17px;margin-bottom:14px;font-size:14.5px;line-height:1.8;border:1px solid rgba(212,175,55,.15);background:rgba(212,175,55,.03)}
+#loading{position:fixed;inset:0;background:#0F172A;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:18px;background-image:radial-gradient(ellipse at center,rgba(212,175,55,.07) 0%,transparent 65%)}
+.spin{width:38px;height:38px;border:2px solid rgba(212,175,55,.12);border-top-color:var(--gd);border-radius:50%;animation:spin .9s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-#sync{position:fixed;bottom:20px;right:20px;font-size:11px;padding:6px 14px;background:rgba(255,255,255,.9);border:1px solid rgba(212,175,55,.2);border-radius:20px;box-shadow:0 4px 20px rgba(15,23,42,.1);display:none;align-items:center;gap:6px;color:var(--t2);z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:all .3s}
+#sync{position:fixed;bottom:20px;right:20px;font-size:12.5px;padding:8px 17px;background:rgba(255,255,255,.95);border:1px solid rgba(212,175,55,.2);border-radius:20px;box-shadow:0 4px 20px rgba(15,23,42,.1);display:none;align-items:center;gap:6px;color:var(--t2);z-index:100;backdrop-filter:blur(12px);font-family:"Inter",sans-serif}
 #sync.show{display:flex}
 #sync.ok{color:var(--ot)}#sync.err{color:var(--et)}
-#setup-banner{background:var(--er);border:1px solid var(--eb);border-radius:var(--rl);padding:12px 14px;margin-bottom:12px}
 </style>
-<script>
-// Safety fallback: show app after 2s even if main script has issues
-setTimeout(function(){
-  var l=document.getElementById('loading');
-  var a=document.getElementById('app');
-  if(l&&a&&l.style.display!=='none'){
-    l.style.display='none';
-    a.style.display='block';
-  }
-},2000);
-</script>
+<script>setTimeout(function(){var l=document.getElementById("loading"),a=document.getElementById("app");if(l&&a&&l.style.display!=="none"){l.style.display="none";a.style.display="block";}},2500);</script>
 </head>
 <body>
-
 <div id="loading">
   <div class="spin"></div>
-  <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:rgba(255,255,255,.9);letter-spacing:.02em">Part II Portal</div>
-  <div style="font-size:11px;color:rgba(212,175,55,.6);letter-spacing:.1em;text-transform:uppercase">Liaison Department</div>
+  <div style="font-family:Cormorant Garamond,serif;font-size:24px;font-weight:600;color:rgba(255,255,255,.88);letter-spacing:.03em">Part II Portal</div>
+  <div style="font-size:11px;color:rgba(212,175,55,.5);letter-spacing:.2em;text-transform:uppercase;font-family:Inter,sans-serif">Liaison Department</div>
 </div>
 <div id="sync"></div>
-
 <div id="app" style="display:none">
-
-<!-- STICKY HEADER -->
 <header class="top-header">
-  <div class="header-inner">
-    <div class="logo-block">
-      <div class="logo-dept">Liaison Department</div>
-      <div class="logo-title">ILSFA Projects &nbsp;<span>·</span>&nbsp; Part II Portal</div>
-    </div>
-    <div class="header-divider"></div>
-    <div class="header-search-wrap">
-      <i class="ti ti-search header-search-icon"></i>
-      <input class="header-search" id="gs" type="text" placeholder="Search projects, PMs, status..." oninput="hs(this.value)" autocomplete="off">
-      <button class="header-search-clear" id="gsc" onclick="cs()"><i class="ti ti-x"></i></button>
-      <div class="sr-dropdown" id="srw">
-        <div style="padding:8px 12px;background:var(--sf);border-bottom:0.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
-          <span style="font-size:11px;font-weight:500;color:var(--t2);text-transform:uppercase;letter-spacing:.04em">Results</span>
-          <span style="font-size:11px;color:var(--bm);font-weight:500" id="src2"></span>
-        </div>
-        <div id="srb"></div>
+<div class="hdr">
+  <div class="logo">
+    <div class="logo-d">Liaison Department</div>
+    <div class="logo-t">ILSFA Projects <span>&middot;</span> Part II Portal</div>
+  </div>
+  <div class="hdiv"></div>
+  <div class="hsrch">
+    <i class="ti ti-search hsrch-ic"></i>
+    <input id="gs" type="text" placeholder="Search projects, PMs, status..." oninput="hs(this.value)" autocomplete="off">
+    <button class="hsrch-cl" id="gsc" onclick="cs()"><i class="ti ti-x"></i></button>
+    <div class="srw" id="srw">
+      <div style="padding:10px 15px;background:var(--sf);border-bottom:.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:12px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.07em">Results</span>
+        <span style="font-size:12px;color:var(--gd);font-weight:600" id="src"></span>
       </div>
-    </div>
-    <div class="header-right">
-      <div class="hd-stat" id="hd-s1" style="cursor:pointer" onclick="fg('all','all','All projects',0)"></div>
-      <div class="hd-stat" id="hd-s2"></div>
-      <div class="hd-stat" id="hd-s3" style="cursor:pointer"></div>
-      <div class="header-divider"></div>
-      <button class="view-btn a" onclick="sv('spl',this)"><i class="ti ti-lock" style="font-size:12px"></i> SPL</button>
-      <button class="view-btn" onclick="sv('team',this)"><i class="ti ti-users" style="font-size:12px"></i> Team</button>
-      <button class="refresh-btn" onclick="reloadData()"><i class="ti ti-refresh" style="font-size:12px"></i></button>
+      <div id="srb"></div>
     </div>
   </div>
+  <div class="hr">
+    <div class="hst" id="hst1"></div>
+    <div class="hst" id="hst2"></div>
+    <div class="hst" id="hst3"></div>
+    <div class="hdiv"></div>
+    <button class="vbtn a" onclick="sv('spl',this)"><i class="ti ti-lock" style="font-size:13px"></i> SPL</button>
+    <button class="vbtn" onclick="sv('team',this)"><i class="ti ti-users" style="font-size:13px"></i> Team</button>
+    <button class="rfbtn" onclick="hardRefresh()"><i class="ti ti-refresh" style="font-size:14px"></i></button>
+  </div>
+</div>
 </header>
-
-<!-- PAGE CONTENT -->
-<div class="page-wrap">
-
-  <!-- SPL VIEW -->
-  <div id="v-spl" class="view a" style="display:flex;width:100%;gap:0">
-    <nav class="sidebar">
-      <div class="sb-label" style="margin-top:0">Navigation</div>
-      <button class="sb-btn a" onclick="nt('dashboard',this)"><i class="ti ti-chart-bar"></i> Dashboard</button>
-      <button class="sb-btn" onclick="nt('projects',this)"><i class="ti ti-folder"></i> Projects</button>
-      <button class="sb-btn" onclick="nt('postreview',this)"><i class="ti ti-zoom-check"></i> Post-review</button>
-      <button class="sb-btn" onclick="nt('standards',this)"><i class="ti ti-shield-check"></i> Standards</button>
-      <button class="sb-btn" onclick="nt('settings',this)"><i class="ti ti-settings"></i> Settings</button>
-      <div class="sb-divider"></div>
-      <div class="sb-label">Quick stats</div>
-      <div id="sb-stats"></div>
-    </nav>
-    <main class="main">
-      <div id="setup-banner" style="display:none">
-        <div style="font-size:13px;font-weight:600;color:var(--et);margin-bottom:3px"><i class="ti ti-alert-circle"></i> Script URL not configured — running in demo mode</div>
-        <div style="font-size:12px;color:var(--t2)">Open the HTML file, find <code>SCRIPT_URL</code> and paste your Apps Script deployment URL.</div>
-      </div>
-      <div id="n-dashboard" class="tab a"></div>
-      <div id="n-projects" class="tab"></div>
-      <div id="n-postreview" class="tab"></div>
-      <div id="n-standards" class="tab"></div>
-      <div id="n-settings" class="tab"></div>
-    </main>
-  </div>
-
-  <!-- TEAM VIEW -->
-  <div id="v-team" class="view" style="display:none;width:100%;gap:0">
-    <nav class="sidebar" id="pm-sidebar"></nav>
-    <main class="main">
-      <div class="ti2" style="color:var(--nm)"><strong>Team submission guide</strong> — Select your name to see your assigned projects and checklist.<br><span style="font-size:12px;opacity:.8">All uploads happen in the <strong>ILSFA portal</strong> and <strong>Zoho</strong>.</span></div>
-      <div id="pmc"></div>
-    </main>
-  </div>
-
-</div><!-- end page-wrap -->
-</div><!-- end app -->
+<div class="pw">
+<div id="v-spl" class="view a" style="display:flex;width:100%">
+  <nav class="sb">
+    <div class="sb-lbl" style="margin-top:0">Navigation</div>
+    <button class="nb a" onclick="nt('dashboard',this)"><i class="ti ti-chart-bar"></i> Dashboard</button>
+    <button class="nb" onclick="nt('projects',this)"><i class="ti ti-folder"></i> Projects</button>
+    <button class="nb" onclick="nt('postreview',this)"><i class="ti ti-zoom-check"></i> Post-review</button>
+    <button class="nb" onclick="nt('standards',this)"><i class="ti ti-shield-check"></i> Standards</button>
+    <button class="nb" onclick="nt('settings',this)"><i class="ti ti-settings"></i> Settings</button>
+    <div class="sbdiv"></div>
+    <div class="sb-lbl">Quick Stats</div>
+    <div id="sbst"></div>
+  </nav>
+  <main class="main">
+    <div id="n-dashboard" class="tab a"></div>
+    <div id="n-projects" class="tab"></div>
+    <div id="n-postreview" class="tab"></div>
+    <div id="n-standards" class="tab"></div>
+    <div id="n-settings" class="tab"></div>
+  </main>
+</div>
+<div id="v-team" class="view" style="display:none;width:100%">
+  <nav class="sb" id="sb-pm"></nav>
+  <main class="main">
+    <div class="ti2"><strong>Team Submission Guide</strong> &mdash; Select your name to see your assigned projects and checklist.<br><span style="font-size:14px;opacity:.75">All uploads happen in the <strong>ILSFA portal</strong> and <strong>Zoho</strong>.</span></div>
+    <div id="pmc"></div>
+  </main>
+</div>
+</div>
+</div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxfxa06AhxkCMFBj87pjbjaIFQDBdKMhyST4T7Gce4-W43m5sjqoVInPN9GjrSmiBRE/exec';
-
-const DEFAULT_PROJECTS=[
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxfxa06AhxkCMFBj87pjbjaIFQDBdKMhyST4T7Gce4-W43m5sjqoVInPN9GjrSmiBRE/exec';
+const DP=[
   {id:'P-10711',py:'PY7',sub:'Oct 21, 2025',pilot:'false',ps:'Further Part II information requested',cs:'Addressed',recs:'$39,198',ut:'ComEd',corr:'(1) Submit 15-module South array panel layout photo. (2) Submit system production report.',cmt:'Pending review. Upload updated SS and plan set.',pm:''},
-  {id:'P-13512',py:'PY8-2025',sub:'May 13, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$52,460',ut:'ComEd',corr:'',cmt:'Upload separate clear full array photos. Pending Approved SO.',pm:''},
-  {id:'P-13053',py:'PY8-2025',sub:'May 13, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$29,058',ut:'Ameren',corr:'',cmt:'Upload separate clear full array photos. Pending Approved SO.',pm:''},
-  {id:'P-13457',py:'PY8-2025',sub:'May 13, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$48,950',ut:'ComEd',corr:'',cmt:'Pending Approved SO.',pm:''},
-  {id:'P-12833',py:'PY8-2025',sub:'May 14, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$34,519',ut:'Ameren',corr:'',cmt:'Upload separate clear full array photos.',pm:''},
-  {id:'P-13416',py:'PY8-2025',sub:'May 18, 2026',pilot:'false',ps:'Under Inspection',cs:'Addressed',recs:'$49,475',ut:'ComEd',corr:'Submit array layout photo of the 6-module South array.',cmt:'Monitoring photos showing system offline. Pending SO approval.',pm:''},
-  {id:'P-12949',py:'PY8-2025',sub:'May 21, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$37,834',ut:'ComEd',corr:'',cmt:'Pending Approved SO.',pm:''},
-  {id:'P-11988',py:'PY8-2025',sub:'May 21, 2026',pilot:'false',ps:'Further Part II information requested',cs:'Pending',recs:'$34,714',ut:'Ameren',corr:'(1) Submit Cold Water Grounding mitigation photos. (2) Submit system production report.',cmt:'Monitoring photos showing system offline status.',pm:''},
-  {id:'P-12990',py:'PY8-2025',sub:'May 22, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$32,568',ut:'ComEd',corr:'',cmt:'Pending Approved SO.',pm:''},
+  {id:'P-13512',py:'PY8-2025',sub:'May 13, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$52,460',ut:'ComEd',corr:'',cmt:'Upload separate clear full array photos. Pending Approved SO.',pm:'Allaiza'},
+  {id:'P-13053',py:'PY8-2025',sub:'May 13, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$29,058',ut:'Ameren',corr:'',cmt:'Upload separate clear full array photos. Pending Approved SO.',pm:'Genneva'},
+  {id:'P-13457',py:'PY8-2025',sub:'May 13, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$48,950',ut:'ComEd',corr:'',cmt:'Pending Approved SO.',pm:'Francheska'},
+  {id:'P-12833',py:'PY8-2025',sub:'May 14, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$34,519',ut:'Ameren',corr:'',cmt:'Upload separate clear full array photos.',pm:'Angelica'},
+  {id:'P-13416',py:'PY8-2025',sub:'May 18, 2026',pilot:'false',ps:'Under Inspection',cs:'Addressed',recs:'$49,475',ut:'ComEd',corr:'Submit array layout photo of the 6-module South array.',cmt:'Pending SO approval.',pm:'May'},
+  {id:'P-12949',py:'PY8-2025',sub:'May 21, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$37,834',ut:'ComEd',corr:'',cmt:'Pending Approved SO.',pm:'Allaiza'},
+  {id:'P-11988',py:'PY8-2025',sub:'May 21, 2026',pilot:'false',ps:'Further Part II information requested',cs:'Pending',recs:'$34,714',ut:'Ameren',corr:'(1) Submit Cold Water Grounding mitigation photos. (2) Submit system production report.',cmt:'Monitoring photos showing system offline status.',pm:'Genneva'},
+  {id:'P-12990',py:'PY8-2025',sub:'May 22, 2026',pilot:'false',ps:'Under Inspection',cs:'No feedback',recs:'$32,568',ut:'ComEd',corr:'',cmt:'Pending Approved SO.',pm:'Francheska'},
 ];
-const DEFAULT_PMS=['Mary','Allaiza','Genneva','Francheska','Angelica','May'];
+const DPM=['Mary','Allaiza','Genneva','Francheska','Angelica','May'];
 const MGR='Mary';
 
 let P=[],CL={},PR={},PML=[],AF=null,prPid='',showAF=false,showPMAF=false,openCards={},clSec={},activePM='';
-const configured=SCRIPT_URL!=='YOUR_SCRIPT_URL_HERE'&&SCRIPT_URL.length>10;
 
+// ── API ──────────────────────────────────
 async function api(p){
-  if(!configured)return null;
+  if(!SCRIPT_URL||SCRIPT_URL==='YOUR_URL')return null;
   const url=SCRIPT_URL+'?'+Object.entries(p).map(([k,v])=>k+'='+encodeURIComponent(v)).join('&');
-  try{
-    const r=await fetch(url,{redirect:'follow',cache:'no-cache'});
-    const txt=await r.text();
-    // Apps Script sometimes returns HTML on error
-    if(txt.trim().startsWith('<'))return null;
-    return JSON.parse(txt);
-  }catch(e){return null;}
+  try{const r=await fetch(url,{redirect:'follow',cache:'no-cache'});const t=await r.text();if(t.trim().startsWith('<'))return null;return JSON.parse(t);}catch(e){return null;}
 }
-function syncInd(msg,type){const el=document.getElementById('sync');el.textContent=msg;el.className='show '+(type||'');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2500);}
-async function reloadData(){
-  try{localStorage.removeItem('ilsfa_cache');}catch(e){}
-  syncInd('Refreshing from Google Sheets...','');
-  if(configured)bgRefresh();
-}
+function si(msg,type){const el=document.getElementById('sync');el.textContent=msg;el.className='show '+(type||'');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3000);}
 
-function applyData(data){
-  P=(data.projects||[]).map(p=>({...p,pilot:p.pilot==='true'||p.pilot===true}));
-  if(!P.length)P=DEFAULT_PROJECTS.map(p=>({...p,pilot:false}));
-  CL={};(data.checklist||[]).forEach(r=>{CL[r.pid+'_'+r.iid]={done:r.done==='true',st:r.st||''};});
+// ── Cache ────────────────────────────────
+function sc(data){try{localStorage.setItem('ilsfa2',JSON.stringify({data,ts:Date.now()}));}catch(e){}}
+function lc(){try{const c=JSON.parse(localStorage.getItem('ilsfa2')||'null');if(c&&c.data)return c;}catch(e){}return null;}
+
+// ── Apply data ───────────────────────────
+function apd(data){
+  P=(data.projects||[]).map(p=>{const x={...p};x.pilot=x.pilot==='true'||x.pilot===true;return x;});
+  if(!P.length)P=DP.map(p=>{return{...p,pilot:false};});
+  CL={};(data.checklist||[]).forEach(r=>{CL[r.pid+'_'+r.iid]={done:r.done==='true',st:r.st||''};}); 
   PR={};(data.postReview||[]).forEach(r=>{PR[r.pid+'_'+r.iid]=r.val||'none';});
-  const pmRow=(data.settings||[]).find(r=>r.key==='pmList');
-  PML=pmRow?pmRow.val.split(',').filter(Boolean):[...DEFAULT_PMS];
+  const pm=(data.settings||[]).find(r=>r.key==='pmList');
+  PML=pm?pm.val.split(',').filter(Boolean):[...DPM];
 }
 
-function saveCache(data){
-  try{localStorage.setItem('ilsfa_cache',JSON.stringify({data,ts:Date.now()}));}catch(e){}
+// ── Background refresh ───────────────────
+async function bgRefresh(){
+  const data=await api({action:'getAll'});
+  if(!data||data.error){si('Sheet unreachable — cached data','err');return;}
+  apd(data);sc(data);si('Synced with Google Sheets','ok');ra();
 }
 
-function loadCache(){
-  try{
-    const c=JSON.parse(localStorage.getItem('ilsfa_cache')||'null');
-    if(c&&c.data&&c.ts)return c;
-  }catch(e){}
-  return null;
-}
-
+// ── Load ─────────────────────────────────
 async function loadData(){
-  // Step 1: Show portal immediately with cache or defaults
-  const cached=loadCache();
+  const cached=lc();
   if(cached){
-    applyData(cached.data);
-  } else {
-    // First visit — use defaults right away
-    P=DEFAULT_PROJECTS.map(p=>({...p,pilot:false}));
-    CL={};PR={};PML=[...DEFAULT_PMS];
-    if(!configured)document.getElementById('setup-banner').style.display='block';
+    apd(cached.data);
+  }else{
+    P=DP.map(p=>{return{...p,pilot:false};});CL={};PR={};PML=[...DPM];
   }
   if(!activePM)activePM=PML[0];
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
   ra();
-
-  // Step 2: Sync with sheet in background (non-blocking)
-  if(configured){
-    if(cached){
-      const age=Math.round((Date.now()-cached.ts)/60000);
-      syncInd(`Loaded · Syncing... (${age}m ago)`,'');
-    } else {
-      syncInd('Connecting to Google Sheets...','');
-    }
+  if(SCRIPT_URL&&SCRIPT_URL!=='YOUR_URL'){
+    if(cached){const age=Math.round((Date.now()-cached.ts)/60000);si('Syncing... ('+age+'m ago)','');}
+    else si('Connecting to Google Sheets...','');
     bgRefresh();
   }
 }
 
-async function bgRefresh(){
-  const data=await api({action:'getAll'});
-  if(!data||data.error){syncInd('⚠ Sheet unreachable — showing cached data','err');return;}
-  applyData(data);
-  saveCache(data);
-  syncInd('✓ Synced with Google Sheets','ok');
-  ra();
-}
+function hardRefresh(){try{localStorage.removeItem('ilsfa2');}catch(e){}si('Refreshing...','');bgRefresh();}
 
-function cdone(p,i){return CL[p+'_'+i]?.done||false;}
-function cst(p,i){return CL[p+'_'+i]?.st||'';}
-function gas(p){return clSec[p]||0;}
-function sas(p,i){clSec[p]=i;rtv();}
-function ppx(pid){const d=ACI.filter(i=>cdone(pid,i.id)||(i.hs&&cst(pid,i.id)==='up')).length;return{d,t:ACI.length,pct:Math.round(d/ACI.length*100)};}
-function tcl(pid,iid){const k=pid+'_'+iid;CL[k]={done:!(CL[k]?.done||false),st:CL[k]?.st||''};ra();api({action:'setCL',pid,iid,done:CL[k].done,st:CL[k].st});}
-function tcs(pid,iid,v){const k=pid+'_'+iid;const ns=(CL[k]?.st||'')=== v?'':v;CL[k]={done:CL[k]?.done||false,st:ns};ra();api({action:'setCL',pid,iid,done:CL[k].done,st:ns});}
-function prSt(p,i){return PR[p+'_'+i]||'none';}
-function gprs(pid){return{t:APRI.length,pa:APRI.filter(i=>prSt(pid,i.id)==='pass').length,fa:APRI.filter(i=>prSt(pid,i.id)==='fail').length,re:APRI.filter(i=>prSt(pid,i.id)==='none').length};}
-function setPR(pid,iid,val){PR[pid+'_'+iid]=val;rpr();api({action:'setPR',pid,iid,val});}
-function tprs(id){openCards['_prs_'+id]=openCards['_prs_'+id]===false?true:false;rpr();}
-function tp(pid){openCards[pid]=openCards[pid]===false?true:false;rp();rtv();}
-function upf(pid,f,v){const p=P.find(x=>x.id===pid);if(!p)return;p[f]=v;rp();rdb();rss();api({action:'upsertProject',data:JSON.stringify(p)}).then(()=>{try{const c=loadCache();if(c){c.data.projects=(c.data.projects||[]).map(x=>x.id===pid?{...x,[f]:v}:x);saveCache(c.data);};}catch(e){}});}
-function spp(pid,pm){const p=P.find(x=>x.id===pid);if(!p)return;p.pm=pm;rp();rtv();rdb();api({action:'upsertProject',data:JSON.stringify(p)});}
-function spn(pid){const ce=document.getElementById('cn-'+pid),me=document.getElementById('mn-'+pid),p=P.find(x=>x.id===pid);if(!p)return;if(ce)p.corr=ce.value;if(me)p.cmt=me.value;rp();api({action:'upsertProject',data:JSON.stringify(p)});}
-function aP(){const id=document.getElementById('ni-id').value.trim();if(!id||P.find(p=>p.id===id)){alert(!id?'ID required.':'ID exists.');return;}const pm=document.getElementById('ni-pm').value;const proj={id,py:document.getElementById('ni-py').value,sub:document.getElementById('ni-sub').value||'—',pilot:document.getElementById('ni-pi').value==='yes',ps:document.getElementById('ni-ps').value,cs:document.getElementById('ni-cs').value,recs:document.getElementById('ni-r').value||'—',ut:document.getElementById('ni-ut').value,corr:document.getElementById('ni-corr').value,cmt:document.getElementById('ni-cmt').value,pm};P.unshift(proj);showAF=false;ra();api({action:'upsertProject',data:JSON.stringify(proj)});}
-function rmP(pid){if(!confirm('Remove '+pid+'?'))return;P=P.filter(p=>p.id!==pid);ra();api({action:'deleteProject',id:pid});}
-function apm(){const n=document.getElementById('npm').value.trim();if(!n)return;if(PML.map(x=>x.toLowerCase()).includes(n.toLowerCase())){alert('PM exists.');return;}PML=[...PML,n];showPMAF=false;rset();rtv();api({action:'setPMs',data:JSON.stringify(PML)});}
-function dpm(n){if(n===MGR){alert('Mary cannot be removed.');return;}if(!confirm('Remove '+n+'?'))return;PML=PML.filter(x=>x!==n);P.filter(p=>p.pm===n).forEach(p=>{p.pm='';api({action:'upsertProject',data:JSON.stringify(p)});});rset();rtv();api({action:'setPMs',data:JSON.stringify(PML)});}
-
-function fpg(){if(!AF)return P;const{t,v}=AF;if(t==='all')return P;if(t==='ps')return P.filter(p=>p.ps===v);if(t==='cs')return P.filter(p=>p.cs===v);if(t==='py')return P.filter(p=>p.py===v);if(t==='pilot')return P.filter(p=>String(p.pilot)===v);if(t==='ut')return P.filter(p=>(p.ut||'')===v);if(t==='pm')return P.filter(p=>p.pm===v);return P;}
-function fg(t,v,label,count){if(count===0&&t!=='all')return;AF={t,v,label};ntid('n-projects');document.querySelectorAll('#v-spl .sb-btn').forEach((b,i)=>b.classList.toggle('a',i===1));rp();}
-function cf(){AF=null;rp();}
-function fgpm(pm,c){if(c===0)return;svid('team');activePM=pm;rtv();}
-
+// ── Checklist data ───────────────────────
 const CLS=[
   {id:'ss',title:'Site suitability',ic:'ti-home',items:[
-    {id:'i1',n:'[1]',t:'Permit',note:'Ensure the accurate and officially approved permit is uploaded.',b:'doc',hs:false},
-    {id:'i2',n:'[2]',t:'PTO / COC',note:'Must include date of approval AND ComEd representative signature.',b:'req',hs:false},
+    {id:'i1',n:'[1]',t:'Permit',note:'Ensure the accurate and officially approved permit is uploaded. Not a draft or expired version.',b:'doc',hs:false},
+    {id:'i2',n:'[2]',t:'PTO / COC',note:'Must include date of approval AND ComEd representative signature. Both required.',b:'req',hs:false},
     {id:'i3',n:'[3]',t:'Net metering',note:'Correct net metering document matching project address and utility account.',b:'doc',hs:false},
     {id:'i4',n:'[4]',t:'PJM / SO SS',note:'Multiple photos — compile into ONE PDF before uploading.',b:'doc',hs:true},
-    {id:'i5',n:'[5]',t:'JCO',note:'All JCO photos complete and accurate. Missing or unclear — escalate to Yen.',b:'doc',hs:true},
+    {id:'i5',n:'[5]',t:'JCO',note:'All JCO photos complete and accurate. Missing or unclear — escalate to Install Team (Yen).',b:'doc',hs:true},
   ]},
   {id:'sd',title:'System design',ic:'ti-bolt',items:[
     {id:'i6',n:'[6]',t:'Inverter & module label photos',note:'Upload clear separate photos, then merge into a single file.',b:'doc',hs:true},
-    {id:'i7',n:'[7]',t:'Complete array photos',note:'Separate complete array photos for each project.',b:'doc',hs:true},
-    {id:'i8',n:'[8]',t:'Updated SSR (if applicable)',note:'Must reflect ALL mitigations from pipeline review, plan set, and installation.',b:'warn',hs:false},
+    {id:'i7',n:'[7]',t:'Complete array photos',note:'Separate complete array photos for each project. Count must match system design.',b:'doc',hs:true},
+    {id:'i8',n:'[8]',t:'Updated SSR (if applicable)',note:'Must reflect ALL mitigations from pipeline review, plan set, and installation work.',b:'warn',hs:false},
     {id:'i9',n:'[9]',t:'Upgrade photos (if applicable)',note:'Submit SEPARATELY to ILSFA portal — not just JCO photos.',b:'warn',hs:false},
-    {id:'i10',n:'[10]',t:'Mitigation — final invoice (pilot only)',note:'Electrical scope must match Initial Invoice from Part I.',b:'warn',hs:false},
+    {id:'i10',n:'[10]',t:'Mitigation final invoice (pilot only)',note:'Electrical scope must match Initial Invoice from Part I.',b:'warn',hs:false},
   ]},
   {id:'add',title:'Additional',ic:'ti-sun',items:[
-    {id:'i11',n:'[11]',t:'Shading study',note:'All details must be consistent with installed system.',b:'req',hs:false},
+    {id:'i11',n:'[11]',t:'Shading study',note:'All details must be consistent with installed system — panel count, layout, orientation.',b:'req',hs:false},
     {id:'i12',n:'[12]',t:'System design',note:'Plan set must match installed system and final shade study.',b:'req',hs:false},
-    {id:'i13',n:'[13]',t:'ACF',note:'Update ONLY if revised value is LOWER than original.',b:'req',hs:false},
-    {id:'i14',n:'[14]',t:'Arrays',note:'Part I arrays must NOT be edited or deleted.',b:'req',hs:false},
+    {id:'i13',n:'[13]',t:'ACF',note:'Update ONLY if revised value is LOWER than original. If higher — enter approved ACF from Part I.',b:'req',hs:false},
+    {id:'i14',n:'[14]',t:'Arrays',note:'Part I arrays must NOT be edited or deleted. Update Part II arrays per final shade study.',b:'req',hs:false},
     {id:'i15',n:'[15]',t:'REC table',note:'All values in Part II Submitted section must match the final shade study.',b:'req',hs:false},
   ]},
   {id:'pc',title:'Post construction',ic:'ti-camera',items:[
     {id:'i16',n:'[16]',t:'Inspection document',note:'Ensure the correct and officially approved inspection document is uploaded.',b:'doc',hs:false},
     {id:'i17',n:'[17]',t:'JCO (Staff info tab)',note:'All JCO photos complete and accurate. Missing or unclear — escalate to Yen.',b:'doc',hs:true},
-    {id:'i18',n:'[18]',t:'SS from Fox / Tesla monitoring app',note:'CRITICAL: System must NOT show 0 production.',b:'req',hs:true},
+    {id:'i18',n:'[18]',t:'SS from Fox / Tesla monitoring app',note:'CRITICAL: System must NOT show 0 production. If offline — notify PM immediately.',b:'req',hs:true},
     {id:'i19',n:'[19]',t:'Shadi / Qais affidavit',note:'Signed affidavit must be in the correct field under the Staff Info tab.',b:'doc',hs:false},
-    {id:'i20',n:'[20]',t:'Start / end dates',note:'Start = day BEFORE install. End = actual install completion date.',b:'req',hs:false},
+    {id:'i20',n:'[20]',t:'Start / end dates',note:'Start = day BEFORE install. End = actual install completion date. Very common error.',b:'req',hs:false},
   ]},
 ];
 const ACI=CLS.flatMap(s=>s.items);
+
 const PRS=[
-  {id:'pr_d',t:'Document review',ic:'ti-files',items:[
+  {id:'prd',t:'Document review',ic:'ti-files',items:[
     {id:'pr1',t:'All 20 documents uploaded and present in ILSFA portal',n:'Confirm every required document is uploaded.'},
     {id:'pr2',t:'Permit is officially approved version',n:'Final approved copy only.'},
     {id:'pr3',t:'PTO / COC includes approval date and ComEd signature',n:'Both elements required.'},
     {id:'pr4',t:'Net metering document is correct and current',n:'Matches project address and utility account.'},
     {id:'pr5',t:'PJM / SO photos compiled into one PDF',n:'Multiple photos must be merged.'},
-    {id:'pr6',t:'JCO photos complete, clear, and accurate',n:'Review every photo.'},
+    {id:'pr6',t:'JCO photos complete, clear, and accurate',n:'Review every photo. Missing or unclear — send back to PM.'},
     {id:'pr7',t:'Inverter and module label photos merged into single file',n:'Both labels clearly visible.'},
     {id:'pr8',t:'Array photos are separate and complete',n:'Each array has its own complete photo.'},
     {id:'pr9',t:'Monitoring screenshot shows system online and producing',n:'System must NOT show 0 production.'},
-    {id:'pr10',t:'Affidavit in correct portal field (Staff Info tab)',n:'Specifically in Staff Info.'},
+    {id:'pr10',t:'Affidavit in correct portal field (Staff Info tab)',n:'Specifically in Staff Info — not elsewhere.'},
     {id:'pr11',t:'Inspection document is the correct approved version',n:'Officially approved only.'},
     {id:'pr12',t:'SSR updated to reflect all mitigations (if applicable)',n:'All pipeline review mitigations reflected.'},
     {id:'pr13',t:'Upgrade photos submitted separately (if applicable)',n:'Pilot — upgrade photos separate from JCO.'},
     {id:'pr14',t:'Mitigation final invoice correct (pilot only)',n:'Electrical scope matches Part I Initial Invoice.'},
   ]},
-  {id:'pr_p',t:'Portal data accuracy',ic:'ti-database',items:[
+  {id:'prp',t:'Portal data accuracy',ic:'ti-database',items:[
     {id:'pr15',t:'Start date = day before install',n:'Most common error — verify carefully.'},
     {id:'pr16',t:'End date = actual install completion date',n:'Confirm with PM if necessary.'},
     {id:'pr17',t:'REC table values match final shade study',n:'Every value must match.'},
@@ -529,7 +408,7 @@ const PRS=[
     {id:'pr21',t:'Customer information matches Zoho records',n:'Name, address, utility account.'},
     {id:'pr22',t:'Utility information accurate and consistent',n:'Territory, account number, service details.'},
   ]},
-  {id:'pr_c',t:'Compliance check',ic:'ti-shield-check',items:[
+  {id:'prc',t:'Compliance check',ic:'ti-shield-check',items:[
     {id:'pr23',t:'Final shade study consistent with installed system',n:'Panel count, layout, orientation match.'},
     {id:'pr24',t:'Plan set matches installed system and shade study',n:'Updated if any changes occurred.'},
     {id:'pr25',t:'Part I arrays not edited or deleted',n:'Verify Part I array data is intact.'},
@@ -537,126 +416,349 @@ const PRS=[
     {id:'pr27',t:'No conflicting data between portal, Zoho, and documents',n:'Final cross-check.'},
     {id:'pr28',t:'No 0-production or offline system in monitoring photos',n:'ILSFA will flag immediately.'},
   ]},
-  {id:'pr_i',t:'Internal correction check',ic:'ti-message-report',items:[
+  {id:'pri',t:'Internal correction check',ic:'ti-message-report',items:[
     {id:'pr29',t:'All internal corrections from pre-submission review resolved',n:'Every item addressed.'},
-    {id:'pr30',t:'PM confirmed all changes are uploaded in portal',n:'Confirm directly.'},
+    {id:'pr30',t:'PM confirmed all changes are uploaded in portal',n:'Confirm directly — do not assume.'},
     {id:'pr31',t:'Zoho updated to reflect current submission status',n:'Stage updated to SPL post-review.'},
     {id:'pr32',t:'No outstanding discrepancies remain',n:'If any unresolved — hold and send correction notice.'},
   ]},
 ];
 const APRI=PRS.flatMap(s=>s.items);
+
 const STDS=[
-  {t:'Submission standards',ic:'ti-list-check',rows:[{l:'Same-day submission',v:'Once confirmed ready, Part II must be submitted the same day.'},{l:'Post-review required',v:'Every project must go through SPL post-review. No exceptions.'},{l:'Accuracy',v:'Double-check all submissions.'},{l:'Zero unattended corrections',v:'ILSFA correction requests must never remain unattended.'}]},
-  {t:'Post-review standards',ic:'ti-zoom-check',rows:[{l:'32-point review',v:'Covers documents, portal data accuracy, compliance, and internal correction check.'},{l:'Trigger',v:'Begins after team submits to ILSFA portal.'},{l:'Hold rule',v:'If any item fails — send internal correction notice and hold until resolved.'}]},
-  {t:'Zoho CRM standards',ic:'ti-database',rows:[{l:'Real-time accuracy',v:'Zoho must always reflect current project status.'},{l:'Daily review',v:'Review Install, Inspection, PTO, Corrections, and Approval stages daily.'},{l:'NON ID entry',v:'Retrieve from PJM, enter in Zoho, verify.'}]},
-  {t:'Reporting schedule',ic:'ti-calendar',rows:[{l:'Daily (Ragheed)',v:'Submission progress, post-review status, REC estimates. Via team chat.'},{l:'Weekly (Ms. Jhai, Mary)',v:'Part II Correction Report.'},{l:'Bi-weekly (ILSFA Team)',v:'Pending Part II Approval Report. Via email.'},{l:'Monthly (Ahmad, Hssen, Ragheed, ILSFA)',v:'Part II Approval Report — project list, total RECs, utility distribution.'}]},
+  {t:'Submission standards',ic:'ti-list-check',rows:[{l:'Same-day submission',v:'Once confirmed ready, Part II must be submitted the same day.'},{l:'Post-review required',v:'Every project must go through SPL post-review. No exceptions.'},{l:'Accuracy',v:'Double-check all submissions. Accuracy minimizes corrections and delays.'},{l:'Zero unattended corrections',v:'ILSFA correction requests must never remain unattended.'}]},
+  {t:'Post-review standards',ic:'ti-zoom-check',rows:[{l:'32-point review',v:'Covers documents, portal data accuracy, compliance, and internal correction check.'},{l:'Trigger',v:'Begins after team submits to ILSFA portal — before ILSFA reviewers see it.'},{l:'Hold rule',v:'If any item fails — send internal correction notice and hold until resolved.'}]},
+  {t:'Zoho CRM standards',ic:'ti-database',rows:[{l:'Real-time accuracy',v:'Zoho must always reflect current project status.'},{l:'Daily review',v:'Review Install, Inspection, PTO, Corrections, and Approval stages daily.'},{l:'NON ID entry',v:'Retrieve from PJM, enter in Zoho, verify. Covers PY7, PY8, PY8-2025.'}]},
+  {t:'Reporting schedule',ic:'ti-calendar',rows:[{l:'Daily (Ragheed)',v:'Submission progress, post-review status, REC estimates. Via team chat.'},{l:'Weekly (Ms. Jhai, Mary)',v:'Part II Correction Report — assigned PM, total corrections, details per project.'},{l:'Bi-weekly (ILSFA Team)',v:'Pending Part II Approval Report. Via email.'},{l:'Monthly (Ahmad, Hssen, Ragheed, ILSFA)',v:'Part II Approval Report — project list, total RECs, utility distribution.'}]},
 ];
 
 const BM={req:'Required',doc:'Document',warn:'If appl.'};
 const BC={req:'br',doc:'bd2',warn:'bw'};
-const SC2={ps:{'Under Inspection':'bd2','Further Part II information requested':'br','Approved':'bo','Part II Submitted':'bw'},cs:{Addressed:'bo',Pending:'br','No feedback':'bw','Partially addressed':'bp2'}};
 function rv(p){return parseInt((p.recs||'').replace(/[$,]/g,''))||0;}
-function ssc(v){if(v==='Approved')return 'sa';if(v==='Further Part II information requested')return 'sc';if(v==='Under Inspection')return 'si';if(v==='Part II Submitted')return 'sw';return '';}
-function csc2(v){if(v==='Addressed')return 'ca';if(v==='Pending')return 'cp';if(v==='Partially addressed')return 'cpa';return 'cn';}
 function fr(n){return '$'+n.toLocaleString();}
-function isPilot(p){return p.pilot===true||p.pilot==='true';}
+function isp(p){return p.pilot===true||p.pilot==='true';}
+function cdone(p,i){return CL[p+'_'+i]?.done||false;}
+function cst(p,i){return CL[p+'_'+i]?.st||'';}
+function gas(p){return clSec[p]||0;}
+function sas(p,i){clSec[p]=i;rtv();}
+function ppx(pid){const d=ACI.filter(i=>cdone(pid,i.id)||(i.hs&&cst(pid,i.id)==='up')).length;return{d,t:ACI.length,pct:Math.round(d/ACI.length*100)};}
+function prSt(p,i){return PR[p+'_'+i]||'none';}
+function gprs(pid){return{t:APRI.length,pa:APRI.filter(i=>prSt(pid,i.id)==='pass').length,fa:APRI.filter(i=>prSt(pid,i.id)==='fail').length,re:APRI.filter(i=>prSt(pid,i.id)==='none').length};}
+function ssc(v){if(v==='Approved')return 'sa';if(v==='Further Part II information requested')return 'sc';if(v==='Under Inspection')return 'si';if(v==='Part II Submitted')return 'sw';return '';}
+function csc(v){if(v==='Addressed')return 'ca';if(v==='Pending')return 'cp';if(v==='Partially addressed')return 'cpa';return 'cn';}
 
+function tcl(pid,iid){const k=pid+'_'+iid;CL[k]={done:!(CL[k]?.done||false),st:CL[k]?.st||''};ra();api({action:'setCL',pid,iid,done:CL[k].done,st:CL[k].st});}
+function tcs(pid,iid,v){const k=pid+'_'+iid;const ns=(CL[k]?.st||'')=== v?'':v;CL[k]={done:CL[k]?.done||false,st:ns};ra();api({action:'setCL',pid,iid,done:CL[k].done,st:ns});}
+function setPR(pid,iid,val){PR[pid+'_'+iid]=val;rpr();api({action:'setPR',pid,iid,val});}
+function tprs(id){openCards['_pr_'+id]=openCards['_pr_'+id]===false?true:false;rpr();}
+function tp(pid){openCards[pid]=openCards[pid]===false?true:false;rp();rtv();}
+
+function upf(pid,f,v){const p=P.find(x=>x.id===pid);if(!p)return;p[f]=v;rp();rdb();rss();api({action:'upsertProject',data:JSON.stringify(p)});}
+function spp(pid,pm){const p=P.find(x=>x.id===pid);if(!p)return;p.pm=pm;rp();rtv();rdb();api({action:'upsertProject',data:JSON.stringify(p)});}
+function spn(pid){const ce=document.getElementById('cn-'+pid),me=document.getElementById('mn-'+pid),p=P.find(x=>x.id===pid);if(!p)return;if(ce)p.corr=ce.value;if(me)p.cmt=me.value;rp();api({action:'upsertProject',data:JSON.stringify(p)});}
+function rmP(pid){if(!confirm('Remove '+pid+'?'))return;P=P.filter(p=>p.id!==pid);ra();api({action:'deleteProject',id:pid});}
+function aP(){
+  const id=document.getElementById('ni-id').value.trim();
+  if(!id||P.find(p=>p.id===id)){alert(!id?'ID required.':'ID exists.');return;}
+  const proj={id,py:document.getElementById('ni-py').value,sub:document.getElementById('ni-sub').value||'—',pilot:document.getElementById('ni-pi').value==='yes',ps:document.getElementById('ni-ps').value,cs:document.getElementById('ni-cs').value,recs:document.getElementById('ni-r').value||'—',ut:document.getElementById('ni-ut').value,corr:document.getElementById('ni-corr').value,cmt:document.getElementById('ni-cmt').value,pm:document.getElementById('ni-pm').value};
+  P.unshift(proj);showAF=false;ra();api({action:'upsertProject',data:JSON.stringify(proj)});
+}
+function apm(){const n=document.getElementById('npm').value.trim();if(!n)return;if(PML.map(x=>x.toLowerCase()).includes(n.toLowerCase())){alert('PM exists.');return;}PML=[...PML,n];showPMAF=false;rset();rtv();api({action:'setPMs',data:JSON.stringify(PML)});}
+function dpm(n){if(n===MGR){alert('Mary cannot be removed.');return;}if(!confirm('Remove '+n+'?'))return;PML=PML.filter(x=>x!==n);P.filter(p=>p.pm===n).forEach(p=>{p.pm='';api({action:'upsertProject',data:JSON.stringify(p)});});rset();rtv();api({action:'setPMs',data:JSON.stringify(PML)});}
+
+function fpg(){if(!AF)return P;const{t,v}=AF;if(t==='all')return P;if(t==='ps')return P.filter(p=>p.ps===v);if(t==='cs')return P.filter(p=>p.cs===v);if(t==='py')return P.filter(p=>p.py===v);if(t==='pilot')return P.filter(p=>String(p.pilot)===v);if(t==='ut')return P.filter(p=>(p.ut||'')===v);if(t==='pm')return P.filter(p=>p.pm===v);return P;}
+function fg(t,v,label,count){if(count===0&&t!=='all')return;AF={t,v,label};ntid('n-projects');document.querySelectorAll('#v-spl .nb').forEach((b,i)=>b.classList.toggle('a',i===1));rp();}
+function cf(){AF=null;rp();}
+function fgpm(pm,c){if(c===0)return;svid('team');activePM=pm;rtv();}
+</script>
+
+<script>
 function rss(){
   const tr=P.reduce((a,p)=>a+rv(p),0);
   const app=P.filter(p=>p.ps==='Approved').length;
   const nc=P.filter(p=>p.ps==='Further Part II information requested').length;
   const ui=P.filter(p=>p.ps==='Under Inspection').length;
-  // Header stats
-  document.getElementById('hd-s1').innerHTML=`<div class="hd-stat-n" style="color:#fff">${P.length}</div><div class="hd-stat-l">Projects</div>`;
-  document.getElementById('hd-s2').innerHTML=`<div class="hd-stat-n">$${(tr/1000).toFixed(0)}K</div><div class="hd-stat-l">Total RECs</div>`;
-  document.getElementById('hd-s3').innerHTML=`<div class="hd-stat-n" style="color:var(--et)">${nc}</div><div class="hd-stat-l">Need correction</div>`;
-  document.getElementById('hd-s3').onclick=()=>fg('ps','Further Part II information requested','Correction requested',nc);
-  // Sidebar stats
-  document.getElementById('sb-stats').innerHTML=`
-    <div class="sb-stat" onclick="fg('all','all','All projects',${P.length})"><span class="sb-stat-lbl"><span class="sb-dot" style="background:var(--bm)"></span>All projects</span><span class="sb-stat-val">${P.length}</span></div>
-    <div class="sb-stat" onclick="fg('ps','Approved','Approved',${app})"><span class="sb-stat-lbl"><span class="sb-dot" style="background:#2e8b35"></span>Approved</span><span class="sb-stat-val" style="color:var(--ot)">${app}</span></div>
-    <div class="sb-stat" onclick="fg('ps','Under Inspection','Under inspection',${ui})"><span class="sb-stat-lbl"><span class="sb-dot" style="background:var(--bm)"></span>Under inspection</span><span class="sb-stat-val">${ui}</span></div>
-    <div class="sb-stat" onclick="fg('ps','Further Part II information requested','Correction requested',${nc})"><span class="sb-stat-lbl"><span class="sb-dot" style="background:#c93030"></span>Correction req.</span><span class="sb-stat-val" style="color:var(--et)">${nc}</span></div>
-    <div class="sb-stat" onclick="fg('cs','Pending','Corr. pending',${P.filter(p=>p.cs==='Pending').length})"><span class="sb-stat-lbl"><span class="sb-dot" style="background:var(--wb)"></span>Corr. pending</span><span class="sb-stat-val">${P.filter(p=>p.cs==='Pending').length}</span></div>`;}
+  document.getElementById('hst1').innerHTML='<div class="hst-n" style="color:#fff">'+P.length+'</div><div class="hst-l">Projects</div>';
+  document.getElementById('hst1').onclick=function(){fg('all','all','All projects',P.length);};
+  document.getElementById('hst2').innerHTML='<div class="hst-n">$'+(tr/1000).toFixed(0)+'K</div><div class="hst-l">Total RECs</div>';
+  document.getElementById('hst3').innerHTML='<div class="hst-n" style="color:#f87171">'+nc+'</div><div class="hst-l">Need Correction</div>';
+  document.getElementById('hst3').onclick=function(){fg('ps','Further Part II information requested','Correction requested',nc);};
+  document.getElementById('sbst').innerHTML=
+    '<div class="sb-st" onclick="fg('all','all','All projects','+P.length+')"><span class="sb-st-l"><span class="dot" style="background:#4a9abe"></span>All projects</span><span class="sb-st-v">'+P.length+'</span></div>'+
+    '<div class="sb-st" onclick="fg('ps','Approved','Approved','+app+')"><span class="sb-st-l"><span class="dot" style="background:#2e8b35"></span>Approved</span><span class="sb-st-v" style="color:#166534">'+app+'</span></div>'+
+    '<div class="sb-st" onclick="fg('ps','Under Inspection','Under inspection','+ui+')"><span class="sb-st-l"><span class="dot" style="background:#4a9abe"></span>Under inspection</span><span class="sb-st-v">'+ui+'</span></div>'+
+    '<div class="sb-st" onclick="fg('ps','Further Part II information requested','Correction req.','+nc+')"><span class="sb-st-l"><span class="dot" style="background:#c93030"></span>Correction req.</span><span class="sb-st-v" style="color:#991B1B">'+nc+'</span></div>'+
+    '<div class="sb-st" onclick="fg('cs','Pending','Corr. pending','+P.filter(p=>p.cs==='Pending').length+')"><span class="sb-st-l"><span class="dot" style="background:#D97706"></span>Corr. pending</span><span class="sb-st-v">'+P.filter(p=>p.cs==='Pending').length+'</span></div>';
+}
+
+function row(label,n,recs,color,max,fn){
+  const w=max>0?Math.round(n/max*100):0;const z=n===0;
+  return '<div class="dbrow'+(z?' z':'')+'"'+((!z&&fn)?' onclick="'+fn+'"':'')+'>'+
+    '<div class="dbrl"><span style="width:9px;height:9px;border-radius:50%;background:'+color+';flex-shrink:0;display:inline-block"></span>'+label+'</div>'+
+    '<div class="dbrb"><div class="dbrf" style="width:'+w+'%;background:'+color+'"></div></div>'+
+    '<div class="dbrc">'+n+'</div><div class="dbrr">'+fr(recs)+'</div>'+
+    '<i class="ti ti-arrow-right darr"></i></div>';
+}
 
 function rdb(){
-  const tot=P.length;if(!tot){document.getElementById('n-dashboard').innerHTML='<div class="hint">No projects yet.</div>';return;}
-  const tr=P.reduce((a,p)=>a+rv(p),0);const app=P.filter(p=>p.ps==='Approved').length;const ui=P.filter(p=>p.ps==='Under Inspection').length;const fi=P.filter(p=>p.ps==='Further Part II information requested').length;const pil=P.filter(isPilot).length;
+  const tot=P.length;
+  if(!tot){document.getElementById('n-dashboard').innerHTML='<div class="hint">No projects yet. Add a project in the Projects tab.</div>';return;}
+  const tr=P.reduce((a,p)=>a+rv(p),0);
+  const app=P.filter(p=>p.ps==='Approved').length;
+  const ui=P.filter(p=>p.ps==='Under Inspection').length;
+  const fi=P.filter(p=>p.ps==='Further Part II information requested').length;
+  const pil=P.filter(isp).length;
   const now=new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
-  function row(label,n,recs,color,max,fn){const w=max>0?Math.round(n/max*100):0;const z=n===0;return`<div class="db-row${z?' z':''}"${!z&&fn?` onclick="${fn}" title="View ${n} project${n!==1?'s':''}"`:''}>
-    <div class="drl"><span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block"></span>${label}</div>
-    <div class="drb"><div class="drf" style="width:${w}%;background:${color}"></div></div>
-    <div class="drc">${n}</div><div class="drr">${fr(recs)}</div><i class="ti ti-arrow-right db-arr"></i></div>`;}
   const sl=[{l:'Under inspection',k:'Under Inspection',c:'#4a9abe'},{l:'Further info requested',k:'Further Part II information requested',c:'#c93030'},{l:'Part II submitted',k:'Part II Submitted',c:'#c9870a'},{l:'Approved',k:'Approved',c:'#2e8b35'}];
-  const cl=[{l:'No feedback',k:'No feedback',c:'#7a92aa'},{l:'Pending',k:'Pending',c:'#c93030'},{l:'Partially addressed',k:'Partially addressed',c:'#c9870a'},{l:'Addressed',k:'Addressed',c:'#2e8b35'}];
-  const pl=['PY7','PY8','PY8-2025'];const pc={'PY7':'#c9a84c','PY8':'#4a9abe','PY8-2025':'#7ec8e3'};
-  const ul=[{u:'ComEd',c:'#163660'},{u:'Ameren',c:'#4a9abe'}];const uu=P.filter(p=>!p.ut||!['ComEd','Ameren'].includes(p.ut)).length;
-  document.getElementById('n-dashboard').innerHTML=`
-    <div class="ts2">Last updated: ${now} · <span style="color:var(--bm)">Click any row → view filtered projects</span></div>
-    <div class="dbs">
-      <div class="dbc g" onclick="fg('all','all','All projects',${tot})"><div class="dbn">${tot}</div><div style="font-size:10px;color:var(--t3)">Total projects</div><div style="font-size:11px;font-weight:600;margin-top:2px;color:var(--gd)">${fr(tr)}</div></div>
-      <div class="dbc gr" onclick="fg('ps','Approved','Approved',${app})"><div class="dbn">${app}</div><div style="font-size:10px;color:var(--t3)">Part II approved</div><div style="font-size:11px;font-weight:600;margin-top:2px;color:var(--ot)">${tot?Math.round(app/tot*100):0}%</div></div>
-      <div class="dbc b" onclick="fg('ps','Under Inspection','Under inspection',${ui})"><div class="dbn">${ui}</div><div style="font-size:10px;color:var(--t3)">Under inspection</div><div style="font-size:11px;font-weight:600;margin-top:2px;color:var(--bm)">${tot?Math.round(ui/tot*100):0}%</div></div>
-      <div class="dbc r" onclick="fg('ps','Further Part II information requested','Correction requested',${fi})"><div class="dbn">${fi}</div><div style="font-size:10px;color:var(--t3)">Correction requested</div><div style="font-size:11px;font-weight:600;margin-top:2px;color:var(--et)">${tot?Math.round(fi/tot*100):0}%</div></div>
-    </div>
-    <div class="d2c">
-      <div class="ds"><div class="dt"><i class="ti ti-activity" style="font-size:14px;color:var(--bm)"></i> Portal status</div>${sl.map(s=>{const n=P.filter(p=>p.ps===s.k).length,r=P.filter(p=>p.ps===s.k).reduce((a,p)=>a+rv(p),0);return row(s.l,n,r,s.c,tot,`fg('ps','${s.k}','${s.l}',${n})`);}).join('')}</div>
-      <div class="ds"><div class="dt"><i class="ti ti-message-report" style="font-size:14px;color:var(--bm)"></i> Correction status</div>${cl.map(c=>{const n=P.filter(p=>p.cs===c.k).length,r=P.filter(p=>p.cs===c.k).reduce((a,p)=>a+rv(p),0);return row(c.l,n,r,c.c,tot,`fg('cs','${c.k}','${c.l}',${n})`);}).join('')}</div>
-    </div>
-    <div class="d2c">
-      <div class="ds"><div class="dt"><i class="ti ti-calendar" style="font-size:14px;color:var(--bm)"></i> Program year</div>${pl.map(py=>{const n=P.filter(p=>p.py===py).length,r=P.filter(p=>p.py===py).reduce((a,p)=>a+rv(p),0);return row(py,n,r,pc[py],Math.max(...pl.map(x=>P.filter(p=>p.py===x).length),1),`fg('py','${py}','${py}',${n})`);}).join('')}</div>
-      <div class="ds"><div class="dt"><i class="ti ti-plug" style="font-size:14px;color:var(--bm)"></i> Utility & pilot</div>${ul.map(u=>{const n=P.filter(p=>p.ut===u.u).length,r=P.filter(p=>p.ut===u.u).reduce((a,p)=>a+rv(p),0);return row(u.u,n,r,u.c,tot,`fg('ut','${u.u}','${u.u}',${n})`);}).join('')}${uu>0?row('Unassigned utility',uu,0,'#7a92aa',tot,`fg('ut','','Utility not assigned',${uu})`):''}${row('Pilot',pil,P.filter(isPilot).reduce((a,p)=>a+rv(p),0),'#c9a84c',tot,`fg('pilot','true','Pilot projects',${pil})`)}</div>
-    </div>
-    <div class="ds"><div class="dt"><i class="ti ti-users" style="font-size:14px;color:var(--bm)"></i> Projects per PM <span style="font-size:11px;font-weight:400;color:var(--t3);font-family:'DM Sans',sans-serif"> — click to jump to PM tab</span></div>
-      ${PML.map(pm=>{const pp3=P.filter(p=>p.pm===pm);const n=pp3.length,r=pp3.reduce((a,p)=>a+rv(p),0);const z=n===0;return`<div class="db-row${z?' z':''}"${!z?` onclick="fgpm('${pm}',${n})"`:''}>
-        <div class="drl"><span style="width:8px;height:8px;border-radius:50%;background:#4a9abe;flex-shrink:0;display:inline-block"></span>${pm}${pm===MGR?' ★':''}</div>
-        <div class="drb"><div class="drf" style="width:${tot>0?Math.round(n/tot*100):0}%;background:#4a9abe"></div></div>
-        <div class="drc">${n}</div><div class="drr">${fr(r)}</div><i class="ti ti-arrow-right db-arr"></i></div>`;}).join('')}
-      ${(()=>{const u=P.filter(p=>!p.pm);return u.length>0?row('Unassigned',u.length,u.reduce((a,p)=>a+rv(p),0),'#7a92aa',tot,`fg('pm','','Unassigned',${u.length})`):''})()}
-    </div>`;}
+  const cl=[{l:'No feedback',k:'No feedback',c:'#9CA3AF'},{l:'Pending',k:'Pending',c:'#c93030'},{l:'Partially addressed',k:'Partially addressed',c:'#c9870a'},{l:'Addressed',k:'Addressed',c:'#2e8b35'}];
+  const pl=['PY7','PY8','PY8-2025'];const pc={'PY7':'#D4AF37','PY8':'#4a9abe','PY8-2025':'#7ec8e3'};
+  const ul=[{u:'ComEd',c:'#1E293B'},{u:'Ameren',c:'#4a9abe'}];
+  let html='<div class="ts">Last updated: '+now+' &nbsp;·&nbsp; <span style="color:var(--gd)">Click any row to filter projects</span></div>';
+  html+='<div class="dbs">';
+  html+='<div class="dbc g" onclick="fg('all','all','All projects','+tot+')"><div class="dbn">'+tot+'</div><div style="font-size:11px;color:var(--t3);font-weight:500">Total projects</div><div style="font-size:13px;font-weight:600;color:var(--gd);margin-top:4px">'+fr(tr)+'</div></div>';
+  html+='<div class="dbc gr" onclick="fg('ps','Approved','Approved','+app+')"><div class="dbn">'+app+'</div><div style="font-size:11px;color:var(--t3);font-weight:500">Part II approved</div><div style="font-size:13px;font-weight:600;color:var(--ot);margin-top:4px">'+(tot?Math.round(app/tot*100):0)+'%</div></div>';
+  html+='<div class="dbc b" onclick="fg('ps','Under Inspection','Under inspection','+ui+')"><div class="dbn">'+ui+'</div><div style="font-size:11px;color:var(--t3);font-weight:500">Under inspection</div><div style="font-size:13px;font-weight:600;color:#4a9abe;margin-top:4px">'+(tot?Math.round(ui/tot*100):0)+'%</div></div>';
+  html+='<div class="dbc r" onclick="fg('ps','Further Part II information requested','Correction requested','+fi+')"><div class="dbn">'+fi+'</div><div style="font-size:11px;color:var(--t3);font-weight:500">Correction requested</div><div style="font-size:13px;font-weight:600;color:var(--et);margin-top:4px">'+(tot?Math.round(fi/tot*100):0)+'%</div></div>';
+  html+='</div><div class="d2c">';
+  html+='<div class="ds"><div class="dt"><i class="ti ti-activity" style="font-size:16px;color:var(--gd)"></i> Portal status</div>'+sl.map(s=>{const n=P.filter(p=>p.ps===s.k).length,r=P.filter(p=>p.ps===s.k).reduce((a,p)=>a+rv(p),0);return row(s.l,n,r,s.c,tot,"fg('ps','"+s.k+"','"+s.l+"',"+n+")")}).join('')+'</div>';
+  html+='<div class="ds"><div class="dt"><i class="ti ti-message-report" style="font-size:16px;color:var(--gd)"></i> Correction status</div>'+cl.map(c=>{const n=P.filter(p=>p.cs===c.k).length,r=P.filter(p=>p.cs===c.k).reduce((a,p)=>a+rv(p),0);return row(c.l,n,r,c.c,tot,"fg('cs','"+c.k+"','"+c.l+"',"+n+")")}).join('')+'</div>';
+  html+='</div><div class="d2c">';
+  html+='<div class="ds"><div class="dt"><i class="ti ti-calendar" style="font-size:16px;color:var(--gd)"></i> Program year</div>'+pl.map(py=>{const n=P.filter(p=>p.py===py).length,r=P.filter(p=>p.py===py).reduce((a,p)=>a+rv(p),0);return row(py,n,r,pc[py],Math.max(...pl.map(x=>P.filter(p=>p.py===x).length),1),"fg('py','"+py+"','"+py+"',"+n+")")}).join('')+'</div>';
+  html+='<div class="ds"><div class="dt"><i class="ti ti-plug" style="font-size:16px;color:var(--gd)"></i> Utility</div>'+ul.map(u=>{const n=P.filter(p=>p.ut===u.u).length,r=P.filter(p=>p.ut===u.u).reduce((a,p)=>a+rv(p),0);return row(u.u,n,r,u.c,tot,"fg('ut','"+u.u+"','"+u.u+"',"+n+")")}).join('')+row('Pilot',pil,P.filter(isp).reduce((a,p)=>a+rv(p),0),'#D4AF37',tot,"fg('pilot','true','Pilot projects',"+pil+")")+'</div>';
+  html+='</div>';
+  html+='<div class="ds"><div class="dt"><i class="ti ti-users" style="font-size:16px;color:var(--gd)"></i> Projects per PM <span style="font-size:13px;font-weight:400;color:var(--t3);font-family:Inter,sans-serif"> &mdash; click to jump</span></div>';
+  html+=PML.map(pm=>{const pp=P.filter(p=>p.pm===pm);const n=pp.length,r=pp.reduce((a,p)=>a+rv(p),0);const z=n===0;return '<div class="dbrow'+(z?' z':'')+'"'+((!z)?(' onclick="fgpm(''+pm+'','+n+')"'):'')+'>'+
+    '<div class="dbrl"><span style="width:9px;height:9px;border-radius:50%;background:#4a9abe;flex-shrink:0;display:inline-block"></span>'+pm+(pm==='Mary'?' &#9733;':'')+'</div>'+
+    '<div class="dbrb"><div class="dbrf" style="width:'+(tot>0?Math.round(n/tot*100):0)+'%;background:#4a9abe"></div></div>'+
+    '<div class="dbrc">'+n+'</div><div class="dbrr">'+fr(r)+'</div><i class="ti ti-arrow-right darr"></i></div>';}).join('');
+  const u=P.filter(p=>!p.pm);if(u.length>0)html+=row('Unassigned',u.length,u.reduce((a,p)=>a+rv(p),0),'#9CA3AF',tot,"fg('pm','','Unassigned',"+u.length+")");
+  html+='</div>';
+  document.getElementById('n-dashboard').innerHTML=html;
+}
 
-function cih(pid,it){const d=cdone(pid,it.id);const s=cst(pid,it.id);const ch=it.hs?`<div class="cch"><button class="sch${s==='ns'?' ns':''}" onclick="tcs('${pid}','${it.id}','ns');event.stopPropagation()">Not started</button><button class="sch${s==='ip'?' ip':''}" onclick="tcs('${pid}','${it.id}','ip');event.stopPropagation()">In progress</button><button class="sch${s==='up'?' up':''}" onclick="tcs('${pid}','${it.id}','up');event.stopPropagation()"><i class="ti ti-check" style="font-size:10px"></i> Uploaded in portal</button></div>`:'';return`<div class="ci${d?' dn':''}" onclick="tcl('${pid}','${it.id}')"><div class="ccb">${d?'<i class="ti ti-check" style="font-size:11px;color:var(--ot)"></i>':''}</div><div class="cnum">${it.n}</div><div class="cbody"><div class="ctit">${it.t}</div><div class="cnote">${it.note}</div>${ch}</div><span class="badge ${BC[it.b]}">${BM[it.b]}</span></div>`;}
-function clh(pid){const ai=gas(pid);const tabs=CLS.map((s,i)=>{const d=s.items.filter(x=>cdone(pid,x.id)||(x.hs&&cst(pid,x.id)==='up')).length;return`<button class="ct2${i===ai?' a':''}" onclick="sas('${pid}',${i});event.stopPropagation()"><i class="ti ${s.ic}" style="font-size:12px"></i>${s.title.split(' ')[0]}<span class="tp">${d}/${s.items.length}${d===s.items.length?' ✓':''}</span></button>`;}).join('');const{d,t,pct}=ppx(pid);return`<div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;font-weight:500;color:var(--t2)">Submission checklist</span><span style="font-size:11px;color:var(--t3)">${d}/${t}</span></div><div style="height:3px;background:var(--bd);border-radius:2px;overflow:hidden;margin-bottom:10px"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--gd),var(--gl));transition:width .4s"></div></div><div class="cls-tabs">${tabs}</div><div>${CLS[ai].items.map(i=>cih(pid,i)).join('')}</div></div>`;}
+function cih(pid,it){
+  const d=cdone(pid,it.id);const s=cst(pid,it.id);
+  const ch=it.hs?('<div class="cch">'+
+    '<button class="sch'+(s==='ns'?' ns':'')+'" onclick="tcs(''+pid+'',''+it.id+'','ns');event.stopPropagation()">Not started</button>'+
+    '<button class="sch'+(s==='ip'?' ip':'')+'" onclick="tcs(''+pid+'',''+it.id+'','ip');event.stopPropagation()">In progress</button>'+
+    '<button class="sch'+(s==='up'?' up':'')+'" onclick="tcs(''+pid+'',''+it.id+'','up');event.stopPropagation()"><i class="ti ti-check" style="font-size:11px"></i> Uploaded</button>'+
+    '</div>'):'';
+  return '<div class="ci'+(d?' dn':'')+'" onclick="tcl(''+pid+'',''+it.id+'')">'+
+    '<div class="ccb">'+(d?'<i class="ti ti-check" style="font-size:12px;color:var(--ot)"></i>':'')+'</div>'+
+    '<div class="cnum">'+it.n+'</div>'+
+    '<div class="cbody"><div class="ctit">'+it.t+'</div><div class="cnote">'+it.note+'</div>'+ch+'</div>'+
+    '<span class="badge '+BC[it.b]+'">'+BM[it.b]+'</span></div>';
+}
 
-function spc2(p){const o=openCards[p.id]!==false;const pm=p.pm||'';const{fa}=gprs(p.id);const{d,t,pct}=ppx(p.id);const prb=fa>0?`<span class="badge br">${fa} PR failed</span>`:`<span class="badge bw">Pending review</span>`;const pmb=pm?`<span class="badge bp2">${pm}</span>`:'<span class="badge" style="background:var(--s2);color:var(--t3)">Unassigned</span>';const ub=p.ut?`<span class="badge bn">${p.ut}</span>`:'';return`<div class="card"><div class="card-hd" onclick="tp('${p.id}')"><div style="flex:1"><div style="font-size:13px;font-weight:500;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${p.id} ${isPilot(p)?'<span class="badge bw">Pilot</span>':''}<span style="font-size:11px;font-weight:400;color:var(--t3)">${p.py}</span>${pmb} ${ub}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">${p.sub} · ${p.recs} · Team: <span style="font-weight:500;color:${pct===100?'var(--ot)':'var(--t3)'}">${d}/${t}</span></div></div><span class="badge ${SC2.ps[p.ps]||'bw'}">${p.ps==='Further Part II information requested'?'Correction req.':p.ps}</span><span class="badge ${SC2.cs[p.cs]||'bw'}" style="margin-left:4px">${p.cs}</span>${prb}<button class="db2" onclick="rmP('${p.id}');event.stopPropagation()"><i class="ti ti-trash" style="font-size:11px"></i></button><button style="background:none;border:none;cursor:pointer;padding:4px" onclick="tp('${p.id}');event.stopPropagation()"><i class="ti ti-chevron-down" style="font-size:13px;color:var(--t3);transform:rotate(${o?180:0}deg);transition:transform .2s"></i></button></div>${o?`<div class="card-bd"><div class="tps"><span style="font-size:11px;color:var(--t3);flex-shrink:0">Team checklist</span><div class="tpb"><div class="tpf" style="width:${pct}%"></div></div><span style="font-size:11px;font-weight:500;color:var(--t2);min-width:30px;text-align:right">${pct}%</span></div><div class="sg"><div class="sf3"><label>Assigned PM</label><select class="sel" onchange="spp('${p.id}',this.value);event.stopPropagation()"><option value="">— Unassigned —</option>${PML.map(n=>`<option value="${n}"${pm===n?' selected':''}>${n}${n===MGR?' (Mgr)':''}</option>`).join('')}</select></div><div class="sf3"><label>Utility</label><select class="sel" onchange="upf('${p.id}','ut',this.value);event.stopPropagation()"><option value="">—</option><option value="ComEd"${p.ut==='ComEd'?' selected':''}>ComEd</option><option value="Ameren"${p.ut==='Ameren'?' selected':''}>Ameren</option></select></div><div class="sf3"><label>ILSFA portal status</label><select class="sel ${ssc(p.ps)}" onchange="upf('${p.id}','ps',this.value);event.stopPropagation()"><option value="Under Inspection"${p.ps==='Under Inspection'?' selected':''}>Under Inspection</option><option value="Part II Submitted"${p.ps==='Part II Submitted'?' selected':''}>Part II Submitted</option><option value="Further Part II information requested"${p.ps==='Further Part II information requested'?' selected':''}>Further Part II info requested</option><option value="Approved"${p.ps==='Approved'?' selected':''}>Approved</option></select></div><div class="sf3"><label>Correction status</label><select class="sel ${csc2(p.cs)}" onchange="upf('${p.id}','cs',this.value);event.stopPropagation()"><option value="No feedback"${p.cs==='No feedback'?' selected':''}>No feedback</option><option value="Pending"${p.cs==='Pending'?' selected':''}>Pending</option><option value="Partially addressed"${p.cs==='Partially addressed'?' selected':''}>Partially addressed</option><option value="Addressed"${p.cs==='Addressed'?' selected':''}>Addressed</option></select></div><div class="sf3"><label>Program year</label><select class="sel" onchange="upf('${p.id}','py',this.value);event.stopPropagation()"><option value="PY7"${p.py==='PY7'?' selected':''}>PY7</option><option value="PY8"${p.py==='PY8'?' selected':''}>PY8</option><option value="PY8-2025"${p.py==='PY8-2025'?' selected':''}>PY8-2025</option></select></div><div class="sf3"><label>Pilot project</label><select class="sel" onchange="upf('${p.id}','pilot',this.value==='yes');event.stopPropagation()"><option value="no"${!isPilot(p)?' selected':''}>No</option><option value="yes"${isPilot(p)?' selected':''}>Yes</option></select></div></div><div style="margin-bottom:10px"><label style="font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:3px">Correction details</label><textarea class="ni" id="cn-${p.id}">${p.corr||''}</textarea></div><div style="margin-bottom:10px"><label style="font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:3px">Comments / SPL notes</label><textarea class="ni" id="mn-${p.id}">${p.cmt||''}</textarea></div><button class="snb" onclick="spn('${p.id}');event.stopPropagation()"><i class="ti ti-device-floppy" style="font-size:11px"></i> Save notes</button><div style="margin-top:8px"><button class="prb" onclick="gpr('${p.id}');event.stopPropagation()"><i class="ti ti-zoom-check" style="font-size:12px"></i> Open post-review</button></div></div>`:''}</div>`;}
+function clh(pid){
+  const ai=gas(pid);
+  const tabs=CLS.map((s,i)=>{const d=s.items.filter(x=>cdone(pid,x.id)||(x.hs&&cst(pid,x.id)==='up')).length;return '<button class="ct'+(i===ai?' a':'')+'" onclick="sas(''+pid+'','+i+');event.stopPropagation()"><i class="ti '+s.ic+'" style="font-size:13px"></i>'+s.title.split(' ')[0]+'<span class="tp">'+d+'/'+s.items.length+(d===s.items.length?' ✓':'')+'</span></button>';}).join('');
+  const{d,t,pct}=ppx(pid);
+  return '<div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span style="font-size:14px;font-weight:600;color:var(--nv)">Submission checklist</span><span style="font-size:13px;color:var(--t3)">'+d+'/'+t+'</span></div>'+
+    '<div style="height:4px;background:var(--bd);border-radius:2px;overflow:hidden;margin-bottom:12px"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--gd),var(--gl));transition:width .4s"></div></div>'+
+    '<div class="cls-tabs">'+tabs+'</div>'+
+    CLS[ai].items.map(i=>cih(pid,i)).join('')+'</div>';
+}
 
-function afh(){if(!showAF)return`<button class="ab" onclick="showAF=true;rp()"><i class="ti ti-plus" style="font-size:13px"></i> Add new project</button>`;const po=PML.map(n=>`<option value="${n}">${n}${n===MGR?' (Mgr)':''}</option>`).join('');return`<div class="af2"><div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--nv);margin-bottom:12px"><i class="ti ti-plus"></i> Add new project</div><div class="g2"><div class="fl"><label>Project ID *</label><input id="ni-id" placeholder="e.g. P-14500"/></div><div class="fl"><label>Assign to PM</label><select id="ni-pm"><option value="">— Unassigned —</option>${po}</select></div><div class="fl"><label>Program year</label><select id="ni-py"><option value="PY7">PY7</option><option value="PY8">PY8</option><option value="PY8-2025" selected>PY8-2025</option></select></div><div class="fl"><label>Utility</label><select id="ni-ut"><option value="">—</option><option value="ComEd">ComEd</option><option value="Ameren">Ameren</option></select></div><div class="fl"><label>Submit date</label><input id="ni-sub" placeholder="e.g. Jun 1, 2026"/></div><div class="fl"><label>Est. RECs</label><input id="ni-r" placeholder="e.g. $45,000"/></div><div class="fl"><label>Portal status</label><select id="ni-ps"><option value="Under Inspection">Under Inspection</option><option value="Part II Submitted">Part II Submitted</option><option value="Further Part II information requested">Further Part II info requested</option><option value="Approved">Approved</option></select></div><div class="fl"><label>Correction status</label><select id="ni-cs"><option value="No feedback">No feedback</option><option value="Pending">Pending</option><option value="Partially addressed">Partially addressed</option><option value="Addressed">Addressed</option></select></div><div class="fl"><label>Pilot?</label><select id="ni-pi"><option value="no">No</option><option value="yes">Yes</option></select></div></div><div class="fl" style="margin-bottom:10px"><label>Correction details</label><textarea id="ni-corr"></textarea></div><div class="fl" style="margin-bottom:12px"><label>Comments</label><textarea id="ni-cmt"></textarea></div><div style="display:flex;gap:8px"><button class="btn" onclick="aP()"><i class="ti ti-check" style="font-size:12px"></i> Add project</button><button class="btn2" onclick="showAF=false;rp()">Cancel</button></div></div>`;}
+function pmOpts(sel){return '<option value="">— Unassigned —</option>'+PML.map(n=>'<option value="'+n+'"'+(sel===n?' selected':'')+'>'+n+(n===MGR?' (Mgr)':'')+'</option>').join('');}
 
-function rp(){const fp=fpg();const tr=P.reduce((a,p)=>a+rv(p),0);const ua=P.filter(p=>!p.pm).length;const banner=AF?`<div class="fb"><i class="ti ti-filter" style="font-size:14px;color:var(--bm)"></i><span style="font-size:13px;font-weight:500;flex:1">Showing: <strong>${AF.label}</strong> · ${fp.length} project${fp.length!==1?'s':''}</span><button onclick="cf()"><i class="ti ti-x" style="font-size:11px"></i> Clear filter</button></div>`:'';document.getElementById('n-projects').innerHTML=`${afh()}${banner}${!AF?`<div class="hint">PY7: ${P.filter(p=>p.py==='PY7').length} · PY8: ${P.filter(p=>p.py==='PY8').length} · PY8-2025: ${P.filter(p=>p.py==='PY8-2025').length} · RECs: $${tr.toLocaleString()}${ua>0?` · <span style="color:var(--wt)">${ua} unassigned</span>`:''}</div>`:''}${fp.length?fp.map(p=>spc2(p)).join(''):'<div class="hint">No projects match this filter.</div>'}`;}
+function spc(p){
+  const o=openCards[p.id]!==false;const pm=p.pm||'';
+  const{fa}=gprs(p.id);const{d,t,pct}=ppx(p.id);
+  const pmb=pm?'<span class="badge bp2">'+pm+'</span>':'<span class="badge" style="background:var(--s2);color:var(--t3)">Unassigned</span>';
+  const ub=p.ut?'<span class="badge bn">'+p.ut+'</span>':'';
+  const prb=fa>0?'<span class="badge br">'+fa+' PR failed</span>':'<span class="badge bw">Pending review</span>';
+  let html='<div class="card"><div class="card-hd" onclick="tp(''+p.id+'')">'+
+    '<div style="flex:1">'+
+    '<div style="font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+p.id+' '+(isp(p)?'<span class="badge bw">Pilot</span>':'')+
+    '<span style="font-size:13px;font-weight:400;color:var(--t3)">'+p.py+'</span>'+pmb+' '+ub+'</div>'+
+    '<div style="font-size:13px;color:var(--t3);margin-top:3px">'+p.sub+' &nbsp;·&nbsp; '+p.recs+' &nbsp;·&nbsp; Team: <span style="font-weight:600;color:'+(pct===100?'var(--ot)':'var(--t3)')+'">'+d+'/'+t+'</span></div></div>'+
+    '<span class="badge" style="background:'+(p.ps==='Approved'?'var(--ok)':p.ps==='Further Part II information requested'?'var(--er)':p.ps==='Under Inspection'?'rgba(212,175,55,.1)':'var(--wn)')+''+
+    ';color:'+(p.ps==='Approved'?'var(--ot)':p.ps==='Further Part II information requested'?'var(--et)':p.ps==='Under Inspection'?'#7a5500':'var(--wt)')+'">'+
+    (p.ps==='Further Part II information requested'?'Corr. req.':p.ps)+'</span>'+
+    '<span class="badge '+csc(p.cs)+'" style="margin-left:4px">'+p.cs+'</span>'+
+    prb+
+    '<button class="db2" onclick="rmP(''+p.id+'');event.stopPropagation()"><i class="ti ti-trash" style="font-size:12px"></i></button>'+
+    '<button style="background:none;border:none;cursor:pointer;padding:5px" onclick="tp(''+p.id+'');event.stopPropagation()"><i class="ti ti-chevron-down" style="font-size:14px;color:var(--t3);transform:rotate('+(o?180:0)+'deg);transition:transform .2s"></i></button>'+
+    '</div>';
+  if(o){
+    html+='<div class="card-bd">'+
+      '<div class="tps"><span style="font-size:13px;font-weight:500;color:var(--t2);flex-shrink:0">Team checklist</span><div class="tpb"><div class="tpf" style="width:'+pct+'%"></div></div><span style="font-size:13px;font-weight:600;color:var(--t2);min-width:34px;text-align:right">'+pct+'%</span></div>'+
+      '<div class="sg">'+
+      '<div class="sf2"><label>Assigned PM</label><select class="sel" onchange="spp(''+p.id+'',this.value);event.stopPropagation()">'+pmOpts(pm)+'</select></div>'+
+      '<div class="sf2"><label>Utility</label><select class="sel" onchange="upf(''+p.id+'','ut',this.value);event.stopPropagation()"><option value="">—</option><option value="ComEd"'+(p.ut==='ComEd'?' selected':'')+'>ComEd</option><option value="Ameren"'+(p.ut==='Ameren'?' selected':'')+'>Ameren</option></select></div>'+
+      '<div class="sf2"><label>ILSFA portal status</label><select class="sel '+ssc(p.ps)+'" onchange="upf(''+p.id+'','ps',this.value);event.stopPropagation()"><option value="Under Inspection"'+(p.ps==='Under Inspection'?' selected':'')+'>Under Inspection</option><option value="Part II Submitted"'+(p.ps==='Part II Submitted'?' selected':'')+'>Part II Submitted</option><option value="Further Part II information requested"'+(p.ps==='Further Part II information requested'?' selected':'')+'>Further Part II info requested</option><option value="Approved"'+(p.ps==='Approved'?' selected':'')+'>Approved</option></select></div>'+
+      '<div class="sf2"><label>Correction status</label><select class="sel '+csc(p.cs)+'" onchange="upf(''+p.id+'','cs',this.value);event.stopPropagation()"><option value="No feedback"'+(p.cs==='No feedback'?' selected':'')+'>No feedback</option><option value="Pending"'+(p.cs==='Pending'?' selected':'')+'>Pending</option><option value="Partially addressed"'+(p.cs==='Partially addressed'?' selected':'')+'>Partially addressed</option><option value="Addressed"'+(p.cs==='Addressed'?' selected':'')+'>Addressed</option></select></div>'+
+      '<div class="sf2"><label>Program year</label><select class="sel" onchange="upf(''+p.id+'','py',this.value);event.stopPropagation()"><option value="PY7"'+(p.py==='PY7'?' selected':'')+'>PY7</option><option value="PY8"'+(p.py==='PY8'?' selected':'')+'>PY8</option><option value="PY8-2025"'+(p.py==='PY8-2025'?' selected':'')+'>PY8-2025</option></select></div>'+
+      '<div class="sf2"><label>Pilot</label><select class="sel" onchange="upf(''+p.id+'','pilot',this.value==='yes');event.stopPropagation()"><option value="no"'+(!isp(p)?' selected':'')+'>No</option><option value="yes"'+(isp(p)?' selected':'')+'>Yes</option></select></div>'+
+      '</div>'+
+      '<div style="margin-bottom:11px"><label style="font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.09em;display:block;margin-bottom:5px">Correction details</label><textarea class="ni" id="cn-'+p.id+'">'+( p.corr||'')+'</textarea></div>'+
+      '<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.09em;display:block;margin-bottom:5px">Comments / SPL notes</label><textarea class="ni" id="mn-'+p.id+'">'+(p.cmt||'')+'</textarea></div>'+
+      '<button class="snb" onclick="spn(''+p.id+'');event.stopPropagation()"><i class="ti ti-device-floppy" style="font-size:12px"></i> Save notes</button>'+
+      '<div style="margin-top:10px"><button class="prb" onclick="gpr(''+p.id+'');event.stopPropagation()"><i class="ti ti-zoom-check" style="font-size:13px"></i> Open post-review</button></div>'+
+      '</div>';
+  }
+  html+='</div>';
+  return html;
+}
 
-function tpc(p){const o=openCards[p.id]!==false;const{d,t,pct}=ppx(p.id);const ub=p.ut?`<span class="badge bn">${p.ut}</span>`:'';const ch=p.corr?`<div style="background:var(--wn);border-left:3px solid var(--wb);border-radius:var(--r);padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--wt);line-height:1.6"><strong>Action needed:</strong> ${p.corr}</div>`:'';const cm=p.cmt?`<div style="background:var(--bp);border-left:3px solid var(--bb);border-radius:var(--r);padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--nm);line-height:1.6"><strong>Note:</strong> ${p.cmt}</div>`:'';return`<div class="card"><div class="card-hd" onclick="tp('${p.id}')"><div style="flex:1"><div style="font-size:13px;font-weight:500;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${p.id} ${isPilot(p)?'<span class="badge bw">Pilot</span>':''}<span style="font-size:11px;font-weight:400;color:var(--t3)">${p.py}</span>${ub}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">${p.sub} · ${p.recs} · <span style="font-weight:500;color:${pct===100?'var(--ot)':'var(--t3)'}">${d}/${t}</span></div></div><span class="badge ${SC2.ps[p.ps]||'bw'}">${p.ps==='Further Part II information requested'?'Correction req.':p.ps}</span><span class="badge ${SC2.cs[p.cs]||'bw'}" style="margin-left:4px">${p.cs}</span><button style="background:none;border:none;cursor:pointer;padding:4px" onclick="tp('${p.id}');event.stopPropagation()"><i class="ti ti-chevron-down" style="font-size:13px;color:var(--t3);transform:rotate(${o?180:0}deg);transition:transform .2s"></i></button></div>${o?`<div class="card-bd">${ch}${cm}<div class="hint" style="margin-bottom:10px"><i class="ti ti-info-circle" style="font-size:13px;vertical-align:-2px;margin-right:4px"></i>Upload all documents in the <strong>ILSFA portal</strong> and <strong>Zoho</strong>. Check off each item here once done.</div>${clh(p.id)}</div>`:''}</div>`;}
+function afh(){
+  if(!showAF)return '<button class="ab" onclick="showAF=true;rp()"><i class="ti ti-plus" style="font-size:14px"></i> Add new project</button>';
+  return '<div class="af2"><div style="font-family:Cormorant Garamond,serif;font-size:18px;font-weight:600;color:var(--nv);margin-bottom:14px"><i class="ti ti-plus"></i> Add new project</div>'+
+    '<div class="g2">'+
+    '<div class="fl"><label>Project ID *</label><input id="ni-id" placeholder="e.g. P-14500"/></div>'+
+    '<div class="fl"><label>Assign to PM</label><select id="ni-pm"><option value="">— Unassigned —</option>'+PML.map(n=>'<option value="'+n+'">'+n+'</option>').join('')+'</select></div>'+
+    '<div class="fl"><label>Program year</label><select id="ni-py"><option value="PY7">PY7</option><option value="PY8">PY8</option><option value="PY8-2025" selected>PY8-2025</option></select></div>'+
+    '<div class="fl"><label>Utility</label><select id="ni-ut"><option value="">—</option><option value="ComEd">ComEd</option><option value="Ameren">Ameren</option></select></div>'+
+    '<div class="fl"><label>Submit date</label><input id="ni-sub" placeholder="e.g. Jun 1, 2026"/></div>'+
+    '<div class="fl"><label>Est. RECs</label><input id="ni-r" placeholder="e.g. $45,000"/></div>'+
+    '<div class="fl"><label>Portal status</label><select id="ni-ps"><option value="Under Inspection">Under Inspection</option><option value="Part II Submitted">Part II Submitted</option><option value="Further Part II information requested">Further Part II info requested</option><option value="Approved">Approved</option></select></div>'+
+    '<div class="fl"><label>Correction status</label><select id="ni-cs"><option value="No feedback">No feedback</option><option value="Pending">Pending</option><option value="Partially addressed">Partially addressed</option><option value="Addressed">Addressed</option></select></div>'+
+    '<div class="fl"><label>Pilot?</label><select id="ni-pi"><option value="no">No</option><option value="yes">Yes</option></select></div>'+
+    '</div>'+
+    '<div class="fl" style="margin-bottom:11px"><label>Correction details</label><textarea id="ni-corr"></textarea></div>'+
+    '<div class="fl" style="margin-bottom:14px"><label>Comments</label><textarea id="ni-cmt"></textarea></div>'+
+    '<div style="display:flex;gap:10px"><button class="btn" onclick="aP()"><i class="ti ti-check" style="font-size:13px"></i> Add project</button><button class="btn2" onclick="showAF=false;rp()">Cancel</button></div></div>';
+}
+
+function rp(){
+  const fp=fpg();const tr=P.reduce((a,p)=>a+rv(p),0);const ua=P.filter(p=>!p.pm).length;
+  const banner=AF?'<div class="fb"><i class="ti ti-filter" style="font-size:15px;color:var(--gd)"></i><span style="font-size:14px;font-weight:500;flex:1">Showing: <strong>'+AF.label+'</strong> &nbsp;·&nbsp; '+fp.length+' project'+(fp.length!==1?'s':'')+'</span><button onclick="cf()"><i class="ti ti-x" style="font-size:12px"></i> Clear filter</button></div>':'';
+  const info=!AF?'<div class="hint">PY7: '+P.filter(p=>p.py==='PY7').length+' &nbsp;·&nbsp; PY8: '+P.filter(p=>p.py==='PY8').length+' &nbsp;·&nbsp; PY8-2025: '+P.filter(p=>p.py==='PY8-2025').length+' &nbsp;·&nbsp; RECs: $'+tr.toLocaleString()+(ua>0?' &nbsp;·&nbsp; <span style="color:var(--wt)">'+ua+' unassigned</span>':'')+'</div>':'';
+  document.getElementById('n-projects').innerHTML=afh()+banner+info+(fp.length?fp.map(p=>spc(p)).join(''):'<div class="hint">No projects match this filter.</div>');
+}
+
+function tpc(p){
+  const o=openCards[p.id]!==false;const{d,t,pct}=ppx(p.id);
+  const ub=p.ut?'<span class="badge bn">'+p.ut+'</span>':'';
+  const ch=p.corr?'<div style="background:var(--wn);border-left:3px solid var(--wb);border-radius:var(--r);padding:10px 14px;margin-bottom:12px;font-size:14px;color:var(--wt);line-height:1.7"><strong>Action needed:</strong> '+p.corr+'</div>':'';
+  const cm=p.cmt?'<div style="background:rgba(212,175,55,.04);border-left:3px solid rgba(212,175,55,.4);border-radius:var(--r);padding:10px 14px;margin-bottom:12px;font-size:14px;color:var(--nm);line-height:1.7"><strong>Note:</strong> '+p.cmt+'</div>':'';
+  return '<div class="card"><div class="card-hd" onclick="tp(''+p.id+'')">'+
+    '<div style="flex:1">'+
+    '<div style="font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+p.id+' '+(isp(p)?'<span class="badge bw">Pilot</span>':'')+
+    '<span style="font-size:13px;font-weight:400;color:var(--t3)">'+p.py+'</span>'+ub+'</div>'+
+    '<div style="font-size:13px;color:var(--t3);margin-top:3px">'+p.sub+' &nbsp;·&nbsp; '+p.recs+' &nbsp;·&nbsp; <span style="font-weight:600;color:'+(pct===100?'var(--ot)':'var(--t3)')+'">'+d+'/'+t+'</span></div></div>'+
+    '<span class="badge '+(p.ps==='Approved'?'bo':p.ps==='Further Part II information requested'?'br':p.ps==='Under Inspection'?'bd2':'bw')+'">'+(p.ps==='Further Part II information requested'?'Corr. req.':p.ps)+'</span>'+
+    '<span class="badge '+csc(p.cs)+'" style="margin-left:4px">'+p.cs+'</span>'+
+    '<button style="background:none;border:none;cursor:pointer;padding:5px" onclick="tp(''+p.id+'');event.stopPropagation()"><i class="ti ti-chevron-down" style="font-size:14px;color:var(--t3);transform:rotate('+(o?180:0)+'deg);transition:transform .2s"></i></button>'+
+    '</div>'+
+    (o?'<div class="card-bd">'+ch+cm+'<div class="hint" style="margin-bottom:12px"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:5px"></i>Upload all documents in the <strong>ILSFA portal</strong> and <strong>Zoho</strong>. Check off each item once done.</div>'+clh(p.id)+'</div>':'')+
+    '</div>';
+}
 
 function rtv(){
-  document.getElementById('pm-sidebar').innerHTML=`<div class="sb-label" style="margin-top:0">Project managers</div>${PML.map(pm=>{const c=P.filter(p=>p.pm===pm).length;const m=pm===MGR;return`<button class="sb-pm-btn${pm===activePM?' a':''}" onclick="activePM='${pm}';rtv()"><div class="pm-av">${pm.charAt(0)}</div><span style="flex:1;font-size:13px">${pm}${m?`<span class="mgr">MGR</span>`:''}</span>${c>0?`<span style="font-size:10px;padding:1px 5px;border-radius:10px;background:rgba(255,255,255,.25)">${c}</span>`:''}</button>`;}).join('')}<div class="sb-divider"></div><button class="sb-pm-btn${activePM==='__n'?' a':''}" onclick="activePM='__n';rtv()"><i class="ti ti-notes" style="font-size:14px"></i> Doc notes</button>`;
+  document.getElementById('sb-pm').innerHTML=
+    '<div class="sb-lbl" style="margin-top:0">Project Managers</div>'+
+    PML.map(pm=>{const c=P.filter(p=>p.pm===pm).length;const m=pm===MGR;return '<button class="sb-pm'+(pm===activePM?' a':'')+'" onclick="activePM=''+pm+'';rtv()">'+
+      '<div class="pmav">'+pm.charAt(0)+'</div>'+
+      '<span style="flex:1">'+pm+(m?'<span class="mgr">MGR</span>':'')+'</span>'+
+      (c>0?'<span style="font-size:11px;padding:1px 6px;border-radius:10px;background:rgba(212,175,55,.15);color:var(--gd);font-weight:600">'+c+'</span>':'')+'</button>';}).join('')+
+    '<div class="sbdiv"></div>'+
+    '<button class="sb-pm'+(activePM==='__n'?' a':'')+'" onclick="activePM='__n';rtv()"><i class="ti ti-notes" style="font-size:15px"></i> Doc notes</button>';
   if(activePM==='__n'){rtn();return;}
   const mp=P.filter(p=>p.pm===activePM);const m=activePM===MGR;
-  document.getElementById('pmc').innerHTML=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:11px 14px;background:var(--cd);border:0.5px solid var(--bd);border-radius:var(--rl);box-shadow:var(--sh)"><div class="pma">${activePM.charAt(0)}</div><div style="flex:1"><div style="font-size:14px;font-weight:500">${activePM}${m?` <span class="mgr" style="font-size:10px">PM Manager</span>`:''}</div><div style="font-size:12px;color:var(--t3)">${mp.length} project${mp.length!==1?'s':''} assigned</div></div></div>${mp.length?mp.map(p=>tpc(p)).join(''):'<div style="text-align:center;padding:36px 20px;color:var(--t3)"><i class="ti ti-folder" style="font-size:30px;display:block;margin-bottom:10px;opacity:.4"></i><div style="font-size:13px;font-weight:500;margin-bottom:4px">No projects assigned yet</div></div>'}`;}
+  document.getElementById('pmc').innerHTML=
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:14px 17px;background:var(--glass);border:1px solid var(--gborder);border-radius:var(--rl);box-shadow:var(--gshadow)">'+
+    '<div class="pma">'+activePM.charAt(0)+'</div>'+
+    '<div style="flex:1"><div style="font-size:16px;font-weight:600">'+activePM+(m?' <span class="mgr">Manager</span>':'')+'</div>'+
+    '<div style="font-size:13.5px;color:var(--t3);margin-top:2px">'+mp.length+' project'+(mp.length!==1?'s':'')+' assigned</div></div></div>'+
+    (mp.length?mp.map(p=>tpc(p)).join(''):'<div style="text-align:center;padding:48px 20px;color:var(--t3)"><i class="ti ti-folder" style="font-size:36px;display:block;margin-bottom:12px;opacity:.35"></i><div style="font-size:15px;font-weight:500;margin-bottom:5px">No projects assigned yet</div></div>');
+}
 
-function rtn(){document.getElementById('pmc').innerHTML=`<div class="hint">Detailed instructions for each of the 20 required documents.</div>${[{n:'[1]',t:'Permit',v:'Officially approved permit only.'},{n:'[2]',t:'PTO / COC',v:'Must include date of approval AND ComEd representative signature.'},{n:'[3]',t:'Net metering',v:'Correct document matching project address and utility account.'},{n:'[4]',t:'PJM / SO SS',v:'Compile multiple photos into ONE PDF before uploading.'},{n:'[5]',t:'JCO (site suitability)',v:'All photos complete and accurate. Escalate missing/unclear to Yen.'},{n:'[6]',t:'Inverter & module label photos',v:'Upload clear separate photos, then merge into asingle file.'},{n:'[7]',t:'Complete array photos',v:'Separate complete array photos for each project.'},{n:'[8]',t:'Updated SSR',v:'Reflect all mitigations in pipeline review, plan set, and installation work.'},{n:'[9]',t:'Upgrade photos',v:'If applicable, submit separately to ILSFA portal.'},{n:'[10]',t:'Mitigation — final invoice',v:'Pilot only. Electrical scope must match Part I Initial Invoice.'},{n:'[11]',t:'Shading study',v:'Must be consistent with installed system.'},{n:'[12]',t:'System design',v:'Plan set must match installed system and final shade study.'},{n:'[13]',t:'ACF',v:'Update ONLY if revised value is LOWER than original.'},{n:'[14]',t:'Arrays',v:'Part I arrays must NOT be edited or deleted.'},{n:'[15]',t:'REC table',v:'All Part II – Submitted values must match the final shade study.'},{n:'[16]',t:'Inspection document',v:'Correct approved inspection document only.'},{n:'[17]',t:'JCO (post construction)',v:'All photos complete and accurate.'},{n:'[18]',t:'SS from Fox / Tesla monitoring app',v:'System must NOT show 0 production.'},{n:'[19]',t:'Shadi / Qais affidavit',v:'Upload in the correct field under the Staff Info tab.'},{n:'[20]',t:'Start / end dates',v:'Start = day BEFORE install. End = actual install completion date.'}].map(x=>`<div class="sc-card"><div class="sc-hd"><span style="font-size:11px;font-weight:500;color:var(--bm);min-width:28px">${x.n}</span><span style="font-size:13px;font-weight:500;flex:1">${x.t}</span></div><div class="sc-bd"><span style="font-size:12px;color:var(--t2);line-height:1.6">${x.v}</span></div></div>`).join('');}
+function rtn(){
+  const docs=[{n:'[1]',t:'Permit',v:'Officially approved permit only. Not a draft or expired version.'},{n:'[2]',t:'PTO / COC',v:'Must include date of approval AND ComEd representative signature. Both required.'},{n:'[3]',t:'Net metering',v:'Correct document matching project address and utility account.'},{n:'[4]',t:'PJM / SO SS',v:'Compile multiple photos into ONE PDF before uploading.'},{n:'[5]',t:'JCO (site suitability)',v:'All photos complete and accurate. Escalate missing/unclear to Yen.'},{n:'[6]',t:'Inverter & module label photos',v:'Upload clear separate photos, then merge into a single file.'},{n:'[7]',t:'Complete array photos',v:'Separate complete array photos for each project.'},{n:'[8]',t:'Updated SSR',v:'Reflect all mitigations in pipeline review, plan set, and installation work.'},{n:'[9]',t:'Upgrade photos',v:'If applicable, submit separately to ILSFA portal — not just JCO photos.'},{n:'[10]',t:'Mitigation final invoice',v:'Pilot only. Electrical scope must match Part I Initial Invoice.'},{n:'[11]',t:'Shading study',v:'Must be consistent with installed system — panel count, layout, orientation.'},{n:'[12]',t:'System design',v:'Plan set must match installed system and final shade study.'},{n:'[13]',t:'ACF',v:'Update ONLY if revised value is LOWER than original.'},{n:'[14]',t:'Arrays',v:'Part I arrays must NOT be edited or deleted.'},{n:'[15]',t:'REC table',v:'All Part II Submitted values must match the final shade study.'},{n:'[16]',t:'Inspection document',v:'Correct approved inspection document only.'},{n:'[17]',t:'JCO (post construction)',v:'All photos complete and accurate. Escalate to Yen if needed.'},{n:'[18]',t:'SS from Fox / Tesla monitoring app',v:'System must NOT show 0 production. If offline — notify PM immediately.'},{n:'[19]',t:'Shadi / Qais affidavit',v:'Upload in the correct field under the Staff Info tab.'},{n:'[20]',t:'Start / end dates',v:'Start = day BEFORE install. End = actual install completion date.'}];
+  document.getElementById('pmc').innerHTML='<div class="hint">Detailed instructions for each of the 20 required documents.</div>'+docs.map(x=>'<div class="sc-card"><div class="sc-hd"><span style="font-size:12px;font-weight:600;color:var(--gd);min-width:32px">'+x.n+'</span><span style="font-size:14.5px;font-weight:600;flex:1">'+x.t+'</span></div><div class="sc-bd"><span style="font-size:14px;color:var(--t2);line-height:1.75">'+x.v+'</span></div></div>').join('');
+}
 
 function rpr(){
-  const pid=prPid||(P.length?P[0].id:'');if(!pid){document.getElementById('n-postreview').innerHTML='<div class="hint">No projects.</div>';return;}
-  const{t,pa,fa,re}=gprs(pid);const pct=Math.round(pa/t*100);const{pct:cp,d:cd3,t:ct}=ppx(pid);
-  const sel=`<div class="prsel"><label>Select project to review</label><select onchange="prPid=this.value;rpr()">${P.map(p=>{const{fa:f}=gprs(p.id);const{pct:cp2}=ppx(p.id);const pm=p.pm||'';return`<option value="${p.id}"${p.id===pid?' selected':''}>${p.id}${pm?' ('+pm+')':''} — team ${cp2}%${f>0?' ⚠':''}`}).join('')}</select></div>`;
-  const wfl=`<div class="wf"><div class="wb d">Team submits</div><div class="wa">›</div><div class="wb a">Post-review</div><div class="wa">›</div><div class="wb">ILSFA review</div><div class="wa">›</div><div class="wb">Approved</div></div>`;
-  const cls=`<div style="background:var(--bp);border:0.5px solid rgba(126,200,227,.3);border-radius:var(--rl);padding:12px;margin-bottom:12px;display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:12px;font-weight:500;margin-bottom:5px;color:var(--bm)">Team checklist — ${pid}</div><div class="pbar"><div class="pfil" style="width:${cp}%"></div></div></div><div style="text-align:right;flex-shrink:0"><div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600">${cp}%</div><div style="font-size:11px;color:var(--t3)">${cd3}/${ct}</div></div></div>`;
-  const sm=`<div class="prsbox"><div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600">${pid} — Post-review summary</div><div class="prgrid"><div class="prs2"><div class="prn" style="color:var(--ot)">${pa}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Passed</div></div><div class="prs2"><div class="prn" style="color:var(--et)">${fa}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Failed</div></div><div class="prs2"><div class="prn">${re}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Not reviewed</div></div></div><div style="margin-top:10px"><div class="pbar"><div class="pfil" style="width:${pct}%"></div></div><div style="font-size:11px;color:var(--t3);margin-top:3px">${pct}% passed</div></div></div>`;
-  const sects=PRS.map(s=>{const sp=s.items.filter(i=>prSt(pid,i.id)==='pass').length;const sf=s.items.filter(i=>prSt(pid,i.id)==='fail').length;const op=openCards['_prs_'+s.id]!==false;return`<div style="margin-bottom:10px;border:0.5px solid var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh)"><div style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;background:var(--sf)" onclick="tprs('${s.id}')"><i class="ti ${s.ic}" style="font-size:15px;color:var(--bm)"></i><span style="font-size:13px;font-weight:500;flex:1">${s.t}</span><span style="display:flex;gap:5px;align-items:center">${sp>0?`<span class="badge bo">${sp}</span>`:''}${sf>0?`<span class="badge br">${sf} failed</span>`:''}<span style="font-size:11px;color:var(--t3)">${s.items.length}</span></span><i class="ti ti-chevron-down" style="font-size:13px;color:var(--t3);transform:rotate(${op?180:0}deg);margin-left:6px"></i></div><div class="pbar"><div class="pfil" style="width:${Math.round(sp/s.items.length*100)}%"></div></div>${op?`<div style="padding:8px 14px 12px;background:var(--cd)">${s.items.map(it=>{const st=prSt(pid,it.id);return`<div class="fi"><div style="flex:1"><div style="font-size:13px;font-weight:500">${it.t}</div><div style="font-size:12px;color:var(--t2);margin-top:2px;line-height:1.5">${it.n}</div></div><div style="display:flex;gap:4px;flex-shrink:0;margin-top:1px"><button class="fb2${st==='pass'?' pass':''}" onclick="setPR('${pid}','${it.id}','${st==='pass'?'none':'pass'}')"><i class="ti ti-check" style="font-size:11px"></i> Pass</button><button class="fb2${st==='fail'?' fail':''}" onclick="setPR('${pid}','${it.id}','${st==='fail'?'none':'fail'}')"><i class="ti ti-x" style="font-size:11px"></i> Fail</button></div></div>`;}).join('')}</div>`:''}</div>`;}).join('');
-  document.getElementById('n-postreview').innerHTML=sel+wfl+cls+sm+sects;}
+  const pid=prPid||(P.length?P[0].id:'');
+  if(!pid){document.getElementById('n-postreview').innerHTML='<div class="hint">No projects.</div>';return;}
+  const{t,pa,fa,re}=gprs(pid);const pct=Math.round(pa/t*100);const{pct:cp,d:cd,t:ct}=ppx(pid);
+  const sel='<div class="prsel"><label>Select project to review</label><select onchange="prPid=this.value;rpr()">'+P.map(p=>{const{fa:f}=gprs(p.id);const{pct:cp2}=ppx(p.id);return '<option value="'+p.id+'"'+(p.id===pid?' selected':'')+'>'+p.id+(p.pm?' ('+p.pm+')':'')+' — team '+cp2+'%'+(f>0?' ⚠':'')+'</option>';}).join('')+'</select></div>';
+  const wfl='<div class="wf"><div class="wb d">Team submits</div><div class="wa">›</div><div class="wb a">Post-review</div><div class="wa">›</div><div class="wb">ILSFA review</div><div class="wa">›</div><div class="wb">Approved</div></div>';
+  const cls='<div style="background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.15);border-radius:var(--rl);padding:14px;margin-bottom:14px;display:flex;align-items:center;gap:14px">'+
+    '<div style="flex:1"><div style="font-size:13.5px;font-weight:600;margin-bottom:7px;color:var(--nv)">Team checklist — '+pid+'</div><div class="pbar"><div class="pfil" style="width:'+cp+'%"></div></div></div>'+
+    '<div style="text-align:right;flex-shrink:0"><div style="font-family:Cormorant Garamond,serif;font-size:22px;font-weight:600">'+cp+'%</div><div style="font-size:13px;color:var(--t3)">'+cd+'/'+ct+'</div></div></div>';
+  const sm='<div class="prsb"><div style="font-family:Cormorant Garamond,serif;font-size:18px;font-weight:600">'+pid+' — Post-review summary</div>'+
+    '<div class="prg"><div class="prs"><div class="prn" style="color:var(--ot)">'+pa+'</div><div class="prl">Passed</div></div>'+
+    '<div class="prs"><div class="prn" style="color:var(--et)">'+fa+'</div><div class="prl">Failed</div></div>'+
+    '<div class="prs"><div class="prn">'+re+'</div><div class="prl">Not reviewed</div></div></div>'+
+    '<div style="margin-top:13px"><div class="pbar"><div class="pfil" style="width:'+pct+'%"></div></div><div style="font-size:13px;color:var(--t3);margin-top:4px">'+pct+'% passed</div></div></div>';
+  const sects=PRS.map(s=>{
+    const sp=s.items.filter(i=>prSt(pid,i.id)==='pass').length;
+    const sf=s.items.filter(i=>prSt(pid,i.id)==='fail').length;
+    const op=openCards['_pr_'+s.id]!==false;
+    return '<div style="margin-bottom:12px;border:1px solid var(--gborder);border-radius:var(--rl);overflow:hidden;box-shadow:var(--gshadow)">'+
+      '<div style="display:flex;align-items:center;gap:10px;padding:13px 17px;cursor:pointer;background:rgba(248,250,252,.78)" onclick="tprs(''+s.id+'')">'+
+      '<i class="ti '+s.ic+'" style="font-size:17px;color:var(--gd)"></i>'+
+      '<span style="font-size:14.5px;font-weight:600;flex:1">'+s.t+'</span>'+
+      '<span style="display:flex;gap:6px;align-items:center">'+(sp>0?'<span class="badge bo">'+sp+'</span>':'')+(sf>0?'<span class="badge br">'+sf+' failed</span>':'')+'<span style="font-size:13px;color:var(--t3)">'+s.items.length+'</span></span>'+
+      '<i class="ti ti-chevron-down" style="font-size:14px;color:var(--t3);transform:rotate('+(op?180:0)+'deg);margin-left:6px"></i></div>'+
+      '<div class="pbar"><div class="pfil" style="width:'+Math.round(sp/s.items.length*100)+'%"></div></div>'+
+      (op?'<div style="padding:10px 17px 15px;background:rgba(255,255,255,.88)">'+s.items.map(it=>{const st=prSt(pid,it.id);return '<div class="fi">'+
+        '<div style="flex:1"><div style="font-size:14px;font-weight:500">'+it.t+'</div><div style="font-size:13.5px;color:var(--t2);margin-top:3px;line-height:1.6">'+it.n+'</div></div>'+
+        '<div style="display:flex;gap:5px;flex-shrink:0;margin-top:2px">'+
+        '<button class="fb2'+(st==='pass'?' pass':'')+'" onclick="setPR(''+pid+'',''+it.id+'',''+(st==='pass'?'none':'pass')+'')"><i class="ti ti-check" style="font-size:12px"></i> Pass</button>'+
+        '<button class="fb2'+(st==='fail'?' fail':'')+'" onclick="setPR(''+pid+'',''+it.id+'',''+(st==='fail'?'none':'fail')+'')"><i class="ti ti-x" style="font-size:12px"></i> Fail</button>'+
+        '</div></div>';}).join('')+'</div>':'')+'</div>';}).join('');
+  document.getElementById('n-postreview').innerHTML=sel+wfl+cls+sm+sects;
+}
 
-function gpr(pid){prPid=pid;ntid('n-postreview');document.querySelectorAll('#v-spl .sb-btn').forEach((b,i)=>b.classList.toggle('a',i===2));rpr();}
-function rstd(){document.getElementById('n-standards').innerHTML=STDS.map(s=>`<div class="sc-card"><div class="sc-hd"><i class="ti ${s.ic}" style="font-size:14px;color:var(--bm)"></i><span style="font-size:13px;font-weight:500;flex:1;margin-left:6px">${s.t}</span></div><div class="sc-bd">${s.rows.map(r=>`<div class="rw"><span class="rl2">${r.l}</span><span class="rv">${r.v}</span></div>`).join('')}</div></div>`).join('');}
-function rset(){const pc2=PML.map(n=>{const c=P.filter(p=>p.pm===n).length;const m=n===MGR;return`<div class="pmc"><div class="pma">${n.substring(0,2).toUpperCase()}</div><div style="flex:1"><div style="font-size:13px;font-weight:500">${n}${m?` <span class="mgr" style="font-size:10px">Manager</span>`:''}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">${c} project${c!==1?'s':''} assigned</div></div>${!m?`<button class="pmr" onclick="dpm('${n}')"><i class="ti ti-trash" style="font-size:11px"></i> Remove</button>`:'<span style="font-size:11px;color:var(--t3)">Protected</span>'}</div>`;}).join('');const af=showPMAF?`<div class="pmaf"><div style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;margin-bottom:10px;color:var(--nv)">Add new PM</div><div class="fl" style="margin-bottom:10px"><label>Full name</label><input id="npm" placeholder="e.g. Katrina Santos"/></div><div style="display:flex;gap:8px"><button class="btn" onclick="apm()"><i class="ti ti-check" style="font-size:12px"></i> Add PM</button><button class="btn2" onclick="showPMAF=false;rset()">Cancel</button></div></div>`:`<button class="ab" onclick="showPMAF=true;rset()"><i class="ti ti-plus" style="font-size:13px"></i> Add new PM</button>`;document.getElementById('n-settings').innerHTML=`<div class="div2">Project manager list</div>${af}${pc2}<div class="hint" style="margin-top:10px"><i class="ti ti-info-circle" style="font-size:13px;vertical-align:-2px;margin-right:4px"></i>Mary is protected as PM Manager.</div>`;}
+function gpr(pid){prPid=pid;ntid('n-postreview');document.querySelectorAll('#v-spl .nb').forEach((b,i)=>b.classList.toggle('a',i===2));rpr();}
 
-function hl(t,q){if(!q)return t;return t.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark style="background:rgba(126,200,227,.3);color:inherit;border-radius:2px;padding:0 2px">$1</mark>');}
-function hs(q){const t=q.trim();document.getElementById('gsc').classList.toggle('v',t.length>0);const w=document.getElementById('srw');if(t.length<2){w.classList.remove('v');return;}const ql=t.toLowerCase();const rs=[];P.forEach(p=>{if([p.id,p.py,p.sub,p.recs,p.ps,p.cs,p.ut||'',p.corr,p.cmt,p.pm||''].join(' ').toLowerCase().includes(ql)){rs.push({ic:'ti-folder',t:`${p.id} — ${p.py}${p.pm?' ('+p.pm+')':''}`,s:`${p.ps} · ${p.recs}`,fn:`op2('${p.id}')`});}});PML.forEach(pm=>{if(pm.toLowerCase().includes(ql)){rs.push({ic:'ti-user',t:pm+(pm===MGR?' (Manager)':''),s:P.filter(p=>p.pm===pm).length+' projects',fn:`fgpm('${pm}',${P.filter(p=>p.pm===pm).length})`});}});w.classList.add('v');document.getElementById('src2').textContent=rs.length+' result'+(rs.length!==1?'s':'');if(!rs.length){document.getElementById('srb').innerHTML=`<div style="padding:16px;text-align:center;color:var(--t3);font-size:12px">No results</div>`;return;}document.getElementById('srb').innerHTML=rs.map(r=>`<div class="sr-item" onclick="${r.fn};cs()"><i class="ti ${r.ic}" style="font-size:14px;color:var(--bm);flex-shrink:0;margin-top:1px"></i><div style="flex:1"><div style="font-size:12px;font-weight:500;margin-bottom:1px">${hl(r.t,t)}</div><div style="font-size:11px;color:var(--t2)">${hl(r.s,t)}</div></div></div>`).join('');}
+function rstd(){
+  document.getElementById('n-standards').innerHTML=STDS.map(s=>'<div class="sc-card"><div class="sc-hd"><i class="ti '+s.ic+'" style="font-size:16px;color:var(--gd)"></i><span style="font-size:15px;font-weight:600;flex:1;margin-left:8px">'+s.t+'</span></div><div class="sc-bd">'+s.rows.map(r=>'<div class="rw"><span class="rl">'+r.l+'</span><span class="rv">'+r.v+'</span></div>').join('')+'</div></div>').join('');
+}
+
+function rset(){
+  const af=showPMAF?'<div class="pmaf"><div style="font-family:Cormorant Garamond,serif;font-size:18px;font-weight:600;margin-bottom:13px;color:var(--nv)">Add new PM</div><div class="fl" style="margin-bottom:13px"><label>Full name</label><input id="npm" placeholder="e.g. Katrina Santos"/></div><div style="display:flex;gap:10px"><button class="btn" onclick="apm()"><i class="ti ti-check" style="font-size:13px"></i> Add PM</button><button class="btn2" onclick="showPMAF=false;rset()">Cancel</button></div></div>':'<button class="ab" onclick="showPMAF=true;rset()"><i class="ti ti-plus" style="font-size:14px"></i> Add new PM</button>';
+  document.getElementById('n-settings').innerHTML='<div class="div2">Project manager list</div>'+af+
+    PML.map(n=>{const c=P.filter(p=>p.pm===n).length;const m=n===MGR;return '<div class="pmc"><div class="pma">'+n.substring(0,2).toUpperCase()+'</div><div style="flex:1"><div style="font-size:15px;font-weight:600">'+n+(m?' <span class="mgr">Manager</span>':'')+'</div><div style="font-size:13.5px;color:var(--t3);margin-top:2px">'+c+' project'+(c!==1?'s':'')+' assigned</div></div>'+((!m)?'<button class="pmr" onclick="dpm(''+n+'')"><i class="ti ti-trash" style="font-size:12px"></i> Remove</button>':'<span style="font-size:13px;color:var(--t3)">Protected</span>')+'</div>';}).join('')+
+    '<div class="hint" style="margin-top:13px"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:5px"></i>Mary is protected as PM Manager and cannot be removed.</div>';
+}
+
+function hl(t,q){if(!q)return t;return t.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark style="background:rgba(212,175,55,.25);color:inherit;border-radius:2px;padding:0 2px">$1</mark>');}
+
+function hs(q){
+  const t=q.trim();document.getElementById('gsc').classList.toggle('v',t.length>0);
+  const w=document.getElementById('srw');
+  if(t.length<2){w.classList.remove('v');return;}
+  const ql=t.toLowerCase();const rs=[];
+  P.forEach(p=>{if([p.id,p.py,p.sub,p.recs,p.ps,p.cs,p.ut||'',p.corr,p.cmt,p.pm||''].join(' ').toLowerCase().includes(ql)){rs.push({ic:'ti-folder',t:p.id+' — '+p.py+(p.pm?' ('+p.pm+')':''),s:p.ps+' · '+p.recs,fn:'op2(''+p.id+'')'});}});
+  PML.forEach(pm=>{if(pm.toLowerCase().includes(ql)){rs.push({ic:'ti-user',t:pm+(pm===MGR?' (Manager)':''),s:P.filter(p=>p.pm===pm).length+' projects assigned',fn:'fgpm(''+pm+'','+P.filter(p=>p.pm===pm).length+')'});}});
+  w.classList.add('v');document.getElementById('src').textContent=rs.length+' result'+(rs.length!==1?'s':'');
+  if(!rs.length){document.getElementById('srb').innerHTML='<div style="padding:20px;text-align:center;color:var(--t3);font-size:14px">No results</div>';return;}
+  document.getElementById('srb').innerHTML=rs.map(r=>'<div class="sri" onclick="'+r.fn+';cs()"><i class="ti '+r.ic+'" style="font-size:15px;color:var(--gd);flex-shrink:0;margin-top:1px"></i><div style="flex:1"><div style="font-size:14px;font-weight:500;margin-bottom:1px">'+hl(r.t,t)+'</div><div style="font-size:13px;color:var(--t2)">'+hl(r.s,t)+'</div></div></div>').join('');
+}
+
 function cs(){document.getElementById('gs').value='';document.getElementById('srw').classList.remove('v');document.getElementById('gsc').classList.remove('v');}
-function op2(pid){cs();openCards[pid]=true;const v=document.querySelector('.view.a').id;if(v==='v-spl'){ntid('n-projects');document.querySelectorAll('#v-spl .sb-btn').forEach((b,i)=>b.classList.toggle('a',i===1));rp();}else{const pm=P.find(p=>p.id===pid)?.pm;if(pm){activePM=pm;rtv();}else rtv();}}
+function op2(pid){cs();openCards[pid]=true;const v=document.querySelector('.view.a').id;if(v==='v-spl'){ntid('n-projects');document.querySelectorAll('#v-spl .nb').forEach((b,i)=>b.classList.toggle('a',i===1));rp();}else{const pm=P.find(p=>p.id===pid)?.pm;if(pm){activePM=pm;rtv();}else rtv();}}
 
-function ntid(id){document.querySelectorAll('#v-spl .tab').forEach(t=>t.classList.remove('a'));document.querySelectorAll('#v-spl .sb-btn').forEach(b=>b.classList.remove('a'));document.getElementById(id).classList.add('a');const m={'n-dashboard':0,'n-projects':1,'n-postreview':2,'n-standards':3,'n-settings':4};const btns=document.querySelectorAll('#v-spl .sb-btn');if(btns[m[id]])btns[m[id]].classList.add('a');}
-function nt(id,btn){document.querySelectorAll('#v-spl .tab').forEach(t=>t.classList.remove('a'));document.querySelectorAll('#v-spl .sb-btn').forEach(b=>b.classList.remove('a'));document.getElementById('n-'+id).classList.add('a');btn.classList.add('a');if(id==='dashboard')rdb();}
-function sv(v,btn){document.querySelectorAll('.view').forEach(x=>{x.classList.remove('a');x.style.display='none';});document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('a'));document.getElementById('v-'+v).classList.add('a');document.getElementById('v-'+v).style.display='flex';btn.classList.add('a');}
-function svid(v){document.querySelectorAll('.view').forEach(x=>{x.classList.remove('a');x.style.display='none';});document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('a'));document.getElementById('v-'+v).classList.add('a');document.getElementById('v-'+v).style.display='flex';document.querySelectorAll('.view-btn')[v==='spl'?0:1].classList.add('a');}
+function ntid(id){
+  document.querySelectorAll('#v-spl .tab').forEach(t=>t.classList.remove('a'));
+  document.querySelectorAll('#v-spl .nb').forEach(b=>b.classList.remove('a'));
+  document.getElementById(id).classList.add('a');
+  const m={'n-dashboard':0,'n-projects':1,'n-postreview':2,'n-standards':3,'n-settings':4};
+  const btns=document.querySelectorAll('#v-spl .nb');
+  if(btns[m[id]])btns[m[id]].classList.add('a');
+}
+function nt(id,btn){
+  document.querySelectorAll('#v-spl .tab').forEach(t=>t.classList.remove('a'));
+  document.querySelectorAll('#v-spl .nb').forEach(b=>b.classList.remove('a'));
+  document.getElementById('n-'+id).classList.add('a');btn.classList.add('a');
+  if(id==='dashboard')rdb();
+}
+function sv(v,btn){
+  document.querySelectorAll('.view').forEach(x=>{x.classList.remove('a');x.style.display='none';});
+  document.querySelectorAll('.vbtn').forEach(b=>b.classList.remove('a'));
+  document.getElementById('v-'+v).classList.add('a');document.getElementById('v-'+v).style.display='flex';btn.classList.add('a');
+}
+function svid(v){
+  document.querySelectorAll('.view').forEach(x=>{x.classList.remove('a');x.style.display='none';});
+  document.querySelectorAll('.vbtn').forEach(b=>b.classList.remove('a'));
+  document.getElementById('v-'+v).classList.add('a');document.getElementById('v-'+v).style.display='flex';
+  document.querySelectorAll('.vbtn')[v==='spl'?0:1].classList.add('a');
+}
 function ra(){rss();rdb();rp();rpr();rstd();rset();rtv();}
 loadData();
 </script>
