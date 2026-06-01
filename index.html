@@ -254,14 +254,24 @@ body{background-image:radial-gradient(ellipse at 20% 0%,rgba(212,175,55,.04) 0%,
 #sync.ok{color:var(--ot)}#sync.err{color:var(--et)}
 #setup-banner{background:var(--er);border:1px solid var(--eb);border-radius:var(--rl);padding:12px 14px;margin-bottom:12px}
 </style>
+<script>
+// Safety fallback: show app after 2s even if main script has issues
+setTimeout(function(){
+  var l=document.getElementById('loading');
+  var a=document.getElementById('app');
+  if(l&&a&&l.style.display!=='none'){
+    l.style.display='none';
+    a.style.display='block';
+  }
+},2000);
+</script>
 </head>
 <body>
 
 <div id="loading">
   <div class="spin"></div>
-  <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:rgba(255,255,255,.9);letter-spacing:.02em">Loading portal data...</div>
-  <div style="font-size:11px;color:rgba(212,175,55,.6);letter-spacing:.1em;text-transform:uppercase" id="load-sub">Connecting to Google Sheets</div>
-  <button id="skip-btn" onclick="skipLoad()" style="display:none;margin-top:16px;font-size:12px;padding:8px 20px;border-radius:20px;border:1px solid rgba(212,175,55,.3);background:rgba(212,175,55,.1);color:rgba(212,175,55,.8);cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.05em">Open in demo mode</button>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:rgba(255,255,255,.9);letter-spacing:.02em">Part II Portal</div>
+  <div style="font-size:11px;color:rgba(212,175,55,.6);letter-spacing:.1em;text-transform:uppercase">Liaison Department</div>
 </div>
 <div id="sync"></div>
 
@@ -372,7 +382,11 @@ async function api(p){
   }catch(e){return null;}
 }
 function syncInd(msg,type){const el=document.getElementById('sync');el.textContent=msg;el.className='show '+(type||'');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2500);}
-async function reloadData(){try{localStorage.removeItem('ilsfa_cache');}catch(e){}document.getElementById('loading').style.display='flex';document.getElementById('app').style.display='none';await loadData();}
+async function reloadData(){
+  try{localStorage.removeItem('ilsfa_cache');}catch(e){}
+  syncInd('Refreshing from Google Sheets...','');
+  if(configured)bgRefresh();
+}
 
 function applyData(data){
   P=(data.projects||[]).map(p=>({...p,pilot:p.pilot==='true'||p.pilot===true}));
@@ -395,63 +409,32 @@ function loadCache(){
   return null;
 }
 
-function skipLoad(){
-  P=DEFAULT_PROJECTS.map(p=>({...p,pilot:false}));CL={};PR={};PML=[...DEFAULT_PMS];
-  if(!activePM)activePM=PML[0];
-  document.getElementById('loading').style.display='none';
-  document.getElementById('app').style.display='block';
-  syncInd('⚠ Sheet unreachable — showing demo data','err');
-  ra();
-}
-
 async function loadData(){
-  if(!configured){
-    P=DEFAULT_PROJECTS.map(p=>({...p}));CL={};PR={};PML=[...DEFAULT_PMS];
-    document.getElementById('setup-banner').style.display='block';
-    if(!activePM)activePM=PML[0];
-    document.getElementById('loading').style.display='none';
-    document.getElementById('app').style.display='block';
-    ra();
-    return;
-  }
-
-  // Try cache first — show instantly
+  // Step 1: Show portal immediately with cache or defaults
   const cached=loadCache();
   if(cached){
     applyData(cached.data);
-    if(!activePM)activePM=PML[0];
-    document.getElementById('loading').style.display='none';
-    document.getElementById('app').style.display='block';
-    ra();
-    // Then refresh in background quietly
-    const ageMin=Math.round((Date.now()-cached.ts)/60000);
-    syncInd(`Cached data (${ageMin}m ago) · Syncing...`,'');
-    bgRefresh();
-    return;
-  }
-
-  // No cache — must fetch (first visit)
-  // Show skip button after 5s in case sheet is slow
-  const skipTimer=setTimeout(()=>{
-    const sb=document.getElementById('skip-btn');
-    const ls=document.getElementById('load-sub');
-    if(sb)sb.style.display='block';
-    if(ls)ls.textContent='Taking longer than usual...';
-  },8000);
-  const data=await api({action:'getAll'});
-  clearTimeout(skipTimer);
-  if(!data||data.error){
-    P=DEFAULT_PROJECTS.map(p=>({...p,pilot:false}));CL={};PR={};PML=[...DEFAULT_PMS];
-    syncInd('⚠ Could not reach sheet — demo mode','err');
   } else {
-    applyData(data);
-    saveCache(data);
-    syncInd('✓ Loaded from Google Sheets','ok');
+    // First visit — use defaults right away
+    P=DEFAULT_PROJECTS.map(p=>({...p,pilot:false}));
+    CL={};PR={};PML=[...DEFAULT_PMS];
+    if(!configured)document.getElementById('setup-banner').style.display='block';
   }
   if(!activePM)activePM=PML[0];
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
   ra();
+
+  // Step 2: Sync with sheet in background (non-blocking)
+  if(configured){
+    if(cached){
+      const age=Math.round((Date.now()-cached.ts)/60000);
+      syncInd(`Loaded · Syncing... (${age}m ago)`,'');
+    } else {
+      syncInd('Connecting to Google Sheets...','');
+    }
+    bgRefresh();
+  }
 }
 
 async function bgRefresh(){
