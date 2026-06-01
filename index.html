@@ -249,7 +249,7 @@ body{background-image:radial-gradient(ellipse at 20% 0%,rgba(212,175,55,.04) 0%,
 #loading{position:fixed;inset:0;background:#0F172A;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:14px;background-image:radial-gradient(ellipse at center,rgba(212,175,55,.06) 0%,transparent 70%)}
 .spin{width:32px;height:32px;border:2px solid rgba(212,175,55,.15);border-top-color:var(--gd);border-radius:50%;animation:spin .8s linear infinite;box-shadow:0 0 20px rgba(212,175,55,.2)}
 @keyframes spin{to{transform:rotate(360deg)}}
-#sync{position:fixed;bottom:16px;right:16px;font-size:11px;padding:5px 12px;background:var(--cd);border:0.5px solid var(--bd);border-radius:20px;box-shadow:var(--sh);display:none;align-items:center;gap:6px;color:var(--t2);z-index:100}
+#sync{position:fixed;bottom:20px;right:20px;font-size:11px;padding:6px 14px;background:rgba(255,255,255,.9);border:1px solid rgba(212,175,55,.2);border-radius:20px;box-shadow:0 4px 20px rgba(15,23,42,.1);display:none;align-items:center;gap:6px;color:var(--t2);z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:all .3s}
 #sync.show{display:flex}
 #sync.ok{color:var(--ot)}#sync.err{color:var(--et)}
 #setup-banner{background:var(--er);border:1px solid var(--eb);border-radius:var(--rl);padding:12px 14px;margin-bottom:12px}
@@ -260,7 +260,8 @@ body{background-image:radial-gradient(ellipse at 20% 0%,rgba(212,175,55,.04) 0%,
 <div id="loading">
   <div class="spin"></div>
   <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:rgba(255,255,255,.9);letter-spacing:.02em">Loading portal data...</div>
-  <div style="font-size:11px;color:rgba(212,175,55,.6);letter-spacing:.1em;text-transform:uppercase">Connecting to Google Sheets</div>
+  <div style="font-size:11px;color:rgba(212,175,55,.6);letter-spacing:.1em;text-transform:uppercase" id="load-sub">Connecting to Google Sheets</div>
+  <button id="skip-btn" onclick="skipLoad()" style="display:none;margin-top:16px;font-size:12px;padding:8px 20px;border-radius:20px;border:1px solid rgba(212,175,55,.3);background:rgba(212,175,55,.1);color:rgba(212,175,55,.8);cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.05em">Open in demo mode</button>
 </div>
 <div id="sync"></div>
 
@@ -359,28 +360,106 @@ const MGR='Mary';
 let P=[],CL={},PR={},PML=[],AF=null,prPid='',showAF=false,showPMAF=false,openCards={},clSec={},activePM='';
 const configured=SCRIPT_URL!=='YOUR_SCRIPT_URL_HERE'&&SCRIPT_URL.length>10;
 
-async function api(p){if(!configured)return null;const url=SCRIPT_URL+'?'+Object.entries(p).map(([k,v])=>k+'='+encodeURIComponent(v)).join('&');try{const r=await fetch(url);return await r.json();}catch(e){return null;}}
+async function api(p,timeout=10000){
+  if(!configured)return null;
+  const url=SCRIPT_URL+'?'+Object.entries(p).map(([k,v])=>k+'='+encodeURIComponent(v)).join('&');
+  try{
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),timeout);
+    const r=await fetch(url,{signal:ctrl.signal});
+    clearTimeout(tid);
+    return await r.json();
+  }catch(e){return null;}
+}
 function syncInd(msg,type){const el=document.getElementById('sync');el.textContent=msg;el.className='show '+(type||'');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2500);}
-async function reloadData(){document.getElementById('loading').style.display='flex';document.getElementById('app').style.display='none';await loadData();}
+async function reloadData(){try{localStorage.removeItem('ilsfa_cache');}catch(e){}document.getElementById('loading').style.display='flex';document.getElementById('app').style.display='none';await loadData();}
+
+function applyData(data){
+  P=(data.projects||[]).map(p=>({...p,pilot:p.pilot==='true'||p.pilot===true}));
+  if(!P.length)P=DEFAULT_PROJECTS.map(p=>({...p,pilot:false}));
+  CL={};(data.checklist||[]).forEach(r=>{CL[r.pid+'_'+r.iid]={done:r.done==='true',st:r.st||''};});
+  PR={};(data.postReview||[]).forEach(r=>{PR[r.pid+'_'+r.iid]=r.val||'none';});
+  const pmRow=(data.settings||[]).find(r=>r.key==='pmList');
+  PML=pmRow?pmRow.val.split(',').filter(Boolean):[...DEFAULT_PMS];
+}
+
+function saveCache(data){
+  try{localStorage.setItem('ilsfa_cache',JSON.stringify({data,ts:Date.now()}));}catch(e){}
+}
+
+function loadCache(){
+  try{
+    const c=JSON.parse(localStorage.getItem('ilsfa_cache')||'null');
+    if(c&&c.data&&c.ts)return c;
+  }catch(e){}
+  return null;
+}
+
+function skipLoad(){
+  P=DEFAULT_PROJECTS.map(p=>({...p,pilot:false}));CL={};PR={};PML=[...DEFAULT_PMS];
+  if(!activePM)activePM=PML[0];
+  document.getElementById('loading').style.display='none';
+  document.getElementById('app').style.display='block';
+  syncInd('⚠ Sheet unreachable — showing demo data','err');
+  ra();
+}
 
 async function loadData(){
-  if(!configured){P=DEFAULT_PROJECTS.map(p=>({...p}));CL={};PR={};PML=[...DEFAULT_PMS];document.getElementById('setup-banner').style.display='block';}
-  else{
-    const data=await api({action:'getAll'});
-    if(!data||data.error){P=DEFAULT_PROJECTS.map(p=>({...p}));CL={};PR={};PML=[...DEFAULT_PMS];syncInd('⚠ Could not reach sheet — demo mode','err');}
-    else{
-      P=(data.projects||[]).map(p=>({...p,pilot:p.pilot==='true'||p.pilot===true}));
-      if(!P.length)P=DEFAULT_PROJECTS.map(p=>({...p,pilot:false}));
-      CL={};(data.checklist||[]).forEach(r=>{CL[r.pid+'_'+r.iid]={done:r.done==='true',st:r.st||''};});
-      PR={};(data.postReview||[]).forEach(r=>{PR[r.pid+'_'+r.iid]=r.val||'none';});
-      const pmRow=(data.settings||[]).find(r=>r.key==='pmList');
-      PML=pmRow?pmRow.val.split(',').filter(Boolean):[...DEFAULT_PMS];
-      syncInd('✓ Loaded from Google Sheets','ok');
-    }
+  if(!configured){
+    P=DEFAULT_PROJECTS.map(p=>({...p}));CL={};PR={};PML=[...DEFAULT_PMS];
+    document.getElementById('setup-banner').style.display='block';
+    if(!activePM)activePM=PML[0];
+    document.getElementById('loading').style.display='none';
+    document.getElementById('app').style.display='block';
+    ra();
+    return;
+  }
+
+  // Try cache first — show instantly
+  const cached=loadCache();
+  if(cached){
+    applyData(cached.data);
+    if(!activePM)activePM=PML[0];
+    document.getElementById('loading').style.display='none';
+    document.getElementById('app').style.display='block';
+    ra();
+    // Then refresh in background quietly
+    const ageMin=Math.round((Date.now()-cached.ts)/60000);
+    syncInd(`Cached data (${ageMin}m ago) · Syncing...`,'');
+    bgRefresh();
+    return;
+  }
+
+  // No cache — must fetch (first visit)
+  // Show skip button after 5s in case sheet is slow
+  const skipTimer=setTimeout(()=>{
+    const sb=document.getElementById('skip-btn');
+    const ls=document.getElementById('load-sub');
+    if(sb)sb.style.display='block';
+    if(ls)ls.textContent='Taking longer than usual...';
+  },5000);
+  const data=await api({action:'getAll'});
+  clearTimeout(skipTimer);
+  if(!data||data.error){
+    P=DEFAULT_PROJECTS.map(p=>({...p,pilot:false}));CL={};PR={};PML=[...DEFAULT_PMS];
+    syncInd('⚠ Could not reach sheet — demo mode','err');
+  } else {
+    applyData(data);
+    saveCache(data);
+    syncInd('✓ Loaded from Google Sheets','ok');
   }
   if(!activePM)activePM=PML[0];
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
+  ra();
+}
+
+async function bgRefresh(){
+  const data=await api({action:'getAll'},12000);
+  if(!data||data.error){syncInd('⚠ Sheet unreachable — showing cached data','err');return;}
+  applyData(data);
+  saveCache(data);
+  syncInd('✓ Synced with Google Sheets','ok');
   ra();
 }
 
@@ -396,7 +475,7 @@ function gprs(pid){return{t:APRI.length,pa:APRI.filter(i=>prSt(pid,i.id)==='pass
 function setPR(pid,iid,val){PR[pid+'_'+iid]=val;rpr();api({action:'setPR',pid,iid,val});}
 function tprs(id){openCards['_prs_'+id]=openCards['_prs_'+id]===false?true:false;rpr();}
 function tp(pid){openCards[pid]=openCards[pid]===false?true:false;rp();rtv();}
-function upf(pid,f,v){const p=P.find(x=>x.id===pid);if(!p)return;p[f]=v;rp();rdb();rss();api({action:'upsertProject',data:JSON.stringify(p)});}
+function upf(pid,f,v){const p=P.find(x=>x.id===pid);if(!p)return;p[f]=v;rp();rdb();rss();api({action:'upsertProject',data:JSON.stringify(p)}).then(()=>{try{const c=loadCache();if(c){c.data.projects=(c.data.projects||[]).map(x=>x.id===pid?{...x,[f]:v}:x);saveCache(c.data);};}catch(e){}});}
 function spp(pid,pm){const p=P.find(x=>x.id===pid);if(!p)return;p.pm=pm;rp();rtv();rdb();api({action:'upsertProject',data:JSON.stringify(p)});}
 function spn(pid){const ce=document.getElementById('cn-'+pid),me=document.getElementById('mn-'+pid),p=P.find(x=>x.id===pid);if(!p)return;if(ce)p.corr=ce.value;if(me)p.cmt=me.value;rp();api({action:'upsertProject',data:JSON.stringify(p)});}
 function aP(){const id=document.getElementById('ni-id').value.trim();if(!id||P.find(p=>p.id===id)){alert(!id?'ID required.':'ID exists.');return;}const pm=document.getElementById('ni-pm').value;const proj={id,py:document.getElementById('ni-py').value,sub:document.getElementById('ni-sub').value||'—',pilot:document.getElementById('ni-pi').value==='yes',ps:document.getElementById('ni-ps').value,cs:document.getElementById('ni-cs').value,recs:document.getElementById('ni-r').value||'—',ut:document.getElementById('ni-ut').value,corr:document.getElementById('ni-corr').value,cmt:document.getElementById('ni-cmt').value,pm};P.unshift(proj);showAF=false;ra();api({action:'upsertProject',data:JSON.stringify(proj)});}
