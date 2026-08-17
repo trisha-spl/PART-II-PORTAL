@@ -532,6 +532,26 @@ async function bgRefresh(){
   if(!data||data.error){si('Sheet unreachable','err');return;}
   apd(data);sc(data);si('Synced with Google Sheets','ok');ra();
 }
+function initReportDefaults(){
+  // Pre-seed Overall Report with known data if not yet saved
+  try{
+    var existing=JSON.parse(localStorage.getItem('ilsfa_report')||'{}');
+    // Only seed if completely empty
+    if(Object.keys(existing).length>0)return;
+    var defaults={
+      // 2024 Projects
+      '2024_total':10,'2024_dropped':0,'2024_eligibility':10,'2024_icc':10,
+      '2024_cancelled':0,'2024_active':10,'2024_pilot':10,'2024_submitted':10,
+      '2024_approved':10,'2024_invoiced':10,'2024_rec':'289249.09',
+      // PY7 Projects
+      'PY7_total':153,'PY7_dropped':4,'PY7_eligibility':148,'PY7_icc':148,
+      'PY7_cancelled':0,'PY7_active':149,'PY7_pilot':49,'PY7_submitted':148,
+      'PY7_approved':148,'PY7_invoiced':147,'PY7_rec':'5270098.29',
+    };
+    localStorage.setItem('ilsfa_report',JSON.stringify(defaults));
+  }catch(e){}
+}
+
 async function loadData(){
   const cached=lc();
   if(cached){apd(cached.data);}
@@ -539,6 +559,7 @@ async function loadData(){
   if(!activePM)activePM='__db';
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
+  initReportDefaults();
   ra();
   if(SCRIPT_URL&&SCRIPT_URL!=='YOUR_URL'){
     if(cached){const age=Math.round((Date.now()-cached.ts)/60000);si(`Syncing... (${age}m ago)`,'');}
@@ -1974,6 +1995,39 @@ function toggleExportMenu(e){
   document.addEventListener('click',()=>m.classList.remove('open'),{once:true});
 }
 
+function getOverallData(){
+  // Returns saved overall report data per program year
+  var pys=getPYS();
+  var saved={};
+  try{saved=JSON.parse(localStorage.getItem('ilsfa_report')||'{}');}catch(e){}
+  var result={pys:[],totals:{projects:0,submitted:0,approved:0,invoiced:0,rec:0}};
+  pys.forEach(function(py){
+    var pp=P.filter(function(p){return p.py===py.key;});
+    var row={
+      key:py.key,
+      label:py.label,
+      total:parseInt(saved[py.key+'_total'])||pp.length||0,
+      dropped:parseInt(saved[py.key+'_dropped'])||0,
+      eligibility:parseInt(saved[py.key+'_eligibility'])||0,
+      icc:parseInt(saved[py.key+'_icc'])||0,
+      cancelled:parseInt(saved[py.key+'_cancelled'])||0,
+      active:parseInt(saved[py.key+'_active'])||pp.length||0,
+      pilot:parseInt(saved[py.key+'_pilot'])||pp.filter(isp).length||0,
+      submitted:parseInt(saved[py.key+'_submitted'])||pp.length||0,
+      approved:parseInt(saved[py.key+'_approved'])||pp.filter(function(p){return p.ps==='Approved';}).length||0,
+      invoiced:parseInt(saved[py.key+'_invoiced'])||0,
+      rec:parseFloat(saved[py.key+'_rec'])||pp.reduce(function(a,p){return a+rv(p);},0)||0,
+    };
+    result.pys.push(row);
+    result.totals.projects+=row.total;
+    result.totals.submitted+=row.submitted;
+    result.totals.approved+=row.approved;
+    result.totals.invoiced+=row.invoiced;
+    result.totals.rec+=row.rec;
+  });
+  return result;
+}
+
 function getReportData(){
   const pys=getPYS();
   const fields=[
@@ -2249,75 +2303,85 @@ function renderBiWeekly(){
 }
 
 function generateBiWeekly(){
-  const startVal=document.getElementById('bw-start')?.value;
-  const endVal=document.getElementById('bw-end')?.value;
+  var startVal=document.getElementById('bw-start')?.value;
+  var endVal=document.getElementById('bw-end')?.value;
   if(!startVal||!endVal)return;
-  const start=new Date(startVal+'T00:00:00');
-  const end=new Date(endVal+'T23:59:59');
+  var start=new Date(startVal+'T00:00:00');
+  var end=new Date(endVal+'T23:59:59');
+  var startLabel=start.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  var endLabel=end.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
 
-  // Projects submitted in this period
-  function parseDate(s){
-    if(!s||s==='—')return null;
-    const d=new Date(s);return isNaN(d)?null:d;
+  // Get daily logs within range
+  var logs=getDailyLogs().filter(function(l){
+    var d=new Date(l.id+'T00:00:00');
+    return d>=start&&d<=end;
+  }).sort(function(a,b){return b.id.localeCompare(a.id);});
+
+  // Extract activity from logs
+  var daysWithSubs=logs.filter(function(l){return l.submissions&&l.submissions.trim();});
+  var daysWithCorr=logs.filter(function(l){return l.corrections&&l.corrections.trim();});
+  var daysWithRes=logs.filter(function(l){return l.resolved&&l.resolved.trim();});
+  var daysWithPend=logs.filter(function(l){return l.pending&&l.pending.trim();});
+
+  // Get overall report data for summary
+  var od=getOverallData();
+  function fmFull(n){return '$'+n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+  var content=document.getElementById('bw-content');
+  var out='';
+
+  // Period header
+  out+='<div style="background:#0D2147;border-radius:var(--rl);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">';
+  out+='<div><div style="font-size:13px;font-weight:600;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;font-family:Nunito,sans-serif">Reporting Period</div>';
+  out+='<div style="font-size:16px;font-weight:600;color:#fff;margin-top:3px;font-family:Nunito,sans-serif">'+startLabel+' — '+endLabel+'</div></div>';
+  out+='<div style="text-align:right"><div style="font-size:22px;font-weight:700;color:#FCD34D">'+logs.length+'</div><div style="font-size:11px;color:rgba(255,255,255,.5);font-family:Nunito,sans-serif">daily logs</div></div>';
+  out+='</div>';
+
+  // Activity summary cards
+  out+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">';
+  out+='<div class="rpt-metric"><div class="rpt-metric-n" style="color:#0891B2">'+daysWithSubs.length+'</div><div class="rpt-metric-l">Days with submissions</div><div class="rpt-metric-sub">'+daysWithSubs.length+' active days</div></div>';
+  out+='<div class="rpt-metric"><div class="rpt-metric-n" style="color:var(--et)">'+daysWithCorr.length+'</div><div class="rpt-metric-l">Corrections received</div><div class="rpt-metric-sub">days with new corrections</div></div>';
+  out+='<div class="rpt-metric"><div class="rpt-metric-n" style="color:var(--ot)">'+daysWithRes.length+'</div><div class="rpt-metric-l">Corrections resolved</div><div class="rpt-metric-sub">days with resolutions</div></div>';
+  out+='<div class="rpt-metric"><div class="rpt-metric-n">'+daysWithPend.length+'</div><div class="rpt-metric-l">Pending follow-ups</div><div class="rpt-metric-sub">days with open items</div></div>';
+  out+='</div>';
+
+  // Overall program totals from Overall Report
+  if(od.totals.projects>0){
+    out+='<div class="ds rpt-section" style="margin-bottom:14px">';
+    out+='<div class="rpt-section-title"><i class="ti ti-chart-bar" style="font-size:14px"></i> Program Totals (from Overall Report)</div>';
+    out+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:0">';
+    out+='<div style="padding:12px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);text-align:center"><div style="font-size:20px;font-weight:700;color:var(--tx)">'+od.totals.projects+'</div><div style="font-size:11px;color:var(--t3);font-family:Nunito,sans-serif;margin-top:2px">Total Projects</div></div>';
+    out+='<div style="padding:12px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);text-align:center"><div style="font-size:20px;font-weight:700;color:#0891B2">'+od.totals.submitted+'</div><div style="font-size:11px;color:var(--t3);font-family:Nunito,sans-serif;margin-top:2px">Part II Submitted</div></div>';
+    out+='<div style="padding:12px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);text-align:center"><div style="font-size:20px;font-weight:700;color:var(--ot)">'+od.totals.approved+'</div><div style="font-size:11px;color:var(--t3);font-family:Nunito,sans-serif;margin-top:2px">Part II Approved</div></div>';
+    out+='<div style="padding:12px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);text-align:center"><div style="font-size:20px;font-weight:700;color:var(--gd)">'+fmFull(od.totals.rec)+'</div><div style="font-size:11px;color:var(--t3);font-family:Nunito,sans-serif;margin-top:2px">Total RECs</div></div>';
+    out+='</div></div>';
   }
 
-  const inPeriod=P.filter(p=>{const d=parseDate(p.sub);return d&&d>=start&&d<=end;});
-  const approved=P.filter(p=>p.ps==='Approved');
-  const corrections=P.filter(p=>p.ps==='Further Part II information requested');
-  const corrAddr=P.filter(p=>p.cs==='Addressed');
-  const corrPend=P.filter(p=>p.cs==='Pending');
+  // Daily log entries for this period
+  if(logs.length){
+    out+='<div class="ds rpt-section">';
+    out+='<div class="rpt-section-title"><i class="ti ti-notes" style="font-size:14px"></i> Daily Log Entries ('+logs.length+')</div>';
+    out+='<table class="rpt-table"><thead><tr><th>Date</th><th>Submissions Made</th><th>Corrections Received</th><th>Resolved</th><th>Pending</th><th>Notes</th></tr></thead><tbody>';
+    logs.forEach(function(l){
+      var d=new Date(l.id+'T00:00:00');
+      var dateLabel=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+      out+='<tr>';
+      out+='<td style="white-space:nowrap;font-weight:600">'+dateLabel+'</td>';
+      out+='<td>'+(l.submissions||'<span style="color:var(--t3)">—</span>')+'</td>';
+      out+='<td>'+(l.corrections||'<span style="color:var(--t3)">—</span>')+'</td>';
+      out+='<td>'+(l.resolved||'<span style="color:var(--t3)">—</span>')+'</td>';
+      out+='<td>'+(l.pending||'<span style="color:var(--t3)">—</span>')+'</td>';
+      out+='<td>'+(l.notes||'<span style="color:var(--t3)">—</span>')+'</td>';
+      out+='</tr>';
+    });
+    out+='</tbody></table></div>';
+  } else {
+    out+='<div class="hint"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:6px"></i>No daily logs found for this period. Log your daily activity in the <strong>Daily</strong> tab.</div>';
+  }
 
-  // Daily logs in period
-  const logs=getDailyLogs().filter(l=>{const d=new Date(l.id+'T00:00:00');return d>=start&&d<=end;});
-  const totalCorrsRec=logs.filter(l=>l.corrections).length;
-  const totalCorrsRes=logs.filter(l=>l.resolved).length;
-  const totalSubs=logs.filter(l=>l.submissions).length;
-
-  // PM progress
-  const pmRows=PML.map(pm=>{
-    const pp=P.filter(p=>p.pm===pm);
-    const clAvg=pp.length?Math.round(pp.map(p=>ppx(p.id).pct).reduce((a,b)=>a+b,0)/pp.length):0;
-    const pApp=pp.filter(p=>p.ps==='Approved').length;
-    const pCorr=pp.filter(p=>p.ps==='Further Part II information requested').length;
-    return `<tr><td><strong>${pm}</strong></td><td>${pp.length}</td><td>${pApp}</td><td>${pCorr}</td><td>
-      <div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:5px;background:var(--s2);border-radius:3px;overflow:hidden"><div style="height:100%;width:${clAvg}%;background:#0891B2;border-radius:3px"></div></div><span style="font-size:12px;color:var(--t2);min-width:30px">${clAvg}%</span></div>
-    </td></tr>`;
-  }).join('');
-
-  function fmK(n){return n>=1000000?'$'+(n/1000000).toFixed(2)+'M':n>=1000?'$'+(n/1000).toFixed(0)+'K':'$'+n.toLocaleString();}
-
-  const startLabel=start.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-  const endLabel=end.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-
-  document.getElementById('bw-content').innerHTML=`
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
-    <div class="rpt-metric"><div class="rpt-metric-n">${inPeriod.length}</div><div class="rpt-metric-l">Submitted this period</div><div class="rpt-metric-sub">${fmK(inPeriod.reduce((a,p)=>a+rv(p),0))} in RECs</div></div>
-    <div class="rpt-metric"><div class="rpt-metric-n" style="color:var(--ot)">${approved.length}</div><div class="rpt-metric-l">Total approved</div><div class="rpt-metric-sub">${fmK(approved.reduce((a,p)=>a+rv(p),0))} in RECs</div></div>
-    <div class="rpt-metric"><div class="rpt-metric-n" style="color:var(--et)">${corrections.length}</div><div class="rpt-metric-l">Need correction</div><div class="rpt-metric-sub">${corrPend.length} still pending</div></div>
-    <div class="rpt-metric"><div class="rpt-metric-n">${logs.length}</div><div class="rpt-metric-l">Daily logs filed</div><div class="rpt-metric-sub">${totalSubs} submission days</div></div>
-  </div>
-
-  <div class="ds rpt-section" style="margin-bottom:14px">
-    <div class="rpt-section-title"><i class="ti ti-users" style="font-size:14px"></i> PM Performance · ${startLabel} – ${endLabel}</div>
-    <table class="rpt-table"><thead><tr><th>PM</th><th>Projects</th><th>Approved</th><th>Corrections</th><th>Checklist Progress</th></tr></thead><tbody>${pmRows}</tbody></table>
-  </div>
-
-  <div class="ds rpt-section" style="margin-bottom:14px">
-    <div class="rpt-section-title"><i class="ti ti-message-report" style="font-size:14px"></i> Correction Summary</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
-      <div style="padding:12px;background:var(--sf);border-radius:var(--r);border:1px solid var(--bd);text-align:center"><div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:600;color:var(--et)">${corrections.length}</div><div style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif">Open corrections</div></div>
-      <div style="padding:12px;background:var(--sf);border-radius:var(--r);border:1px solid var(--bd);text-align:center"><div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:600;color:var(--ot)">${corrAddr.length}</div><div style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif">Addressed</div></div>
-      <div style="padding:12px;background:var(--sf);border-radius:var(--r);border:1px solid var(--bd);text-align:center"><div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:600;color:var(--wb)">${corrPend.length}</div><div style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif">Still pending</div></div>
-    </div>
-  </div>
-
-  ${logs.length?`<div class="ds rpt-section">
-    <div class="rpt-section-title"><i class="ti ti-notes" style="font-size:14px"></i> Daily Log Highlights</div>
-    <table class="rpt-table"><thead><tr><th>Date</th><th>Submissions</th><th>Corrections</th><th>Resolved</th><th>Notes</th></tr></thead><tbody>
-    ${logs.sort((a,b)=>b.id.localeCompare(a.id)).map(l=>`<tr><td style="white-space:nowrap;font-weight:600">${new Date(l.id+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</td><td>${l.submissions||'—'}</td><td>${l.corrections||'—'}</td><td>${l.resolved||'—'}</td><td>${l.notes||'—'}</td></tr>`).join('')}
-    </tbody></table>
-  </div>`:''}`;
+  content.innerHTML=out;
 }
+
 
 // ── MONTHLY REPORT ────────────────────────────────────────────────────
 function renderMonthly(){
@@ -2346,92 +2410,104 @@ function renderMonthly(){
 }
 
 function generateMonthly(){
-  const monthVal=document.getElementById('mo-month')?.value;
+  var monthVal=document.getElementById('mo-month')?.value;
   if(!monthVal)return;
-  const[yr,mo]=monthVal.split('-').map(Number);
-  const start=new Date(yr,mo-1,1);
-  const end=new Date(yr,mo,0,23,59,59);
-  const monthLabel=start.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  var parts=monthVal.split('-').map(Number);
+  var yr=parts[0],mo=parts[1];
+  var start=new Date(yr,mo-1,1);
+  var end=new Date(yr,mo,0,23,59,59);
+  var monthLabel=start.toLocaleDateString('en-US',{month:'long',year:'numeric'});
 
-  function parseDate(s){if(!s||s==='—')return null;const d=new Date(s);return isNaN(d)?null:d;}
-  function fmK(n){return n>=1000000?'$'+(n/1000000).toFixed(2)+'M':n>=1000?'$'+(n/1000).toFixed(0)+'K':'$'+n.toLocaleString();}
   function fmFull(n){return '$'+n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
-
-  const inMonth=P.filter(p=>{const d=parseDate(p.sub);return d&&d>=start&&d<=end;});
-  const approved=P.filter(p=>p.ps==='Approved');
-  const corrections=P.filter(p=>p.ps==='Further Part II information requested');
-  const ui=P.filter(p=>p.ps==='Under Inspection');
-  const totalRec=P.reduce((a,p)=>a+rv(p),0);
-  const appRec=approved.reduce((a,p)=>a+rv(p),0);
-  const TARGET=2000000;
-  const tPct=Math.min(Math.round(totalRec/TARGET*100),100);
+  function fmK(n){return n>=1000000?'$'+(n/1000000).toFixed(2)+'M':n>=1000?'$'+(n/1000).toFixed(0)+'K':fmFull(n);}
 
   // Daily logs this month
-  const logs=getDailyLogs().filter(l=>{const d=new Date(l.id+'T00:00:00');return d>=start&&d<=end;});
+  var logs=getDailyLogs().filter(function(l){
+    var d=new Date(l.id+'T00:00:00');
+    return d>=start&&d<=end;
+  }).sort(function(a,b){return b.id.localeCompare(a.id);});
 
-  // PY breakdown
-  const pyRows=['PY7','PY8','PY8-2025'].map(py=>{
-    const pp=P.filter(p=>p.py===py);
-    const pApp=pp.filter(p=>p.ps==='Approved').length;
-    const pCorr=pp.filter(p=>p.ps==='Further Part II information requested').length;
-    const pRec=pp.reduce((a,p)=>a+rv(p),0);
-    return `<tr><td><strong>${py}</strong></td><td>${pp.length}</td><td>${pApp}</td><td style="color:var(--et)">${pCorr}</td><td>${fmFull(pRec)}</td></tr>`;
-  }).join('');
+  // Overall report data
+  var od=getOverallData();
+  var TARGET=2000000;
+  var tPct=Math.min(Math.round(od.totals.rec/TARGET*100),100);
 
-  const pmRows=PML.map(pm=>{
-    const pp=P.filter(p=>p.pm===pm);
-    const pApp=pp.filter(p=>p.ps==='Approved').length;
-    const pCorr=pp.filter(p=>p.ps==='Further Part II information requested').length;
-    const pRec=pp.reduce((a,p)=>a+rv(p),0);
-    const clAvg=pp.length?Math.round(pp.map(p=>ppx(p.id).pct).reduce((a,b)=>a+b,0)/pp.length):0;
-    const prStats=pp.map(p=>gprs(p.id));
-    const prAvg=pp.length?Math.round(prStats.map(s=>s.re===0?100:Math.round(s.pa/s.t*100)).reduce((a,b)=>a+b,0)/pp.length):0;
-    return `<tr><td><strong>${pm}</strong>${pm===MGR?'<span class="mgr" style="margin-left:6px">MGR</span>':''}</td><td>${pp.length}</td><td style="color:var(--ot)">${pApp}</td><td style="color:var(--et)">${pCorr}</td><td>${fmFull(pRec)}</td><td>
-      <div style="display:flex;align-items:center;gap:6px"><div style="width:60px;height:5px;background:var(--s2);border-radius:3px;overflow:hidden"><div style="height:100%;width:${clAvg}%;background:#0891B2;border-radius:3px"></div></div><span style="font-size:12px">${clAvg}%</span></div>
-    </td><td>
-      <div style="display:flex;align-items:center;gap:6px"><div style="width:60px;height:5px;background:var(--s2);border-radius:3px;overflow:hidden"><div style="height:100%;width:${prAvg}%;background:var(--ot);border-radius:3px"></div></div><span style="font-size:12px">${prAvg}%</span></div>
-    </td></tr>`;
-  }).join('');
+  // Activity from logs
+  var daysWithSubs=logs.filter(function(l){return l.submissions&&l.submissions.trim();}).length;
+  var daysWithCorr=logs.filter(function(l){return l.corrections&&l.corrections.trim();}).length;
+  var daysWithRes=logs.filter(function(l){return l.resolved&&l.resolved.trim();}).length;
 
-  document.getElementById('mo-content').innerHTML=`
-  <div style="font-family:'Inter',sans-serif;font-size:18px;font-weight:600;color:var(--tx);margin-bottom:14px">${monthLabel} Summary</div>
+  var content=document.getElementById('mo-content');
+  var out='';
 
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
-    <div class="rpt-metric"><div class="rpt-metric-n">${P.length}</div><div class="rpt-metric-l">Total projects</div><div class="rpt-metric-sub">${fmK(totalRec)} in RECs</div></div>
-    <div class="rpt-metric"><div class="rpt-metric-n" style="color:var(--ot)">${approved.length}</div><div class="rpt-metric-l">Approved</div><div class="rpt-metric-sub">${fmK(appRec)} in RECs</div></div>
-    <div class="rpt-metric"><div class="rpt-metric-n" style="color:#0891B2">${ui.length}</div><div class="rpt-metric-l">Under inspection</div><div class="rpt-metric-sub">${P.length?Math.round(ui.length/P.length*100):0}% of total</div></div>
-    <div class="rpt-metric"><div class="rpt-metric-n" style="color:var(--et)">${corrections.length}</div><div class="rpt-metric-l">Need correction</div><div class="rpt-metric-sub">${P.filter(p=>p.cs==='Pending').length} pending response</div></div>
-  </div>
+  // Month header
+  out+='<div style="font-size:18px;font-weight:700;color:var(--tx);margin-bottom:16px;display:flex;align-items:center;gap:10px">';
+  out+='<span>'+monthLabel+'</span>';
+  out+='<span style="font-size:12px;font-weight:500;color:var(--t3);font-family:Nunito,sans-serif">'+logs.length+' daily log'+(logs.length!==1?'s':'')+' recorded</span>';
+  out+='</div>';
 
-  <div class="ds rpt-section" style="margin-bottom:14px">
-    <div class="rpt-section-title"><i class="ti ti-target" style="font-size:14px"></i> $2M REC Target — ${monthLabel}</div>
-    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
-      <span style="font-family:'Inter',sans-serif;font-size:36px;font-weight:600">${tPct}%</span>
-      <span style="font-size:13px;color:var(--t3);font-family:'Nunito',sans-serif">${fmFull(totalRec)} of $2,000,000.00</span>
-    </div>
-    <div style="height:10px;background:var(--s2);border-radius:5px;overflow:hidden;margin-bottom:8px">
-      <div style="height:100%;width:${tPct}%;background:linear-gradient(90deg,#0891B2,#0D2147);border-radius:5px"></div>
-    </div>
-    <div style="font-size:13px;color:var(--t3);font-family:'Nunito',sans-serif">$${Math.max(TARGET-totalRec,0).toLocaleString()} remaining to reach target</div>
-  </div>
+  // Top metrics from Overall Report
+  out+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">';
+  out+='<div class="rpt-metric"><div class="rpt-metric-n">'+od.totals.projects+'</div><div class="rpt-metric-l">Total projects</div><div class="rpt-metric-sub">'+fmFull(od.totals.rec)+' RECs</div></div>';
+  out+='<div class="rpt-metric"><div class="rpt-metric-n" style="color:#0891B2">'+od.totals.submitted+'</div><div class="rpt-metric-l">Part II Submitted</div><div class="rpt-metric-sub">'+(od.totals.projects>0?Math.round(od.totals.submitted/od.totals.projects*100):0)+'% of total</div></div>';
+  out+='<div class="rpt-metric"><div class="rpt-metric-n" style="color:var(--ot)">'+od.totals.approved+'</div><div class="rpt-metric-l">Part II Approved</div><div class="rpt-metric-sub">'+(od.totals.submitted>0?Math.round(od.totals.approved/od.totals.submitted*100):0)+'% of submitted</div></div>';
+  out+='<div class="rpt-metric"><div class="rpt-metric-n">'+od.totals.invoiced+'</div><div class="rpt-metric-l">Invoiced</div><div class="rpt-metric-sub">'+(od.totals.approved>0?Math.round(od.totals.invoiced/od.totals.approved*100):0)+'% of approved</div></div>';
+  out+='</div>';
 
-  <div class="ds rpt-section" style="margin-bottom:14px">
-    <div class="rpt-section-title"><i class="ti ti-calendar" style="font-size:14px"></i> Program Year Breakdown</div>
-    <table class="rpt-table"><thead><tr><th>Program Year</th><th>Projects</th><th>Approved</th><th>Corrections</th><th>Total RECs</th></tr></thead><tbody>${pyRows}</tbody></table>
-  </div>
+  // $2M REC progress
+  out+='<div class="ds rpt-section" style="margin-bottom:14px">';
+  out+='<div class="rpt-section-title"><i class="ti ti-target" style="font-size:14px"></i> $2M REC Target</div>';
+  out+='<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">';
+  out+='<span style="font-size:32px;font-weight:700;color:var(--tx)">'+tPct+'%</span>';
+  out+='<span style="font-size:13px;color:var(--t3);font-family:Nunito,sans-serif">'+fmFull(od.totals.rec)+' of $2,000,000.00</span>';
+  out+='</div>';
+  out+='<div style="height:10px;background:var(--s2);border-radius:5px;overflow:hidden;margin-bottom:8px"><div style="height:100%;width:'+tPct+'%;background:linear-gradient(90deg,#0891B2,#0D2147);border-radius:5px"></div></div>';
+  out+='<div style="font-size:13px;color:var(--t3);font-family:Nunito,sans-serif">$'+Math.max(TARGET-od.totals.rec,0).toLocaleString()+' remaining</div>';
+  out+='</div>';
 
-  <div class="ds rpt-section" style="margin-bottom:14px">
-    <div class="rpt-section-title"><i class="ti ti-users" style="font-size:14px"></i> PM Performance Report</div>
-    <table class="rpt-table"><thead><tr><th>PM</th><th>Projects</th><th>Approved</th><th>Corrections</th><th>Total RECs</th><th>Checklist</th><th>Post-review</th></tr></thead><tbody>${pmRows}</tbody></table>
-  </div>
+  // Program year breakdown from Overall Report
+  if(od.pys.length){
+    out+='<div class="ds rpt-section" style="margin-bottom:14px">';
+    out+='<div class="rpt-section-title"><i class="ti ti-calendar" style="font-size:14px"></i> Program Year Summary (from Overall Report)</div>';
+    out+='<table class="rpt-table"><thead><tr><th>Program Year</th><th>Total</th><th>Active</th><th>Submitted</th><th>Approved</th><th>Invoiced</th><th>Total RECs</th></tr></thead><tbody>';
+    od.pys.forEach(function(r){
+      out+='<tr><td><strong>'+r.key+'</strong></td><td>'+r.total+'</td><td>'+r.active+'</td><td>'+r.submitted+'</td><td style="color:var(--ot)">'+r.approved+'</td><td>'+r.invoiced+'</td><td>'+fmFull(r.rec)+'</td></tr>';
+    });
+    out+='<tr style="font-weight:700;background:var(--sf)"><td>TOTAL</td><td>'+od.totals.projects+'</td><td>—</td><td>'+od.totals.submitted+'</td><td style="color:var(--ot)">'+od.totals.approved+'</td><td>'+od.totals.invoiced+'</td><td>'+fmFull(od.totals.rec)+'</td></tr>';
+    out+='</tbody></table></div>';
+  }
 
-  ${logs.length?`<div class="ds rpt-section">
-    <div class="rpt-section-title"><i class="ti ti-notes" style="font-size:14px"></i> Daily Logs This Month (${logs.length})</div>
-    <table class="rpt-table"><thead><tr><th>Date</th><th>Submissions</th><th>Corrections</th><th>Resolved</th><th>Notes</th></tr></thead><tbody>
-    ${logs.sort((a,b)=>b.id.localeCompare(a.id)).map(l=>`<tr><td style="white-space:nowrap;font-weight:600">${new Date(l.id+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</td><td>${l.submissions||'—'}</td><td>${l.corrections||'—'}</td><td>${l.resolved||'—'}</td><td>${l.notes||'—'}</td></tr>`).join('')}
-    </tbody></table>
-  </div>`:'<div class="hint" style="margin-top:0">No daily log entries found for this month. Use the Daily tab to log activity.</div>'}`;
+  // Monthly activity from daily logs
+  out+='<div class="ds rpt-section" style="margin-bottom:14px">';
+  out+='<div class="rpt-section-title"><i class="ti ti-activity" style="font-size:14px"></i> Monthly Activity Summary</div>';
+  out+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">';
+  out+='<div style="padding:12px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);text-align:center"><div style="font-size:22px;font-weight:700;color:#0891B2">'+daysWithSubs+'</div><div style="font-size:11px;color:var(--t3);font-family:Nunito,sans-serif;margin-top:2px">Days with submissions</div></div>';
+  out+='<div style="padding:12px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);text-align:center"><div style="font-size:22px;font-weight:700;color:var(--et)">'+daysWithCorr+'</div><div style="font-size:11px;color:var(--t3);font-family:Nunito,sans-serif;margin-top:2px">Days with corrections</div></div>';
+  out+='<div style="padding:12px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);text-align:center"><div style="font-size:22px;font-weight:700;color:var(--ot)">'+daysWithRes+'</div><div style="font-size:11px;color:var(--t3);font-family:Nunito,sans-serif;margin-top:2px">Days with resolutions</div></div>';
+  out+='</div>';
+
+  if(logs.length){
+    out+='<table class="rpt-table"><thead><tr><th>Date</th><th>Submissions</th><th>Corrections</th><th>Resolved</th><th>Pending</th><th>Notes</th></tr></thead><tbody>';
+    logs.forEach(function(l){
+      var d=new Date(l.id+'T00:00:00');
+      var dateLabel=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+      out+='<tr><td style="white-space:nowrap;font-weight:600">'+dateLabel+'</td>';
+      out+='<td>'+(l.submissions||'<span style="color:var(--t3)">—</span>')+'</td>';
+      out+='<td>'+(l.corrections||'<span style="color:var(--t3)">—</span>')+'</td>';
+      out+='<td>'+(l.resolved||'<span style="color:var(--t3)">—</span>')+'</td>';
+      out+='<td>'+(l.pending||'<span style="color:var(--t3)">—</span>')+'</td>';
+      out+='<td>'+(l.notes||'<span style="color:var(--t3)">—</span>')+'</td>';
+      out+='</tr>';
+    });
+    out+='</tbody></table>';
+  } else {
+    out+='<div class="hint"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:6px"></i>No daily logs for this month yet. Use the <strong>Daily</strong> tab to record your activity.</div>';
+  }
+  out+='</div>';
+
+  content.innerHTML=out;
 }
+
 
 function exportPeriodReport(type){
   const isMonthly=type==='monthly';
