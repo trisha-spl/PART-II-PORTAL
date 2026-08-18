@@ -556,7 +556,7 @@ function initReportDefaults(){
       'PY8-2025_total':276,'PY8-2025_dropped':41,'PY8-2025_eligibility':160,'PY8-2025_icc':160,
       'PY8-2025_active':235,'PY8-2025_pilot':0,'PY8-2025_submitted':160,
       'PY8-2025_approved':158,'PY8-2025_invoiced':140,'PY8-2025_rec':'6091735.66',
-      '_v2':'1',
+      '_v3':'1',
     };
     localStorage.setItem('ilsfa_report',JSON.stringify(defaults));
   }catch(e){}
@@ -1215,7 +1215,7 @@ function rp(){
             <select style="border:1px solid var(--bd);padding:6px 9px;border-radius:var(--r);background:var(--cd);font-family:Nunito,sans-serif;font-size:13px" onchange="upf('${p.id}','py',this.value)"><option value="PY7"${p.py==='PY7'?' selected':''}>PY7</option><option value="PY8"${p.py==='PY8'?' selected':''}>PY8</option><option value="PY8-2025"${p.py==='PY8-2025'?' selected':''}>PY8-2025</option></select>
           </div>
           <div class="proj-detail-field"><span class="proj-detail-label">Assign PM</span>
-            <select style="border:1px solid var(--bd);padding:6px 9px;border-radius:var(--r);background:var(--cd);font-family:Nunito,sans-serif;font-size:13px" id="pm-sel-${p.id}" onchange="spp('${p.id}',this.value)">${pmOptsHtml}</select>
+            <select style="border:1px solid var(--bd);padding:6px 9px;border-radius:var(--r);background:var(--cd);font-family:Nunito,sans-serif;font-size:13px" id="pm-sel-${p.id}" onchange="spp('${p.id}',this.value)"><option value="">— Unassigned —</option></select>
           </div>
           <div class="proj-detail-field"><span class="proj-detail-label">REC Value</span><span class="proj-detail-val proj-rec">${p.recs||'—'}</span></div>
           <div class="proj-detail-field"><span class="proj-detail-label">Pilot</span>
@@ -2009,22 +2009,40 @@ function getOverallData(){
   var pys=getPYS();
   var saved={};
   try{saved=JSON.parse(localStorage.getItem('ilsfa_report')||'{}');}catch(e){}
+
+  // Hardcoded baseline data (used when saved data is missing/wrong)
+  var baseline={
+    '2024':{total:10,dropped:0,eligibility:10,icc:10,active:10,pilot:10,submitted:10,approved:10,invoiced:10,rec:289249.09},
+    'PY7':{total:153,dropped:4,eligibility:148,icc:148,active:149,pilot:49,submitted:148,approved:148,invoiced:147,rec:5270098.29},
+    'PY8':{total:327,dropped:32,eligibility:263,icc:263,active:295,pilot:54,submitted:263,approved:263,invoiced:257,rec:10396050.45},
+    'PY8-2025':{total:276,dropped:41,eligibility:160,icc:160,active:235,pilot:0,submitted:160,approved:158,invoiced:140,rec:6091735.66},
+  };
+  function getVal(key,field){
+    var saved_val=saved[key+'_'+field];
+    if(saved_val!==undefined&&saved_val!==''){
+      var n=parseFloat(saved_val);
+      // For rec field, only trust if it's a reasonable amount (>100)
+      if(field==='rec')return n>100?n:(baseline[key]?baseline[key].rec:0);
+      return parseInt(saved_val)||0;
+    }
+    return baseline[key]?baseline[key][field]||0:0;
+  }
   var result={pys:[],totals:{projects:0,submitted:0,approved:0,invoiced:0,rec:0}};
   pys.forEach(function(py){
     var pp=P.filter(function(p){return p.py===py.key;});
     var row={
       key:py.key,
       label:py.label,
-      total:parseInt(saved[py.key+'_total'])||pp.length||0,
-      dropped:parseInt(saved[py.key+'_dropped'])||0,
-      eligibility:parseInt(saved[py.key+'_eligibility'])||0,
-      icc:parseInt(saved[py.key+'_icc'])||0,
-      active:parseInt(saved[py.key+'_active'])||pp.length||0,
-      pilot:parseInt(saved[py.key+'_pilot'])||pp.filter(isp).length||0,
-      submitted:parseInt(saved[py.key+'_submitted'])||pp.length||0,
-      approved:parseInt(saved[py.key+'_approved'])||pp.filter(function(p){return p.ps==='Approved';}).length||0,
-      invoiced:parseInt(saved[py.key+'_invoiced'])||0,
-      rec:parseFloat(saved[py.key+'_rec'])||pp.reduce(function(a,p){return a+rv(p);},0)||0,
+      total:getVal(py.key,'total')||pp.length||0,
+      dropped:getVal(py.key,'dropped'),
+      eligibility:getVal(py.key,'eligibility'),
+      icc:getVal(py.key,'icc'),
+      active:getVal(py.key,'active')||pp.length||0,
+      pilot:getVal(py.key,'pilot'),
+      submitted:getVal(py.key,'submitted')||pp.length||0,
+      approved:getVal(py.key,'approved'),
+      invoiced:getVal(py.key,'invoiced'),
+      rec:getVal(py.key,'rec'),
     };
     result.pys.push(row);
     result.totals.projects+=row.active; // Use Active as main count
