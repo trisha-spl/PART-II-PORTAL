@@ -537,8 +537,8 @@ function initReportDefaults(){
   try{
     var existing=JSON.parse(localStorage.getItem('ilsfa_report')||'{}');
     // Only seed if completely empty
-    // Only seed if missing key fields
-    if(existing['PY8_total']&&existing['PY8-2025_total'])return;
+    // Always reseed if version key missing or REC data is wrong
+    if(existing['_v2']&&existing['PY8_rec']&&parseFloat(existing['PY8_rec'])>1000000)return;
     var defaults={
       // 2024 Projects
       '2024_total':10,'2024_dropped':0,'2024_eligibility':10,'2024_icc':10,
@@ -556,6 +556,7 @@ function initReportDefaults(){
       'PY8-2025_total':276,'PY8-2025_dropped':41,'PY8-2025_eligibility':160,'PY8-2025_icc':160,
       'PY8-2025_active':235,'PY8-2025_pilot':0,'PY8-2025_submitted':160,
       'PY8-2025_approved':158,'PY8-2025_invoiced':140,'PY8-2025_rec':'6091735.66',
+      '_v2':'1',
     };
     localStorage.setItem('ilsfa_report',JSON.stringify(defaults));
   }catch(e){}
@@ -1940,48 +1941,59 @@ function saveField(inp){
 }
 
 function updateOverallSummary(){
-  // Use getOverallData() for consistent data from saved report
+  // All values come from saved Overall Report data via getOverallData()
   var od=getOverallData();
-  var totProj=od.totals.projects;
-  // Use Active Projects as the "Total Projects" metric
-  var totActive=od.pys.reduce(function(a,r){return a+r.active;},0)||totProj;
+
+  // Totals from saved report
+  var totActive=od.pys.reduce(function(a,r){return a+r.active;},0);
   var totSub=od.totals.submitted;
   var totApp=od.totals.approved;
   var totInv=od.totals.invoiced;
-  var totRec=od.totals.rec;
-  var totProj=totActive; // Show Active Projects instead of Total
+  var totRec=od.totals.rec; // Sum of all program year RECs from saved data
 
-  function animCount2(id,val){
-    const el=document.getElementById(id);if(!el)return;
-    const dur=400,st=performance.now();
-    function step(now){const p=Math.min((now-st)/dur,1),e=1-Math.pow(1-p,3);el.textContent=Math.round(val*e);if(p<1)requestAnimationFrame(step);else el.textContent=val;}
+  // Per-category RECs from saved data (proportional estimate)
+  var subRec=totRec; // All submitted projects' RECs
+  var appRec=od.pys.reduce(function(a,r){
+    return a+(r.submitted>0?(r.rec*(r.approved/r.submitted)):0);
+  },0);
+  var invRec=od.pys.reduce(function(a,r){
+    return a+(r.approved>0?(r.rec*(r.invoiced/r.approved))*(r.approved/Math.max(r.submitted,1)):0);
+  },0);
+
+  function fmFull3(n){
+    if(!n||isNaN(n))return '$0.00';
+    return '$'+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+  }
+  function animN(id,val){
+    var el=document.getElementById(id);
+    if(!el)return;
+    var dur=600,st=performance.now();
+    function step(now){
+      var p=Math.min((now-st)/dur,1),e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(val*e);
+      if(p<1)requestAnimationFrame(step);else el.textContent=val;
+    }
     requestAnimationFrame(step);
   }
-  function fmFull3(n){return '$'+n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
 
-  animCount2('rov1-n',totProj);
-  animCount2('rov2-n',totSub);
-  animCount2('rov3-n',totApp);
-  animCount2('rov4-n',totInv);
+  animN('rov1-n',totActive);
+  animN('rov2-n',totSub);
+  animN('rov3-n',totApp);
+  animN('rov4-n',totInv);
 
-  // RECs per category
-  const appRec=P.filter(p=>p.ps==='Approved').reduce((a,p)=>a+rv(p),0);
-  const subRec=P.reduce((a,p)=>a+rv(p),0);
-  // Invoiced RECs — sum rec footers proportionally (invoiced/submitted * totalRec per PY)
-  let invRec=0;
-  getPYS().forEach(py=>{
-    const pyP=P.filter(p=>p.py===py.key);
-    const pyTotRec=parseFloat(document.querySelector(`.rpt-rec-inp[data-py="${py.key}"]`)?.value)||pyP.reduce((a,p)=>a+rv(p),0);
-    const pyInv=parseInt(document.querySelector(`.rpt-inp[data-py="${py.key}"][data-field="invoiced"]`)?.value)||0;
-    const pySub=pyP.length||1;
-    invRec+=pyTotRec*(pyInv/pySub);
-  });
+  var r1=document.getElementById('rov1-r');
+  if(r1)r1.textContent=fmFull3(totRec)+' total RECs';
 
-  const r1=document.getElementById('rov1-r');if(r1)r1.textContent=fmFull3(totRec)+' total RECs';
-  const r2=document.getElementById('rov2-r');if(r2)r2.innerHTML=fmFull3(subRec)+'<br><span style="font-size:10px;opacity:.7">'+(totProj>0?Math.round(totSub/totProj*100)+'% of total':'—')+'</span>';
-  const r3=document.getElementById('rov3-r');if(r3)r3.innerHTML=fmFull3(appRec)+'<br><span style="font-size:10px;opacity:.7">'+(totSub>0?Math.round(totApp/totSub*100)+'% of submitted':'—')+'</span>';
-  const r4=document.getElementById('rov4-r');if(r4)r4.innerHTML=fmFull3(Math.round(invRec))+'<br><span style="font-size:10px;opacity:.7">'+(totApp>0?Math.round(totInv/totApp*100)+'% of approved':'—')+'</span>';
+  var r2=document.getElementById('rov2-r');
+  if(r2)r2.innerHTML=fmFull3(subRec)+'<br><span style="font-size:10px;opacity:.7">'+(totActive>0?Math.round(totSub/totActive*100)+'% of active':'—')+'</span>';
+
+  var r3=document.getElementById('rov3-r');
+  if(r3)r3.innerHTML=fmFull3(appRec)+'<br><span style="font-size:10px;opacity:.7">'+(totSub>0?Math.round(totApp/totSub*100)+'% of submitted':'—')+'</span>';
+
+  var r4=document.getElementById('rov4-r');
+  if(r4)r4.innerHTML=fmFull3(invRec)+'<br><span style="font-size:10px;opacity:.7">'+(totApp>0?Math.round(totInv/totApp*100)+'% of approved':'—')+'</span>';
 }
+
 
 function saveReport(){si('Report saved!','ok');}
 
