@@ -537,16 +537,25 @@ function initReportDefaults(){
   try{
     var existing=JSON.parse(localStorage.getItem('ilsfa_report')||'{}');
     // Only seed if completely empty
-    if(Object.keys(existing).length>0)return;
+    // Only seed if missing key fields
+    if(existing['PY8_total']&&existing['PY8-2025_total'])return;
     var defaults={
       // 2024 Projects
       '2024_total':10,'2024_dropped':0,'2024_eligibility':10,'2024_icc':10,
-      '2024_cancelled':0,'2024_active':10,'2024_pilot':10,'2024_submitted':10,
+      '2024_active':10,'2024_pilot':10,'2024_submitted':10,
       '2024_approved':10,'2024_invoiced':10,'2024_rec':'289249.09',
       // PY7 Projects
       'PY7_total':153,'PY7_dropped':4,'PY7_eligibility':148,'PY7_icc':148,
-      'PY7_cancelled':0,'PY7_active':149,'PY7_pilot':49,'PY7_submitted':148,
+      'PY7_active':149,'PY7_pilot':49,'PY7_submitted':148,
       'PY7_approved':148,'PY7_invoiced':147,'PY7_rec':'5270098.29',
+      // PY8 Projects (July Submission)
+      'PY8_total':327,'PY8_dropped':32,'PY8_eligibility':263,'PY8_icc':263,
+      'PY8_active':295,'PY8_pilot':54,'PY8_submitted':263,
+      'PY8_approved':263,'PY8_invoiced':257,'PY8_rec':'10396050.45',
+      // PY8-2025 Projects (Nov Submission)
+      'PY8-2025_total':276,'PY8-2025_dropped':41,'PY8-2025_eligibility':160,'PY8-2025_icc':160,
+      'PY8-2025_active':235,'PY8-2025_pilot':0,'PY8-2025_submitted':160,
+      'PY8-2025_approved':158,'PY8-2025_invoiced':140,'PY8-2025_rec':'6091735.66',
     };
     localStorage.setItem('ilsfa_report',JSON.stringify(defaults));
   }catch(e){}
@@ -1931,28 +1940,16 @@ function saveField(inp){
 }
 
 function updateOverallSummary(){
-  const allPYS=getPYS();
-  let totProj=0,totApp=0,totInv=0,totRec=0;
-  // Part II Submitted is always auto from portal
-  const totSub=P.length;
-
-  allPYS.forEach(py=>{
-    // Total projects: use input value if filled, else portal count
-    const totalInp=document.querySelector(`.rpt-inp[data-py="${py.key}"][data-field="total"]`);
-    const totalVal=totalInp?parseInt(totalInp.value)||0:0;
-    totProj+=totalVal||P.filter(p=>p.py===py.key).length;
-
-    // Part II Approved: auto from portal
-    totApp+=P.filter(p=>p.py===py.key&&p.ps==='Approved').length;
-
-    // Invoiced: use input value
-    const invInp=document.querySelector(`.rpt-inp[data-py="${py.key}"][data-field="invoiced"]`);
-    totInv+=invInp?parseInt(invInp.value)||0:0;
-
-    // REC: use rec input
-    const recInp=document.querySelector(`.rpt-rec-inp[data-py="${py.key}"]`);
-    totRec+=recInp?parseFloat(recInp.value)||0:P.filter(p=>p.py===py.key).reduce((a,p)=>a+rv(p),0);
-  });
+  // Use getOverallData() for consistent data from saved report
+  var od=getOverallData();
+  var totProj=od.totals.projects;
+  // Use Active Projects as the "Total Projects" metric
+  var totActive=od.pys.reduce(function(a,r){return a+r.active;},0)||totProj;
+  var totSub=od.totals.submitted;
+  var totApp=od.totals.approved;
+  var totInv=od.totals.invoiced;
+  var totRec=od.totals.rec;
+  var totProj=totActive; // Show Active Projects instead of Total
 
   function animCount2(id,val){
     const el=document.getElementById(id);if(!el)return;
@@ -2010,7 +2007,6 @@ function getOverallData(){
       dropped:parseInt(saved[py.key+'_dropped'])||0,
       eligibility:parseInt(saved[py.key+'_eligibility'])||0,
       icc:parseInt(saved[py.key+'_icc'])||0,
-      cancelled:parseInt(saved[py.key+'_cancelled'])||0,
       active:parseInt(saved[py.key+'_active'])||pp.length||0,
       pilot:parseInt(saved[py.key+'_pilot'])||pp.filter(isp).length||0,
       submitted:parseInt(saved[py.key+'_submitted'])||pp.length||0,
@@ -2019,7 +2015,7 @@ function getOverallData(){
       rec:parseFloat(saved[py.key+'_rec'])||pp.reduce(function(a,p){return a+rv(p);},0)||0,
     };
     result.pys.push(row);
-    result.totals.projects+=row.total;
+    result.totals.projects+=row.active; // Use Active as main count
     result.totals.submitted+=row.submitted;
     result.totals.approved+=row.approved;
     result.totals.invoiced+=row.invoiced;
