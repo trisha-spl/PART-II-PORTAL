@@ -236,7 +236,7 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
 .rpt-row.hl{background:rgba(8,145,178,.04)}
 .rpt-row.hl .rpt-row-l{color:var(--tx);font-weight:600}
 .rpt-row.hl .rpt-row-v{color:#0891B2}
-.rpt-footer{background:#0D2147;padding:11px 14px;display:flex;align-items:center;justify-content:space-between}
+.rpt-footer{background:#0D2147;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;min-height:52px}
 .rpt-footer-l{font-size:11px;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.08em;font-family:'Nunito',sans-serif}
 .rpt-footer-v{font-family:'Inter',sans-serif;font-size:16px;font-weight:600;color:#FCD34D}
 .rpt-overall{background:#0D2147;border-radius:var(--rl);padding:20px;margin-bottom:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid rgba(255,255,255,.08)}
@@ -838,7 +838,6 @@ function dbRow(label,n,recs,color,max,fn){
 
 function rdb(){
   const tot=P.length;
-  if(!tot){document.getElementById('n-dashboard').innerHTML='<div class="hint">No projects yet. Add a project in the Projects tab.</div>';return;}
 
   const now=new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
   const tr=P.reduce((a,p)=>a+rv(p),0);
