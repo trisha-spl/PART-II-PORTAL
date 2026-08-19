@@ -490,10 +490,12 @@ let P=[],CL={},PR={},PML=[...DPM],AF=null,prPid='',showAF=false,showPMAF=false,o
 
 // ── DATE HELPERS ─────────────────────────────────────────────────────
 function dateToInput(str){
-  // Convert "May 13, 2026" → "2026-05-13" for date input
+  // Convert "Aug 6, 2026" → "2026-08-06" for date input
   if(!str||str==='—')return '';
   try{
-    var d=new Date(str);
+    // Strip any time portion before parsing
+    var clean=str.replace(/\s+GMT.*/,'').replace(/\s+\d{2}:\d{2}:\d{2}.*/,'').trim();
+    var d=new Date(clean);
     if(isNaN(d.getTime()))return '';
     var yr=d.getFullYear();
     var mo=String(d.getMonth()+1).padStart(2,'0');
@@ -502,11 +504,12 @@ function dateToInput(str){
   }catch(e){return '';}
 }
 function inputToDate(str){
-  // Convert "2026-05-13" → "May 13, 2026" for display/storage
+  // Convert "2026-05-13" → "Aug 6, 2026" for display/storage
   if(!str)return '—';
   try{
-    var d=new Date(str+'T00:00:00');
-    return d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+    var parts=str.split('-');
+    var d=new Date(parseInt(parts[0]),parseInt(parts[1])-1,parseInt(parts[2]));
+    return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   }catch(e){return str;}
 }
 
@@ -2164,6 +2167,7 @@ function switchRptTab(tab, btn){
   else if(tab==='daily') renderDailyReport();
   else if(tab==='biweekly') renderBiWeekly();
   else if(tab==='monthly') renderMonthly();
+  else if(tab==='monthlyREC') renderMonthlyREC();
 }
 
 // ── DAILY REPORT ─────────────────────────────────────────────────────
