@@ -405,9 +405,17 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
 <div id="app" style="display:none">
 <header class="top-header">
 <div class="hdr">
-  <div class="logo">
-    <div class="logo-d">Liaison Department</div>
-    <div class="logo-t">ILSFA Projects <span>&middot;</span> Part II Portal</div>
+  <div style="display:flex;align-items:center;gap:14px;flex-shrink:0">
+    <!-- Sunrise Logo -->
+    <div style="flex-shrink:0">
+      <div style="font-family:'Inter',sans-serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:.02em;line-height:1.1">SUNRISE</div>
+      <div style="font-size:9px;color:var(--gd);letter-spacing:.18em;text-transform:uppercase;font-family:'Nunito',sans-serif;margin-top:2px;opacity:.85">Lighting the Path to Clean Energy</div>
+    </div>
+    <div class="hdiv"></div>
+    <div class="logo">
+      <div class="logo-d">Liaison Department</div>
+      <div class="logo-t">ILSFA Projects <span>&middot;</span> Part II Portal</div>
+    </div>
   </div>
   <div class="hdiv"></div>
   <div class="hsrch">
@@ -434,27 +442,7 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
 </div>
 </header>
 <!-- Stats bar -->
-<div class="stats-bar">
-  <div class="stats-bar-inner">
-    <div class="stat-pill" id="sp1">
-      <div class="stat-pill-icon" style="background:rgba(255,255,255,.07);color:rgba(255,255,255,.6)"><i class="ti ti-folder"></i></div>
-      <div><div class="stat-pill-n" id="sp1-n" style="color:#fff;font-family:'Inter',sans-serif">—</div><div class="stat-pill-l" style="font-family:'Nunito',sans-serif">Total Projects</div></div>
-    </div>
-    <div class="stat-pill" id="sp2">
-      <div class="stat-pill-icon" style="background:rgba(255,255,255,.07);color:rgba(255,255,255,.6)"><i class="ti ti-check"></i></div>
-      <div><div class="stat-pill-n" id="sp2-n" style="color:#fff">—</div><div class="stat-pill-l" style="font-family:'Nunito',sans-serif">Approved</div></div>
-    </div>
 
-    <div class="stat-pill" id="sp4">
-      <div class="stat-pill-icon" style="background:rgba(255,255,255,.07);color:rgba(255,255,255,.6)"><i class="ti ti-alert-circle"></i></div>
-      <div><div class="stat-pill-n" id="sp4-n" style="color:#fff">—</div><div class="stat-pill-l" style="font-family:'Nunito',sans-serif">Need Correction</div></div>
-    </div>
-    <div class="stat-pill" id="sp5" style="border-right:none">
-      <div class="stat-pill-icon" style="background:rgba(255,255,255,.07);color:rgba(255,255,255,.6)"><i class="ti ti-coin"></i></div>
-      <div><div class="stat-pill-n" id="sp5-n" style="color:#fff">—</div><div class="stat-pill-l" style="font-family:'Nunito',sans-serif">Total RECs</div></div>
-    </div>
-  </div>
-</div>
 
 <!-- Chat overlay -->
 <div class="chat-overlay" id="chat-overlay" onclick="closeChat()"></div>
@@ -575,9 +563,12 @@ async function api(p){
 function si(msg,type){const el=document.getElementById('sync');el.textContent=msg;el.className='show '+(type||'');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3000);}
 function sc(data){try{localStorage.setItem('ilsfa2',JSON.stringify({data,ts:Date.now()}));}catch(e){}}
 function lc(){try{const c=JSON.parse(localStorage.getItem('ilsfa2')||'null');if(c&&c.data)return c;}catch(e){}return null;}
+function saveProjects(){try{localStorage.setItem('ilsfa_projects',JSON.stringify(P));}catch(e){}}
+function loadProjects(){try{const d=JSON.parse(localStorage.getItem('ilsfa_projects')||'null');if(d&&d.length)return d;}catch(e){}return null;}
 function apd(data){
   P=(data.projects||[]).map(p=>({...p,pilot:p.pilot===true||p.pilot==='true'}));
   if(!P.length)P=DP.map(p=>({...p}));
+  saveProjects();
   CL={};(data.checklist||[]).forEach(r=>{CL[r.pid+'_'+r.iid]={done:r.done==='true',st:r.st||''};});
   PR={};(data.postReview||[]).forEach(r=>{PR[r.pid+'_'+r.iid]=r.val||'none';});
   const pm=(data.settings||[]).find(r=>r.key==='pmList');
@@ -619,9 +610,26 @@ function initReportDefaults(){
 }
 
 async function loadData(){
+  // 1. Load projects from direct localStorage save (fastest, always works)
+  const savedProjects=loadProjects();
+  if(savedProjects){
+    P=savedProjects.map(p=>({...p,pilot:p.pilot===true||p.pilot==='true'}));
+  }
+  // 2. Load full cache (checklist, post-review, settings) from ilsfa2
   const cached=lc();
-  if(cached){apd(cached.data);}
-  else{P=DP.map(p=>({...p}));CL={};PR={};PML=[...DPM];}
+  if(cached){
+    if(!savedProjects){  // Only load projects from cache if no direct save
+      P=(cached.data.projects||[]).map(p=>({...p,pilot:p.pilot===true||p.pilot==='true'}));
+    }
+    CL={};(cached.data.checklist||[]).forEach(r=>{CL[r.pid+'_'+r.iid]={done:r.done==='true',st:r.st||''};});
+    PR={};(cached.data.postReview||[]).forEach(r=>{PR[r.pid+'_'+r.iid]=r.val||'none';});
+    const pm=(cached.data.settings||[]).find(r=>r.key==='pmList');
+    PML=pm?pm.val.split(',').filter(Boolean):[...DPM];
+  } else {
+    if(!savedProjects) P=DP.map(p=>({...p}));
+    CL={};PR={};PML=[...DPM];
+  }
+  if(!P.length) P=DP.map(p=>({...p}));
   if(!activePM)activePM='__db';
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
