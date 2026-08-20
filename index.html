@@ -939,6 +939,19 @@ function rdb(){
     utRows+=mkRow(u.u,n,tot,r,u.c,utOnclick);
   });
 
+  const sl=[
+    {l:'Part II Submitted & Under Review',k:'Part II Submitted',c:'var(--wb)'},
+    {l:'Further Part II Info Requested',k:'Further Part II information requested',c:'var(--et)'},
+    {l:'Under Inspection',k:'Under Inspection',c:'#0891B2'},
+    {l:'Part II Approved',k:'Approved',c:'var(--ot)'},
+  ];
+  const cl=[
+    {l:'No feedback',k:'No feedback',c:'var(--t3)'},
+    {l:'Pending',k:'Pending',c:'var(--et)'},
+    {l:'Partially addressed',k:'Partially addressed',c:'var(--wb)'},
+    {l:'Addressed',k:'Addressed',c:'var(--ot)'},
+  ];
+
   // ── SECTION: Top stat cards ──────────────────────────────
   let html=`<div class="ts">Last updated: ${now}</div>
 
@@ -1043,18 +1056,6 @@ function rdb(){
   </div>`;
 
   // ── SECTION: Status + Correction breakdown ───────────────
-  const sl=[
-    {l:'Part II Submitted & Under Review',k:'Part II Submitted',c:'var(--wb)'},
-    {l:'Further Part II Info Requested',k:'Further Part II information requested',c:'var(--et)'},
-    {l:'Under Inspection',k:'Under Inspection',c:'#0891B2'},
-    {l:'Part II Approved',k:'Approved',c:'var(--ot)'},
-  ];
-  const cl=[
-    {l:'No feedback',k:'No feedback',c:'var(--t3)'},
-    {l:'Pending',k:'Pending',c:'var(--et)'},
-    {l:'Partially addressed',k:'Partially addressed',c:'var(--wb)'},
-    {l:'Addressed',k:'Addressed',c:'var(--ot)'},
-  ];
 
   html+=`<div class="d2c">
     <div class="ds">
@@ -1934,12 +1935,7 @@ function rreport(){
   }
 
   // Add PY form
-  let out=`<div class="rpt-subtabs" id="rpt-subtabs">
-    <button class="rpt-stab a" onclick="switchRptTab('overall',this)"><i class="ti ti-chart-bar" style="font-size:14px"></i> Overall</button>
-    <button class="rpt-stab" onclick="switchRptTab('daily',this)"><i class="ti ti-calendar-day" style="font-size:14px"></i> Daily</button>
-    <button class="rpt-stab" onclick="switchRptTab('monthly',this)"><i class="ti ti-calendar-month" style="font-size:14px"></i> Monthly</button>
-    <button class="rpt-stab" onclick="switchRptTab('monthlyREC',this)"><i class="ti ti-receipt" style="font-size:14px"></i> REC Report</button>
-  </div>
+  let out=mkRptSubtabs('overall')+`
   <div id="rpt-content">
   <div class="rpt-hd">
     <div>
@@ -2349,12 +2345,7 @@ function renderDailyReport(){
   reportHTML+='<tr><td colspan="3" style="'+footerStyle+'">Sunrise Solar LLC | sunrisesolar-il.com</td></tr>';
   reportHTML+='</table></div>';
 
-  var out=`<div class="rpt-subtabs">
-    <button class="rpt-stab" onclick="switchRptTab('overall',this)"><i class="ti ti-chart-bar" style="font-size:14px"></i> Overall</button>
-    <button class="rpt-stab a" onclick="switchRptTab('daily',this)"><i class="ti ti-calendar-day" style="font-size:14px"></i> Daily</button>
-    <button class="rpt-stab" onclick="switchRptTab('monthly',this)"><i class="ti ti-calendar-month" style="font-size:14px"></i> Monthly</button>
-    <button class="rpt-stab" onclick="switchRptTab('monthlyREC',this)"><i class="ti ti-receipt" style="font-size:14px"></i> REC Report</button>
-  </div>
+  var out=mkRptSubtabs('daily')+`
   <div class="rpt-hd">
     <div>
       <div style="font-size:22px;font-weight:700;color:var(--tx)">Daily Report</div>
@@ -2368,21 +2359,58 @@ function renderDailyReport(){
 
   ${reportHTML}
 
-  <!-- Daily log section -->
-  <div style="margin-top:20px;background:rgba(8,145,178,.04);border:1.5px solid rgba(8,145,178,.15);border-radius:var(--rl);padding:18px">
-    <div style="font-size:15px;font-weight:600;color:var(--tx);margin-bottom:4px">${hasToday?'Edit Today\'s Notes':'Add Notes for Today'}</div>
-    <div style="font-size:12px;color:var(--t3);font-family:Nunito,sans-serif;margin-bottom:12px">${todayLabel}</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-      <div class="log-field"><label>Submissions made today</label><textarea id="dl-sub" placeholder="e.g. P-13512 submitted to ILSFA portal">${hasToday?hasToday.submissions||'':''}</textarea></div>
-      <div class="log-field"><label>Corrections received</label><textarea id="dl-corr" placeholder="e.g. P-10711 — correction request received">${hasToday?hasToday.corrections||'':''}</textarea></div>
-      <div class="log-field"><label>Corrections resolved</label><textarea id="dl-res" placeholder="e.g. P-13416 — updated and resubmitted">${hasToday?hasToday.resolved||'':''}</textarea></div>
-      <div class="log-field"><label>Pending / follow-ups</label><textarea id="dl-pend" placeholder="e.g. Waiting on SO approval for P-12949">${hasToday?hasToday.pending||'':''}</textarea></div>
-    </div>
-    <div class="log-field" style="margin-bottom:14px"><label>General notes</label><textarea id="dl-notes" style="min-height:60px" placeholder="Any updates, communications...">${hasToday?hasToday.notes||'':''}</textarea></div>
-    <button class="gen-report-btn" style="margin-left:0" onclick="saveDailyEntry()"><i class="ti ti-device-floppy" style="font-size:13px"></i> Save Notes</button>
   </div>`;
 
   el.innerHTML=out;
+
+  // Build the notes form via DOM (Safari-safe - textareas created this way are always editable)
+  var notesWrap=document.createElement('div');
+  notesWrap.style.cssText='margin-top:20px;background:rgba(8,145,178,.04);border:1.5px solid rgba(8,145,178,.15);border-radius:var(--rl);padding:18px';
+
+  var noteTitle=document.createElement('div');
+  noteTitle.style.cssText='font-size:15px;font-weight:600;color:var(--tx);margin-bottom:4px';
+  noteTitle.textContent=hasToday?'Edit Today\'s Notes':'Add Notes for Today';
+  notesWrap.appendChild(noteTitle);
+
+  var noteSub=document.createElement('div');
+  noteSub.style.cssText='font-size:12px;color:var(--t3);font-family:Nunito,sans-serif;margin-bottom:12px';
+  noteSub.textContent=todayLabel;
+  notesWrap.appendChild(noteSub);
+
+  var grid=document.createElement('div');
+  grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px';
+
+  var fields=[
+    {id:'dl-sub',label:'Submissions made today',ph:'e.g. P-13512 submitted to ILSFA portal',val:hasToday?hasToday.submissions||'':''},
+    {id:'dl-corr',label:'Corrections received',ph:'e.g. P-10711 — correction request received',val:hasToday?hasToday.corrections||'':''},
+    {id:'dl-res',label:'Corrections resolved',ph:'e.g. P-13416 — updated and resubmitted',val:hasToday?hasToday.resolved||'':''},
+    {id:'dl-pend',label:'Pending / follow-ups',ph:'e.g. Waiting on SO approval for P-12949',val:hasToday?hasToday.pending||'':''},
+  ];
+  fields.forEach(function(f){
+    var wrap=document.createElement('div');wrap.className='log-field';
+    var lbl=document.createElement('label');lbl.textContent=f.label;
+    var ta=document.createElement('textarea');
+    ta.id=f.id;ta.placeholder=f.ph;ta.value=f.val;
+    wrap.appendChild(lbl);wrap.appendChild(ta);grid.appendChild(wrap);
+  });
+  notesWrap.appendChild(grid);
+
+  var notesField=document.createElement('div');notesField.className='log-field';
+  notesField.style.marginBottom='14px';
+  var notesLbl=document.createElement('label');notesLbl.textContent='General notes';
+  var notesTa=document.createElement('textarea');
+  notesTa.id='dl-notes';notesTa.placeholder='Any updates, communications...';
+  notesTa.style.minHeight='60px';notesTa.value=hasToday?hasToday.notes||'':'';
+  notesField.appendChild(notesLbl);notesField.appendChild(notesTa);
+  notesWrap.appendChild(notesField);
+
+  var saveBtn=document.createElement('button');
+  saveBtn.className='gen-report-btn';saveBtn.style.marginLeft='0';
+  saveBtn.innerHTML='<i class="ti ti-device-floppy" style="font-size:13px"></i> Save Notes';
+  saveBtn.addEventListener('click',saveDailyEntry);
+  notesWrap.appendChild(saveBtn);
+
+  el.appendChild(notesWrap);
 }
 
 function exportDailyTarget(){
@@ -2462,11 +2490,7 @@ function renderMonthly(){
   const now=new Date();
   const currMonth=now.toISOString().slice(0,7);
 
-  el.innerHTML=`<div class="rpt-subtabs">
-    <button class="rpt-stab" onclick="switchRptTab('overall',this)"><i class="ti ti-chart-bar" style="font-size:14px"></i> Overall</button>
-    <button class="rpt-stab" onclick="switchRptTab('daily',this)"><i class="ti ti-calendar-day" style="font-size:14px"></i> Daily</button>
-    <button class="rpt-stab a" onclick="switchRptTab('monthly',this)"><i class="ti ti-calendar-month" style="font-size:14px"></i> Monthly</button>
-  </div>
+  el.innerHTML=mkRptSubtabs('monthly')+`
   <div class="rpt-hd">
     <div><div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:600;color:var(--tx)">Monthly Report</div>
     <div class="rpt-ts">Full monthly summary — auto-generated from portal data</div></div>
@@ -3065,6 +3089,77 @@ function exportCurrentRecReport(){
   a.download='Monthly_REC_Report_'+new Date().toISOString().split('T')[0]+'.csv';
   a.click();si('Exported!','ok');
 }
+// ── SNAPSHOT SYSTEM ──────────────────────────────────────────────────
+function getSnapshots(){
+  try{return JSON.parse(localStorage.getItem('ilsfa_snapshots')||'[]');}catch(e){return [];}
+}
+function saveSnapshots(snaps){localStorage.setItem('ilsfa_snapshots',JSON.stringify(snaps));}
+
+function openSnapshotModal(){
+  if(!P.length){alert('No projects to snapshot.');return;}
+  var modal=document.createElement('div');
+  modal.className='proj-modal-bg';modal.id='snap-modal';
+  var now=new Date();
+  var defLabel=now.toLocaleDateString('en-US',{month:'long',year:'numeric'})+' Batch';
+  modal.innerHTML='<div class="proj-modal" onclick="event.stopPropagation()" style="max-width:480px">'
+    +'<div class="proj-modal-hd"><div class="proj-modal-title">Save REC Report Snapshot</div>'
+    +'<button onclick="document.getElementById(\"snap-modal\").remove()" style="background:none;border:none;cursor:pointer;color:var(--t3);font-size:18px"><i class="ti ti-x"></i></button></div>'
+    +'<div style="background:var(--sf);border-radius:var(--r);padding:13px 15px;margin-bottom:16px;font-size:13.5px;color:var(--t2);line-height:1.6">Saves a permanent snapshot of all <strong>'+P.length+' current approved projects</strong>.</div>'
+    +'<div class="fl" style="margin-bottom:16px"><label>Snapshot Label</label><input id="snap-label" value="'+defLabel+'" placeholder="e.g. August 2026 Batch"/></div>'
+    +'<div style="display:flex;gap:8px"><button class="add-proj-btn" onclick="saveSnapshot()" style="background:#0D2147"><i class="ti ti-camera" style="font-size:13px"></i> Save Snapshot</button>'
+    +'<button onclick="document.getElementById(\"snap-modal\").remove()" style="font-size:13px;padding:8px 16px;border-radius:var(--r);border:1px solid var(--bd);background:transparent;cursor:pointer">Cancel</button></div></div>';
+  modal.addEventListener('click',function(){modal.remove();});
+  document.body.appendChild(modal);
+}
+
+function saveSnapshot(){
+  var label=document.getElementById('snap-label')&&document.getElementById('snap-label').value.trim()||new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  var now=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+  function rv2(p){
+    var saved=localStorage.getItem('rec_final_'+p.id);
+    if(saved)return parseFloat(saved)||0;
+    return parseFloat((p.recs||'').replace(/[$,]/g,''))||0;
+  }
+  var approved=P.filter(function(p){return p.ps==='Approved';});
+  var total=approved.reduce(function(a,p){return a+rv2(p);},0);
+  var pending=approved.filter(function(p){return p.ps!=='Approved';}).reduce(function(a,p){return a+rv2(p);},0);
+  var app=approved.filter(function(p){return p.ps==='Approved';}).reduce(function(a,p){return a+rv2(p);},0);
+  var byUT={Ameren:0,ComEd:0,IPA:0};
+  approved.forEach(function(p){var u=p.ut||'';if(byUT[u]!==undefined)byUT[u]+=rv2(p);});
+  var snap={
+    id:Date.now(),label:label,created:now,
+    projects:approved.map(function(p){return{id:p.id,name:p.name||'',py:p.py,ut:p.ut||'',ps:p.ps,recs:p.recs,pm:p.pm||''};}),
+    summary:{totalSubmitted:total,pendingApproval:pending,approved:app,byUtility:byUT}
+  };
+  var snaps=getSnapshots();snaps.push(snap);saveSnapshots(snaps);
+  var modal=document.getElementById('snap-modal');if(modal)modal.remove();
+  si('Snapshot saved: '+label,'ok');
+  switchRptTab('monthlyREC',document.querySelector('.rpt-stab.a'));
+}
+
+function deleteSnapshot(idx){
+  if(!confirm('Delete this snapshot? Cannot be undone.'))return;
+  var snaps=getSnapshots();snaps.splice(idx,1);saveSnapshots(snaps);
+  renderMonthlyREC();si('Snapshot deleted','ok');
+}
+
+function exportSnapshot(idx){
+  var snap=getSnapshots()[idx];if(!snap)return;
+  function fmFull(n){return '$'+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+  var csv=snap.label+'\n'+snap.created+'\n\n';
+  csv+='TOTAL RECs SUBMITTED,'+fmFull(snap.summary.totalSubmitted)+'\n';
+  csv+='PENDING PART II APPROVAL,'+fmFull(snap.summary.pendingApproval)+'\n';
+  csv+='PART II APPROVED,'+fmFull(snap.summary.approved)+'\n\n';
+  Object.keys(snap.summary.byUtility).forEach(function(u){csv+=u.toUpperCase()+','+fmFull(snap.summary.byUtility[u])+'\n';});
+  csv+='\nPROJECT ID,REC VALUE,BUYER\n';
+  snap.projects.forEach(function(p){csv+=p.id+','+p.recs+','+(p.ut||'')+'\n';});
+  csv+='Total REC Value,'+fmFull(snap.summary.totalSubmitted)+'\n';
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download=snap.label.replace(/\s+/g,'_')+'_REC_Report.csv';
+  a.click();si('Exported: '+snap.label,'ok');
+}
+
 </script>
 </body>
 </html>
