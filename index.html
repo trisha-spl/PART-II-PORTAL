@@ -638,7 +638,7 @@ async function loadData(){
   initReportDefaults();
   ra();
   // Auto-open dashboard on load
-  setTimeout(function(){navTo('dashboard');},50);
+  setTimeout(function(){try{navTo('dashboard');}catch(e){si('Dashboard error: '+e.message,'err');}},50);
   if(SCRIPT_URL&&SCRIPT_URL!=='YOUR_URL'){
     if(cached){const age=Math.round((Date.now()-cached.ts)/60000);si(`Syncing... (${age}m ago)`,'');}
     else si('Connecting to Google Sheets...','');
@@ -875,6 +875,19 @@ function rdb(){
   const el=document.getElementById('n-dashboard');
 
   // Pre-build map sections to avoid nested template literals (Safari fix)
+  const sl=[
+    {l:'Part II Submitted & Under Review',k:'Part II Submitted',c:'var(--wb)'},
+    {l:'Further Part II Info Requested',k:'Further Part II information requested',c:'var(--et)'},
+    {l:'Under Inspection',k:'Under Inspection',c:'#0891B2'},
+    {l:'Part II Approved',k:'Approved',c:'var(--ot)'},
+  ];
+  const cl=[
+    {l:'No feedback',k:'No feedback',c:'var(--t3)'},
+    {l:'Pending',k:'Pending',c:'var(--et)'},
+    {l:'Partially addressed',k:'Partially addressed',c:'var(--wb)'},
+    {l:'Addressed',k:'Addressed',c:'var(--ot)'},
+  ];
+
   function mkRow(label,n,tot,r,color,onclick){
     var w=tot>0?Math.round(n/tot*100):0;
     var row='<div class="dbrow'+(n===0?' z':'')+'" onclick="'+onclick+'">';
@@ -892,7 +905,6 @@ function rdb(){
     var n=P.filter(function(p){return p.ps===s.k;}).length;
     var r=P.filter(function(p){return p.ps===s.k;}).reduce(function(a,p){return a+rv(p);},0);
     slRows+=mkRow(s.l,n,tot,r,s.c,'navDash("ps","'+s.k+'","'+s.l+'",'+n+')');
-    slRows+=mkRow(s.l,n,tot,r,s.c,slOnclick);
   });
 
   // Correction status rows
@@ -901,7 +913,6 @@ function rdb(){
     var n=P.filter(function(p){return p.cs===c.k;}).length;
     var r=P.filter(function(p){return p.cs===c.k;}).reduce(function(a,p){return a+rv(p);},0);
     clRows+=mkRow(c.l,n,tot,r,c.c,'navDash("cs","'+c.k+'","'+c.l+'",'+n+')');
-    clRows+=mkRow(c.l,n,tot,r,c.c,clOnclick);
   });
 
   // PM workload cards
@@ -921,13 +932,16 @@ function rdb(){
     pmCards+='<div style="display:flex;justify-content:space-between;font-size:11px;font-family:Nunito,sans-serif"><span style="color:var(--ot)">'+pApp+' approved</span>'+corrSpan+'</div></div>';
   });
 
+  const pl=['PY7','PY8','PY8-2025'];
+
+  const pc={'PY7':'#0891B2','PY8':'#0D2147','PY8-2025':'#475569'};
+
   // Program year rows
   var pyRows='';
   pl.forEach(function(py){
     var n=P.filter(function(p){return p.py===py;}).length;
     var r=P.filter(function(p){return p.py===py;}).reduce(function(a,p){return a+rv(p);},0);
     pyRows+=mkRow(py,n,tot,r,pc[py],'navDash("py","'+py+'","'+py+'",'+n+')');
-    pyRows+=mkRow(py,n,tot,r,pc[py],pyOnclick);
   });
 
   // Utility rows
@@ -936,21 +950,8 @@ function rdb(){
     var n=P.filter(function(p){return p.ut===u.u;}).length;
     var r=P.filter(function(p){return p.ut===u.u;}).reduce(function(a,p){return a+rv(p);},0);
     utRows+=mkRow(u.u,n,tot,r,u.c,'navDash("ut","'+u.u+'","'+u.u+'",'+n+')');
-    utRows+=mkRow(u.u,n,tot,r,u.c,utOnclick);
   });
 
-  const sl=[
-    {l:'Part II Submitted & Under Review',k:'Part II Submitted',c:'var(--wb)'},
-    {l:'Further Part II Info Requested',k:'Further Part II information requested',c:'var(--et)'},
-    {l:'Under Inspection',k:'Under Inspection',c:'#0891B2'},
-    {l:'Part II Approved',k:'Approved',c:'var(--ot)'},
-  ];
-  const cl=[
-    {l:'No feedback',k:'No feedback',c:'var(--t3)'},
-    {l:'Pending',k:'Pending',c:'var(--et)'},
-    {l:'Partially addressed',k:'Partially addressed',c:'var(--wb)'},
-    {l:'Addressed',k:'Addressed',c:'var(--ot)'},
-  ];
 
   // ── SECTION: Top stat cards ──────────────────────────────
   let html=`<div class="ts">Last updated: ${now}</div>
@@ -1078,9 +1079,7 @@ ${clRows}
     </div>
   </div>`;
 
-  // ── SECTION: Program year + utility ─────────────────────
-  const pl=['PY7','PY8','PY8-2025'];
-  const pc={'PY7':'#0891B2','PY8':'#0D2147','PY8-2025':'#475569'};
+  // ── SECTION: Program year + utility ─────────────────────  const pc={'PY7':'#0891B2','PY8':'#0D2147','PY8-2025':'#475569'};
   html+=`<div class="d2c">
     <div class="ds">
       <div class="dt"><i class="ti ti-calendar" style="font-size:16px;color:var(--gd)"></i> Program Year
@@ -2243,7 +2242,13 @@ function exportReport(){exportCSV();}
 
 function ra(){
   var fns=[['rss',rss],['rdb',rdb],['rp',rp],['rpr',rpr],['rstd',rstd],['rset',rset],['rtv',rtv]];
-  fns.forEach(function(f){try{f[1]();}catch(e){si('Error in '+f[0]+': '+e.message,'err');console.error(f[0],e);}});
+  fns.forEach(function(f){
+    try{f[1]();}
+    catch(e){
+      si('Error in '+f[0]+': '+e.message+' (line:'+e.lineNumber+')', 'err');
+      console.error(f[0]+' ERROR:', e.message, e.stack||'');
+    }
+  });
 }
 
 // ── SUB-TAB SWITCHER ─────────────────────────────────────────────────
@@ -2301,49 +2306,90 @@ function renderDailyReport(){
   var totalSubmitted=P.filter(function(p){return p.ps!=='';});
   var totalSubmittedVal=totalSubmitted.reduce(function(a,p){return a+rv2(p);},0);
 
-  var tblStyle='width:100%;border-collapse:collapse;font-family:Nunito,sans-serif;font-size:13.5px;margin-bottom:14px';
-  var hdrStyle='background:#1a3a6b;color:#fff;font-weight:700;text-align:center;padding:10px;font-size:13px;text-transform:uppercase;letter-spacing:.08em';
-  var subHdrStyle='background:#2d5fa0;color:#fff;font-weight:600;text-align:center;padding:8px;font-size:12.5px;text-transform:uppercase;letter-spacing:.06em';
-  var noteStyle='background:#f0f4f8;color:#555;text-align:center;padding:7px;font-size:12px;font-style:italic;border-bottom:1px solid #ddd';
-  var rowStyle='padding:9px 14px;border-bottom:1px solid #ddd;color:var(--tx)';
-  var boldRowStyle='padding:9px 14px;border-bottom:1px solid #ddd;font-weight:700;color:var(--tx);background:#f5f8ff';
-  var footerStyle='text-align:center;padding:10px;color:#777;font-size:12px;font-style:italic;border-top:1px solid #ddd;background:#fafafa';
+  // Load saved target report edits for today
+  var trKey='target_report_'+todayKey;
+  var trSaved={};
+  try{trSaved=JSON.parse(localStorage.getItem(trKey)||'{}');}catch(e){}
+  function trVal(key,def){return trSaved[key]!==undefined?trSaved[key]:def;}
+  function trInput(id,def,isRec){
+    var v=trVal(id,def);
+    var style='border:none;border-bottom:2px solid var(--bd);background:transparent;font-family:Nunito,sans-serif;font-size:'+(isRec?'14':'14')+'px;font-weight:600;color:var(--tx);width:'+(isRec?'130':'50')+'px;text-align:right;padding:2px 4px;outline:none';
+    return '<input id="tr-'+id+'" type="number" value="'+v+'" style="'+style+'" onchange="saveTR()" oninput="saveTR()" placeholder="0"/>';
+  }
+  function trInputRec(id,def){
+    var v=trVal(id,def);
+    return '<input id="tr-'+id+'" type="number" step="0.01" value="'+v+'" style="border:none;border-bottom:2px solid var(--bd);background:transparent;font-family:Inter,sans-serif;font-size:14px;font-weight:700;color:var(--tx);width:140px;text-align:right;padding:2px 4px;outline:none" onchange="saveTR()" oninput="saveTR()" placeholder="0.00"/>';
+  }
 
-  var reportHTML='<div style="background:#fff;border:1px solid #ddd;border-radius:10px;overflow:hidden;box-shadow:0 2px 16px rgba(15,23,42,.08);max-width:700px;margin:0 auto">';
-  reportHTML+='<table style="'+tblStyle+'">';
+  function editRow(label, idCount, defCount, idRec, defRec){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)">'
+      +'<span style="font-size:13.5px;color:var(--t2);font-family:Nunito,sans-serif">'+label+'</span>'
+      +'<div style="display:flex;align-items:center;gap:12px">'
+      +trInput(idCount,defCount,false)
+      +(idRec?trInputRec(idRec,defRec):'')
+      +'</div></div>';
+  }
+  function sectionHdr(title, icon){
+    return '<div style="display:flex;align-items:center;gap:8px;padding:10px 0 6px;margin-top:8px">'
+      +'<i class="ti '+icon+'" style="font-size:15px;color:#0891B2"></i>'
+      +'<span style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;font-family:Nunito,sans-serif">'+title+'</span>'
+      +'</div>';
+  }
 
-  // Header
-  reportHTML+='<tr><td colspan="3" style="'+hdrStyle+'">TARGET REPORT</td></tr>';
-  reportHTML+='<tr><td colspan="3" style="'+subHdrStyle+'">PROGRAM YEAR BREAKDOWN</td></tr>';
-  reportHTML+='<tr><td colspan="3" style="'+noteStyle+'">* These are projects currently pending Part II approval</td></tr>';
+  var reportHTML='<div style="background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--gshadow)">';
+  reportHTML+='<div style="background:#0D2147;padding:14px 20px;display:flex;align-items:center;justify-content:space-between">';
+  reportHTML+='<div><div style="font-size:16px;font-weight:700;color:#fff;letter-spacing:.05em">TARGET REPORT</div>';
+  reportHTML+='<div style="font-size:12px;color:rgba(255,255,255,.45);font-family:Nunito,sans-serif;margin-top:2px">'+today+' · <span style="color:rgba(255,255,255,.3)">Click any number to edit</span></div></div>';
+  reportHTML+='<div style="display:flex;align-items:center;gap:8px">';
+  reportHTML+='<button onclick="resetTR()" style="font-size:11px;padding:5px 11px;border-radius:var(--r);border:1px solid rgba(255,255,255,.15);background:transparent;cursor:pointer;color:rgba(255,255,255,.5);font-family:Nunito,sans-serif">Reset</button>';
+  reportHTML+='</div></div>';
+  reportHTML+='<div style="padding:16px 20px">';
+
+  // Program Year Breakdown
+  reportHTML+=sectionHdr('Program Year Breakdown','ti-calendar');
+  reportHTML+='<div style="font-size:12px;color:var(--t3);font-family:Nunito,sans-serif;font-style:italic;margin-bottom:6px">Projects currently pending Part II approval</div>';
   pys.forEach(function(py){
-    reportHTML+='<tr><td style="'+rowStyle+'">'+py+'</td><td></td><td style="'+rowStyle+';text-align:right;font-weight:700">'+pendingByPY[py]+'</td></tr>';
+    reportHTML+=editRow(py,'py-'+py,pendingByPY[py],null,null);
   });
 
   // Pipeline Summary
-  reportHTML+='<tr><td colspan="3" style="'+subHdrStyle+'">PIPELINE SUMMARY</td></tr>';
-  reportHTML+='<tr><td colspan="3" style="'+noteStyle+'">Projects not yet Invoiced — awaiting approval or PTO/COC</td></tr>';
-  reportHTML+='<tr><td style="'+rowStyle+'">Pending Part II Approval</td><td style="'+rowStyle+';text-align:center">'+pendingApproval.length+'</td><td style="'+rowStyle+';text-align:right">'+fmFull(pendingApprovalVal)+'</td></tr>';
-  reportHTML+='<tr><td style="'+rowStyle+'">Pending PTO/COC</td><td style="'+rowStyle+';text-align:center">'+pendingPTO.length+'</td><td style="'+rowStyle+';text-align:right">'+fmFull(pendingPTOVal)+'</td></tr>';
-  reportHTML+='<tr><td style="'+boldRowStyle+'">Total Pipeline Value</td><td style="'+boldRowStyle+';text-align:center">'+totalPipeline+'</td><td style="'+boldRowStyle+';text-align:right">'+fmFull(totalPipelineVal)+'</td></tr>';
+  reportHTML+=sectionHdr('Pipeline Summary','ti-chart-bar');
+  reportHTML+='<div style="font-size:12px;color:var(--t3);font-family:Nunito,sans-serif;font-style:italic;margin-bottom:6px">Not yet invoiced — awaiting approval or PTO/COC</div>';
+  reportHTML+=editRow('Pending Part II Approval','ppa-count',pendingApproval.length,'ppa-val',pendingApprovalVal.toFixed(2));
+  reportHTML+=editRow('Pending PTO/COC','pto-count',pendingPTO.length,'pto-val',pendingPTOVal.toFixed(2));
+  reportHTML+='<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#0D2147;border-radius:var(--r);margin-top:8px">'
+    +'<span style="font-size:13px;font-weight:700;color:#fff">Total Pipeline Value</span>'
+    +'<div style="display:flex;align-items:center;gap:12px" id="tr-pipeline-total">'
+    +'<span style="font-size:14px;font-weight:700;color:rgba(255,255,255,.7)" id="tr-pipe-count">-</span>'
+    +'<span style="font-size:15px;font-weight:700;color:#D4AF37" id="tr-pipe-val">-</span>'
+    +'</div></div>';
 
   // Approved
-  reportHTML+='<tr><td colspan="3" style="'+subHdrStyle+'">APPROVED</td></tr>';
-  reportHTML+='<tr><td colspan="3" style="'+noteStyle+'">Projects fully approved by ILSFA</td></tr>';
-  reportHTML+='<tr><td style="'+boldRowStyle+'">Part II Approved — Ready to Invoice</td><td style="'+boldRowStyle+';text-align:center">'+approved.length+'</td><td style="'+boldRowStyle+';text-align:right">'+fmFull(approvedVal)+'</td></tr>';
+  reportHTML+=sectionHdr('Part II Approved','ti-circle-check');
+  reportHTML+='<div style="font-size:12px;color:var(--t3);font-family:Nunito,sans-serif;font-style:italic;margin-bottom:6px">Projects fully approved by ILSFA</div>';
+  reportHTML+='<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);border-radius:var(--r)">'
+    +'<span style="font-size:13px;font-weight:600;color:var(--tx)">Part II Approved — Ready to Invoice</span>'
+    +'<div style="display:flex;align-items:center;gap:12px">'
+    +trInput('app-count',approved.length,false)
+    +trInputRec('app-val',approvedVal.toFixed(2))
+    +'</div></div>';
 
   // Total Submitted
-  reportHTML+='<tr><td colspan="3" style="'+subHdrStyle+'">TOTAL SUBMITTED TO PROGRAM</td></tr>';
-  reportHTML+='<tr><td colspan="3" style="'+noteStyle+'">All projects submitted for Part II — includes approved + pending approval</td></tr>';
-  reportHTML+='<tr><td style="'+boldRowStyle+'">Total Projects Submitted</td><td style="'+boldRowStyle+';text-align:center">'+pendingApproval.length+'</td><td style="'+boldRowStyle+';text-align:right">'+fmFull(pendingApprovalVal)+'</td></tr>';
+  reportHTML+=sectionHdr('Total Submitted to Program','ti-send');
+  reportHTML+='<div style="font-size:12px;color:var(--t3);font-family:Nunito,sans-serif;font-style:italic;margin-bottom:6px">All projects submitted — includes approved + pending</div>';
+  reportHTML+=editRow('Total Projects Submitted','sub-count',pendingApproval.length,'sub-val',pendingApprovalVal.toFixed(2));
 
   // Total Portfolio
-  reportHTML+='<tr><td colspan="3" style="'+subHdrStyle+'">TOTAL ESTIMATED PORTFOLIO VALUE</td></tr>';
-  reportHTML+='<tr><td style="'+boldRowStyle+'">Overall Total (All Projects)</td><td style="'+boldRowStyle+';text-align:center">'+totalPipeline+'</td><td style="'+boldRowStyle+';text-align:right">'+fmFull(totalPipelineVal)+'</td></tr>';
+  reportHTML+=sectionHdr('Total Estimated Portfolio Value','ti-wallet');
+  reportHTML+='<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#0D2147;border-radius:var(--r);margin-top:4px">'
+    +'<span style="font-size:13px;font-weight:700;color:#fff">Overall Total (All Projects)</span>'
+    +'<div style="display:flex;align-items:center;gap:12px" id="tr-overall-total">'
+    +'<span style="font-size:14px;font-weight:700;color:rgba(255,255,255,.7)" id="tr-overall-count">-</span>'
+    +'<span style="font-size:15px;font-weight:700;color:#D4AF37" id="tr-overall-val">-</span>'
+    +'</div></div>';
 
-  // Footer
-  reportHTML+='<tr><td colspan="3" style="'+footerStyle+'">Sunrise Solar LLC | sunrisesolar-il.com</td></tr>';
-  reportHTML+='</table></div>';
+  reportHTML+='<div style="font-size:11px;color:var(--t3);font-family:Nunito,sans-serif;text-align:center;padding:10px 0 0;font-style:italic">Sunrise Solar LLC | sunrisesolar-il.com</div>';
+  reportHTML+='</div></div>';
 
   var out=mkRptSubtabs('daily')+`
   <div class="rpt-hd">
@@ -2411,6 +2457,32 @@ function renderDailyReport(){
   notesWrap.appendChild(saveBtn);
 
   el.appendChild(notesWrap);
+  setTimeout(saveTR,50);
+}
+
+function saveTR(){
+  var key='target_report_'+new Date().toISOString().split('T')[0];
+  var data={};
+  document.querySelectorAll('[id^="tr-"]').forEach(function(el){
+    if(el.tagName==='INPUT')data[el.id.replace('tr-','')]=el.value;
+  });
+  localStorage.setItem(key,JSON.stringify(data));
+  // Update computed totals
+  function n(id){return parseFloat(document.getElementById('tr-'+id)&&document.getElementById('tr-'+id).value||0)||0;}
+  function fmFull(v){return '$'+v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+  var pipeCount=(n('ppa-count')+n('pto-count'));
+  var pipeVal=(n('ppa-val')+n('pto-val'));
+  var ovCount=pipeCount;
+  var ovVal=pipeVal;
+  var pc=document.getElementById('tr-pipe-count');if(pc)pc.textContent=pipeCount;
+  var pv=document.getElementById('tr-pipe-val');if(pv)pv.textContent=fmFull(pipeVal);
+  var oc=document.getElementById('tr-overall-count');if(oc)oc.textContent=ovCount;
+  var ov=document.getElementById('tr-overall-val');if(ov)ov.textContent=fmFull(ovVal);
+}
+function resetTR(){
+  if(!confirm('Reset all values to portal data?'))return;
+  localStorage.removeItem('target_report_'+new Date().toISOString().split('T')[0]);
+  renderDailyReport();
 }
 
 function exportDailyTarget(){
@@ -2959,12 +3031,6 @@ function renderMonthlyREC(){
   var byUT={Ameren:0,ComEd:0,IPA:0};
   approved.forEach(function(p){var u=p.ut||'';if(byUT[u]!==undefined)byUT[u]+=rv2(p);});
 
-  var gs='background:#4a8f3f;color:#fff;font-weight:700;padding:9px 14px;border:1px solid #3a7a30';
-  var gb='background:#e8f5e3;padding:9px 14px;border:1px solid #c5dfc0';
-  var gbb='background:#e8f5e3;padding:9px 14px;border:1px solid #c5dfc0;font-weight:700';
-  var gh='background:#4a8f3f;color:#fff;font-weight:700;text-align:center;padding:9px 14px;border:1px solid #3a7a30;letter-spacing:.06em;text-transform:uppercase;font-size:12.5px;font-family:Nunito,sans-serif';
-  var td='padding:8px 14px;border:1px solid #ddd;text-align:center;font-family:Nunito,sans-serif;font-size:13.5px';
-
   function buildTable(projects, editable){
     var total=projects.reduce(function(a,p){return a+rv2(p);},0);
     var ut={Ameren:0,ComEd:0,IPA:0};
@@ -2972,16 +3038,38 @@ function renderMonthlyREC(){
     var pending=projects.filter(function(p){return p.ps!=='Approved';}).reduce(function(a,p){return a+rv2(p);},0);
     var app=projects.filter(function(p){return p.ps==='Approved';}).reduce(function(a,p){return a+rv2(p);},0);
 
-    var t='<table style="width:100%;border-collapse:collapse;font-family:Nunito,sans-serif;font-size:13.5px">';
-    t+='<tr><td style="'+gb+'"><strong>TOTAL RECs SUBMITTED:</strong></td><td style="'+gbb+';text-align:right">'+fmFull(total)+'</td><td style="border:1px solid #c5dfc0"></td></tr>';
-    t+='<tr><td style="'+gb+'"><strong>PENDING PART II APPROVAL:</strong></td><td style="'+gb+';text-align:right">'+fmFull(pending)+'</td><td style="border:1px solid #c5dfc0"></td></tr>';
-    t+='<tr><td style="'+gb+'"><strong>PART II APPROVED:</strong></td><td style="'+gbb+';text-align:right">'+fmFull(app)+'</td><td style="border:1px solid #c5dfc0"></td></tr>';
-    t+='<tr><td colspan="3" style="height:10px;border:none"></td></tr>';
+    var t='';
+
+    // Summary cards
+    t+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">';
+    t+='<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:12px;text-align:center">'
+      +'<div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;font-family:Nunito,sans-serif;margin-bottom:4px">Total RECs Submitted</div>'
+      +'<div style="font-size:18px;font-weight:700;color:var(--tx);font-family:Inter,sans-serif">'+fmFull(total)+'</div></div>';
+    t+='<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:12px;text-align:center">'
+      +'<div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;font-family:Nunito,sans-serif;margin-bottom:4px">Pending Approval</div>'
+      +'<div style="font-size:18px;font-weight:700;color:var(--wb);font-family:Inter,sans-serif">'+fmFull(pending)+'</div></div>';
+    t+='<div style="background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.2);border-radius:var(--r);padding:12px;text-align:center">'
+      +'<div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;font-family:Nunito,sans-serif;margin-bottom:4px">Part II Approved</div>'
+      +'<div style="font-size:18px;font-weight:700;color:var(--ot);font-family:Inter,sans-serif">'+fmFull(app)+'</div></div>';
+    t+='</div>';
+
+    // Utility breakdown
+    t+='<div style="display:flex;gap:10px;margin-bottom:16px">';
     ['Ameren','ComEd','IPA'].forEach(function(u){
-      t+='<tr><td style="'+gb+'"><strong>'+u.toUpperCase()+':</strong></td><td style="'+gbb+';text-align:right">'+fmFull(ut[u]||0)+'</td><td style="border:1px solid #c5dfc0"></td></tr>';
+      t+='<div style="flex:1;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:10px;text-align:center">'
+        +'<div style="font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;font-family:Nunito,sans-serif;margin-bottom:3px">'+u+'</div>'
+        +'<div style="font-size:15px;font-weight:700;color:var(--tx);font-family:Inter,sans-serif">'+fmFull(ut[u]||0)+'</div></div>';
     });
-    t+='<tr><td colspan="3" style="height:14px;border:none"></td></tr>';
-    t+='<tr><th style="'+gh+'">PROJECT ID</th><th style="'+gh+'">REC VALUE</th><th style="'+gh+'">BUYER</th></tr>';
+    t+='</div>';
+
+    // Project table
+    t+='<div style="background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden">';
+    t+='<table style="width:100%;border-collapse:collapse;font-family:Nunito,sans-serif;font-size:13px">';
+    t+='<thead><tr>'
+      +'<th style="text-align:left;padding:9px 14px;border-bottom:1px solid var(--bd);background:var(--sf);font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em">Project ID</th>'
+      +'<th style="text-align:right;padding:9px 14px;border-bottom:1px solid var(--bd);background:var(--sf);font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em">REC Value</th>'
+      +'<th style="text-align:center;padding:9px 14px;border-bottom:1px solid var(--bd);background:var(--sf);font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em">Buyer</th>'
+      +'</tr></thead><tbody>';
 
     var sorted=[].concat(projects).sort(function(a,b){
       var ua=a.ut||'';var ub=b.ut||'';
@@ -2991,20 +3079,24 @@ function renderMonthlyREC(){
 
     sorted.forEach(function(p){
       var recVal=getFinalRec(p.id);
-      t+='<tr>';
-      t+='<td style="'+td+'">'+p.id+(p.name?' <span style=\"color:#999;font-size:11px\">'+p.name+'</span>':'')+'</td>';
+      t+='<tr style="border-bottom:1px solid var(--bd)">';
+      t+='<td style="padding:9px 14px;font-weight:600;color:#0D2147">'+p.id+(p.name?' <span style="color:var(--t3);font-size:11px;font-weight:400">'+p.name+'</span>':'')+'</td>';
       if(editable){
-        t+='<td style="'+td+'"><input type="number" step="0.01" value="'+recVal+'" data-pid="'+p.id+'" onchange="saveRecFinal(this)" oninput="saveRecFinal(this)" style="width:130px;border:1px solid #c5dfc0;border-radius:4px;padding:4px 8px;text-align:right;font-family:Nunito,sans-serif;font-size:13px;background:#f5fbf3" placeholder="Enter final REC"/></td>';
+        t+='<td style="padding:6px 14px;text-align:right"><input type="number" step="0.01" value="'+recVal+'" data-pid="'+p.id+'" onchange="saveRecFinal(this)" oninput="saveRecFinal(this)" style="width:140px;border:1px solid var(--bd);border-radius:var(--r);padding:5px 10px;text-align:right;font-family:Nunito,sans-serif;font-size:13px;background:var(--cd);color:var(--tx)" placeholder="Enter final REC"/></td>';
       } else {
-        t+='<td style="'+td+'">'+fmFull(rv2(p))+'</td>';
+        t+='<td style="padding:9px 14px;text-align:right;font-weight:600;font-family:Inter,sans-serif">'+fmFull(rv2(p))+'</td>';
       }
-      t+='<td style="'+td+';"><span style="padding:3px 10px;border-radius:4px;border:1px solid #ccc;font-size:12.5px;background:#f5f5f5">'+(p.ut||'—')+'</span></td>';
+      t+='<td style="padding:9px 14px;text-align:center"><span style="font-size:12px;padding:3px 10px;border-radius:10px;background:var(--s2);color:var(--t2)">'+(p.ut||'—')+'</span></td>';
       t+='</tr>';
     });
 
-    t+='<tr><td style="'+gs+';text-align:center;font-size:13px">Total REC Value</td>';
-    t+='<td colspan="2" style="'+gs+';text-align:center;font-size:15px">'+fmFull(total)+'</td></tr>';
-    t+='</table>';
+    t+='</tbody></table>';
+    // Total footer
+    t+='<div style="background:#0D2147;padding:11px 16px;display:flex;align-items:center;justify-content:space-between">'
+      +'<span style="font-size:13px;font-weight:600;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.06em;font-family:Nunito,sans-serif">Total REC Value</span>'
+      +'<span style="font-size:17px;font-weight:700;color:#D4AF37;font-family:Inter,sans-serif">'+fmFull(total)+'</span>'
+      +'</div>';
+    t+='</div>';
     return t;
   }
 
