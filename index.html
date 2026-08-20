@@ -563,8 +563,8 @@ async function api(p){
 function si(msg,type){const el=document.getElementById('sync');el.textContent=msg;el.className='show '+(type||'');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3000);}
 function sc(data){try{localStorage.setItem('ilsfa2',JSON.stringify({data,ts:Date.now()}));}catch(e){}}
 function lc(){try{const c=JSON.parse(localStorage.getItem('ilsfa2')||'null');if(c&&c.data)return c;}catch(e){}return null;}
-function saveProjects(){try{localStorage.setItem('ilsfa_projects',JSON.stringify(P));}catch(e){}}
-function loadProjects(){try{const d=JSON.parse(localStorage.getItem('ilsfa_projects')||'null');if(d&&d.length)return d;}catch(e){}return null;}
+function saveProjects(){try{if(P&&P.length>0)localStorage.setItem('ilsfa_projects',JSON.stringify(P));}catch(e){}}
+function loadProjects(){try{const d=JSON.parse(localStorage.getItem('ilsfa_projects')||'null');if(d&&Array.isArray(d)&&d.length>0)return d;}catch(e){}return null;}
 function apd(data){
   P=(data.projects||[]).map(p=>({...p,pilot:p.pilot===true||p.pilot==='true'}));
   if(!P.length)P=DP.map(p=>({...p}));
@@ -577,7 +577,7 @@ function apd(data){
 async function bgRefresh(){
   const data=await api({action:'getAll'});
   if(!data||data.error){si('Sheet unreachable','err');return;}
-  apd(data);sc(data);si('Synced with Google Sheets','ok');ra();
+  apd(data);sc(data);si('Synced with Google Sheets','ok');ra();  // re-render active tab
 }
 function initReportDefaults(){
   // Pre-seed Overall Report with known data if not yet saved
@@ -1176,6 +1176,13 @@ let projFilter={py:'',ps:'',pm:''};
 let expandedProj=null;
 
 function rp(){
+  // If P is empty but we have a cache, try reloading
+  if(!P||P.length===0){
+    const cached=lc();
+    if(cached&&cached.data&&cached.data.projects&&cached.data.projects.length){
+      apd(cached.data);
+    }
+  }
   const fp=applyProjFilters();
   const el=document.getElementById('n-projects');
 
