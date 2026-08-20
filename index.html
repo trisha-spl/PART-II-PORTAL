@@ -610,31 +610,35 @@ function initReportDefaults(){
 }
 
 async function loadData(){
-  // 1. Load projects from direct localStorage save (fastest, always works)
+  // Load from all available sources, best data wins
   const savedProjects=loadProjects();
-  if(savedProjects){
-    P=savedProjects.map(p=>({...p,pilot:p.pilot===true||p.pilot==='true'}));
-  }
-  // 2. Load full cache (checklist, post-review, settings) from ilsfa2
   const cached=lc();
-  if(cached){
-    if(!savedProjects){  // Only load projects from cache if no direct save
-      P=(cached.data.projects||[]).map(p=>({...p,pilot:p.pilot===true||p.pilot==='true'}));
-    }
+
+  // Projects: savedProjects > cache > DP fallback
+  if(savedProjects&&savedProjects.length>0){
+    P=savedProjects.map(p=>({...p,pilot:p.pilot===true||p.pilot==='true'}));
+  } else if(cached&&cached.data&&cached.data.projects&&cached.data.projects.length>0){
+    P=cached.data.projects.map(p=>({...p,pilot:p.pilot===true||p.pilot==='true'}));
+  } else {
+    P=DP.map(p=>({...p}));
+  }
+
+  // Checklist, post-review, settings from cache
+  if(cached&&cached.data){
     CL={};(cached.data.checklist||[]).forEach(r=>{CL[r.pid+'_'+r.iid]={done:r.done==='true',st:r.st||''};});
     PR={};(cached.data.postReview||[]).forEach(r=>{PR[r.pid+'_'+r.iid]=r.val||'none';});
     const pm=(cached.data.settings||[]).find(r=>r.key==='pmList');
     PML=pm?pm.val.split(',').filter(Boolean):[...DPM];
   } else {
-    if(!savedProjects) P=DP.map(p=>({...p}));
     CL={};PR={};PML=[...DPM];
   }
-  if(!P.length) P=DP.map(p=>({...p}));
   if(!activePM)activePM='__db';
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
   initReportDefaults();
   ra();
+  // Auto-open dashboard on load
+  setTimeout(function(){navTo('dashboard');},50);
   if(SCRIPT_URL&&SCRIPT_URL!=='YOUR_URL'){
     if(cached){const age=Math.round((Date.now()-cached.ts)/60000);si(`Syncing... (${age}m ago)`,'');}
     else si('Connecting to Google Sheets...','');
@@ -866,9 +870,74 @@ function rdb(){
 
   function fm(n){return '$'+n.toLocaleString();}
   function fmK(n){return n>=1000000?'$'+(n/1000000).toFixed(1)+'M':n>=1000?'$'+(n/1000).toFixed(0)+'K':fm(n);}
-  function navTo(tab){document.querySelectorAll('#v-spl .tab').forEach(t=>t.classList.remove('a'));document.querySelectorAll('#v-spl .nb').forEach(b=>b.classList.remove('a'));const el=document.getElementById('n-'+tab);if(el)el.classList.add('a');const m={dashboard:0,report:1,projects:2,postreview:3,standards:4,settings:5};const btns=document.querySelectorAll('#v-spl .nb');if(btns[m[tab]])btns[m[tab]].classList.add('a');if(tab==='report')rreport();if(tab==='postreview')rpr();}
+
 
   const el=document.getElementById('n-dashboard');
+
+  // Pre-build map sections to avoid nested template literals (Safari fix)
+  function mkRow(label,n,tot,r,color,onclick){
+    var w=tot>0?Math.round(n/tot*100):0;
+    var row='<div class="dbrow'+(n===0?' z':'')+'" onclick="'+onclick+'">';
+    row+='<div class="dbrl"><span style="width:8px;height:8px;border-radius:50%;background:'+color+';flex-shrink:0;display:inline-block"></span>'+label+'</div>';
+    row+='<div style="flex:1;height:6px;background:var(--s2);border-radius:3px;overflow:hidden;margin:0 10px"><div style="height:100%;width:'+w+'%;background:'+color+';border-radius:3px"></div></div>';
+    row+='<div style="font-size:13px;font-weight:600;min-width:24px;text-align:right">'+n+'</div>';
+    row+='<div style="font-size:12px;color:var(--t3);min-width:64px;text-align:right;font-family:Nunito,sans-serif">'+fmK(r)+'</div>';
+    row+='<i class="ti ti-arrow-right darr"></i></div>';
+    return row;
+  }
+
+  // Portal status rows
+  var slRows='';
+  sl.forEach(function(s){
+    var n=P.filter(function(p){return p.ps===s.k;}).length;
+    var r=P.filter(function(p){return p.ps===s.k;}).reduce(function(a,p){return a+rv(p);},0);
+    slRows+=mkRow(s.l,n,tot,r,s.c,'navDash("ps","'+s.k+'","'+s.l+'",'+n+')');
+    slRows+=mkRow(s.l,n,tot,r,s.c,slOnclick);
+  });
+
+  // Correction status rows
+  var clRows='';
+  cl.forEach(function(c){
+    var n=P.filter(function(p){return p.cs===c.k;}).length;
+    var r=P.filter(function(p){return p.cs===c.k;}).reduce(function(a,p){return a+rv(p);},0);
+    clRows+=mkRow(c.l,n,tot,r,c.c,'navDash("cs","'+c.k+'","'+c.l+'",'+n+')');
+    clRows+=mkRow(c.l,n,tot,r,c.c,clOnclick);
+  });
+
+  // PM workload cards
+  var pmCards='';
+  PML.forEach(function(pm){
+    var pp=P.filter(function(p){return p.pm===pm;});
+    var pApp=pp.filter(function(p){return p.ps==='Approved';}).length;
+    var pCorr=pp.filter(function(p){return p.ps==='Further Part II information requested';}).length;
+    var pR=pp.reduce(function(a,p){return a+rv(p);},0);
+    var clP=pp.length?Math.round(pp.map(function(p){return ppx(p.id).pct;}).reduce(function(a,b){return a+b;},0)/pp.length):0;
+    var corrSpan=pCorr>0?'<span style="color:var(--et)">'+pCorr+' correction</span>':'<span style="color:var(--t3)">'+clP+'% checklist</span>';
+    pmCards+='<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:12px;cursor:pointer;transition:all .15s" data-pm="'+pm+'" data-cnt="'+pp.length+'" onclick="fgpm(this.dataset.pm,this.dataset.cnt)" onmouseover="this.style.borderColor=\'#0891B2\'" onmouseout="this.style.borderColor=\'var(--bd)\'">';
+    pmCards+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">';
+    pmCards+='<div style="width:28px;height:28px;border-radius:50%;background:#0D2147;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0">'+pm.charAt(0)+'</div>';
+    pmCards+='<div><div style="font-size:13.5px;font-weight:600;color:var(--tx)">'+pm+'</div><div style="font-size:11px;color:var(--t3);font-family:Nunito,sans-serif">'+pp.length+' project'+(pp.length!==1?'s':'')+' · '+fmK(pR)+'</div></div></div>';
+    pmCards+='<div style="height:4px;background:var(--bd);border-radius:2px;overflow:hidden;margin-bottom:6px"><div style="height:100%;width:'+clP+'%;background:#0891B2;border-radius:2px;transition:width .6s"></div></div>';
+    pmCards+='<div style="display:flex;justify-content:space-between;font-size:11px;font-family:Nunito,sans-serif"><span style="color:var(--ot)">'+pApp+' approved</span>'+corrSpan+'</div></div>';
+  });
+
+  // Program year rows
+  var pyRows='';
+  pl.forEach(function(py){
+    var n=P.filter(function(p){return p.py===py;}).length;
+    var r=P.filter(function(p){return p.py===py;}).reduce(function(a,p){return a+rv(p);},0);
+    pyRows+=mkRow(py,n,tot,r,pc[py],'navDash("py","'+py+'","'+py+'",'+n+')');
+    pyRows+=mkRow(py,n,tot,r,pc[py],pyOnclick);
+  });
+
+  // Utility rows
+  var utRows='';
+  [{u:'ComEd',c:'#0D2147'},{u:'Ameren',c:'#0891B2'},{u:'IPA',c:'#6366F1'}].forEach(function(u){
+    var n=P.filter(function(p){return p.ut===u.u;}).length;
+    var r=P.filter(function(p){return p.ut===u.u;}).reduce(function(a,p){return a+rv(p);},0);
+    utRows+=mkRow(u.u,n,tot,r,u.c,'navDash("ut","'+u.u+'","'+u.u+'",'+n+')');
+    utRows+=mkRow(u.u,n,tot,r,u.c,utOnclick);
+  });
 
   // ── SECTION: Top stat cards ──────────────────────────────
   let html=`<div class="ts">Last updated: ${now}</div>
@@ -879,11 +948,6 @@ function rdb(){
       <div style="font-size:11px;color:var(--t3);font-weight:500;font-family:'Nunito',sans-serif">Total Projects</div>
       <div style="font-size:13px;font-weight:600;color:var(--gd);margin-top:4px;font-family:'Nunito',sans-serif">${fmK(tr)} RECs</div>
     </div>
-    <div class="dbc gr" onclick="(()=>{fg('ps','Approved','Approved',${app.length});navTo('projects');})()" title="View approved projects">
-      <div class="dbn">${app.length}</div>
-      <div style="font-size:11px;color:var(--t3);font-weight:500;font-family:'Nunito',sans-serif">Part II Approved</div>
-      <div style="font-size:13px;font-weight:600;color:var(--ot);margin-top:4px;font-family:'Nunito',sans-serif">${tot?Math.round(app.length/tot*100):0}% of total</div>
-    </div>
     <div class="dbc b" onclick="navTo('postreview')" title="Open post-review">
       <div class="dbn">${prDone}</div>
       <div style="font-size:11px;color:var(--t3);font-weight:500;font-family:'Nunito',sans-serif">Post-review Done</div>
@@ -893,6 +957,11 @@ function rdb(){
       <div class="dbn">${fi.length}</div>
       <div style="font-size:11px;color:var(--t3);font-weight:500;font-family:'Nunito',sans-serif">Need Correction</div>
       <div style="font-size:13px;font-weight:600;color:var(--et);margin-top:4px;font-family:'Nunito',sans-serif">${pend.length} still pending</div>
+    </div>
+    <div class="dbc gr" onclick="(()=>{fg('ps','Approved','Approved',${app.length});navTo('projects');})()" title="View approved projects">
+      <div class="dbn">${app.length}</div>
+      <div style="font-size:11px;color:var(--t3);font-weight:500;font-family:'Nunito',sans-serif">Part II Approved</div>
+      <div style="font-size:13px;font-weight:600;color:var(--ot);margin-top:4px;font-family:'Nunito',sans-serif">${tot?Math.round(app.length/tot*100):0}% of total</div>
     </div>
   </div>`;
 
@@ -975,10 +1044,10 @@ function rdb(){
 
   // ── SECTION: Status + Correction breakdown ───────────────
   const sl=[
+    {l:'Part II Submitted & Under Review',k:'Part II Submitted',c:'var(--wb)'},
+    {l:'Further Part II Info Requested',k:'Further Part II information requested',c:'var(--et)'},
     {l:'Under Inspection',k:'Under Inspection',c:'#0891B2'},
-    {l:'Further info requested',k:'Further Part II information requested',c:'var(--et)'},
-    {l:'Part II Submitted',k:'Part II Submitted',c:'var(--wb)'},
-    {l:'Approved',k:'Approved',c:'var(--ot)'},
+    {l:'Part II Approved',k:'Approved',c:'var(--ot)'},
   ];
   const cl=[
     {l:'No feedback',k:'No feedback',c:'var(--t3)'},
@@ -990,23 +1059,11 @@ function rdb(){
   html+=`<div class="d2c">
     <div class="ds">
       <div class="dt"><i class="ti ti-activity" style="font-size:16px;color:var(--gd)"></i> Portal Status</div>
-      ${sl.map(s=>{const n=P.filter(p=>p.ps===s.k).length,r=P.filter(p=>p.ps===s.k).reduce((a,p)=>a+rv(p),0);
-        return `<div class="dbrow${n===0?' z':''}" onclick="(()=>{if(${n}>0){fg('ps','${s.k}','${s.l}',${n});navTo('projects');}})()">
-        <div class="dbrl"><span style="width:8px;height:8px;border-radius:50%;background:${s.c};flex-shrink:0;display:inline-block"></span>${s.l}</div>
-        <div style="flex:1;height:6px;background:var(--s2);border-radius:3px;overflow:hidden;margin:0 10px"><div style="height:100%;width:${tot>0?Math.round(n/tot*100):0}%;background:${s.c};border-radius:3px"></div></div>
-        <div style="font-size:13px;font-weight:600;min-width:24px;text-align:right">${n}</div>
-        <div style="font-size:12px;color:var(--t3);min-width:64px;text-align:right;font-family:'Nunito',sans-serif">${fmK(r)}</div>
-        <i class="ti ti-arrow-right darr"></i></div>`;}).join('')}
+${slRows}
     </div>
     <div class="ds">
       <div class="dt"><i class="ti ti-message-report" style="font-size:16px;color:var(--gd)"></i> Correction Status</div>
-      ${cl.map(c=>{const n=P.filter(p=>p.cs===c.k).length,r=P.filter(p=>p.cs===c.k).reduce((a,p)=>a+rv(p),0);
-        return `<div class="dbrow${n===0?' z':''}" onclick="(()=>{if(${n}>0){fg('cs','${c.k}','${c.l}',${n});navTo('projects');}})()">
-        <div class="dbrl"><span style="width:8px;height:8px;border-radius:50%;background:${c.c};flex-shrink:0;display:inline-block"></span>${c.l}</div>
-        <div style="flex:1;height:6px;background:var(--s2);border-radius:3px;overflow:hidden;margin:0 10px"><div style="height:100%;width:${tot>0?Math.round(n/tot*100):0}%;background:${c.c};border-radius:3px"></div></div>
-        <div style="font-size:13px;font-weight:600;min-width:24px;text-align:right">${n}</div>
-        <div style="font-size:12px;color:var(--t3);min-width:64px;text-align:right;font-family:'Nunito',sans-serif">${fmK(r)}</div>
-        <i class="ti ti-arrow-right darr"></i></div>`;}).join('')}
+${clRows}
     </div>
   </div>`;
 
@@ -1016,26 +1073,7 @@ function rdb(){
       <button onclick="svid('team')" style="margin-left:auto;font-size:12px;padding:4px 12px;border-radius:var(--r);border:1px solid var(--bd);background:transparent;cursor:pointer;color:var(--t2);font-family:'Nunito',sans-serif">Team view →</button>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
-    ${PML.map(pm=>{
-      const pp=P.filter(p=>p.pm===pm);
-      const pApp=pp.filter(p=>p.ps==='Approved').length;
-      const pCorr=pp.filter(p=>p.ps==='Further Part II information requested').length;
-      const pR=pp.reduce((a,p)=>a+rv(p),0);
-      const clP=pp.length?Math.round(pp.map(p=>ppx(p.id).pct).reduce((a,b)=>a+b,0)/pp.length):0;
-      return `<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:12px;cursor:pointer;transition:all .15s" onclick="fgpm('${pm}',${pp.length})" onmouseover="this.style.borderColor='#0891B2'" onmouseout="this.style.borderColor='var(--bd)'">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <div style="width:28px;height:28px;border-radius:50%;background:#0D2147;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0">${pm.charAt(0)}</div>
-          <div><div style="font-size:13.5px;font-weight:600;color:var(--tx)">${pm}</div><div style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif">${pp.length} project${pp.length!==1?'s':''} · ${fmK(pR)}</div></div>
-        </div>
-        <div style="height:4px;background:var(--bd);border-radius:2px;overflow:hidden;margin-bottom:6px">
-          <div style="height:100%;width:${clP}%;background:#0891B2;border-radius:2px;transition:width .6s"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:11px;font-family:'Nunito',sans-serif">
-          <span style="color:var(--ot)">${pApp} approved</span>
-          ${pCorr>0?`<span style="color:var(--et)">${pCorr} correction</span>`:`<span style="color:var(--t3)">${clP}% checklist</span>`}
-        </div>
-      </div>`;
-    }).join('')}
+    ${pmCards}
     </div>
   </div>`;
 
@@ -1047,29 +1085,12 @@ function rdb(){
       <div class="dt"><i class="ti ti-calendar" style="font-size:16px;color:var(--gd)"></i> Program Year
         <button onclick="navTo('report')" style="margin-left:auto;font-size:12px;padding:4px 12px;border-radius:var(--r);border:1px solid var(--bd);background:transparent;cursor:pointer;color:var(--t2);font-family:'Nunito',sans-serif">Full report →</button>
       </div>
-      ${pl.map(py=>{const n=P.filter(p=>p.py===py).length,r=P.filter(p=>p.py===py).reduce((a,p)=>a+rv(p),0);
-        return `<div class="dbrow${n===0?' z':''}" onclick="(()=>{if(${n}>0){fg('py','${py}','${py}',${n});navTo('projects');}})()">
-        <div class="dbrl"><span style="width:8px;height:8px;border-radius:50%;background:${pc[py]};flex-shrink:0;display:inline-block"></span>${py}</div>
-        <div style="flex:1;height:6px;background:var(--s2);border-radius:3px;overflow:hidden;margin:0 10px"><div style="height:100%;width:${tot>0?Math.round(n/tot*100):0}%;background:${pc[py]};border-radius:3px"></div></div>
-        <div style="font-size:13px;font-weight:600;min-width:24px;text-align:right">${n}</div>
-        <div style="font-size:12px;color:var(--t3);min-width:64px;text-align:right;font-family:'Nunito',sans-serif">${fmK(r)}</div>
-        <i class="ti ti-arrow-right darr"></i></div>`;}).join('')}
+      ${pyRows}
     </div>
     <div class="ds">
       <div class="dt"><i class="ti ti-plug" style="font-size:16px;color:var(--gd)"></i> Utility</div>
-      ${[{u:'ComEd',c:'#0D2147'},{u:'Ameren',c:'#0891B2'}].map(u=>{const n=P.filter(p=>p.ut===u.u).length,r=P.filter(p=>p.ut===u.u).reduce((a,p)=>a+rv(p),0);
-        return `<div class="dbrow${n===0?' z':''}" onclick="(()=>{if(${n}>0){fg('ut','${u.u}','${u.u}',${n});navTo('projects');}})()">
-        <div class="dbrl"><span style="width:8px;height:8px;border-radius:50%;background:${u.c};flex-shrink:0;display:inline-block"></span>${u.u}</div>
-        <div style="flex:1;height:6px;background:var(--s2);border-radius:3px;overflow:hidden;margin:0 10px"><div style="height:100%;width:${tot>0?Math.round(n/tot*100):0}%;background:${u.c};border-radius:3px"></div></div>
-        <div style="font-size:13px;font-weight:600;min-width:24px;text-align:right">${n}</div>
-        <div style="font-size:12px;color:var(--t3);min-width:64px;text-align:right;font-family:'Nunito',sans-serif">${fmK(r)}</div>
-        <i class="ti ti-arrow-right darr"></i></div>`;}).join('')}
-      ${(()=>{const n=pil.length,r=pil.reduce((a,p)=>a+rv(p),0);return `<div class="dbrow${n===0?' z':''}" onclick="(()=>{if(${n}>0){fg('pilot','true','Pilot projects',${n});navTo('projects');}})()">
-        <div class="dbrl"><span style="width:8px;height:8px;border-radius:50%;background:var(--gd);flex-shrink:0;display:inline-block"></span>Pilot</div>
-        <div style="flex:1;height:6px;background:var(--s2);border-radius:3px;overflow:hidden;margin:0 10px"><div style="height:100%;width:${tot>0?Math.round(n/tot*100):0}%;background:var(--gd);border-radius:3px"></div></div>
-        <div style="font-size:13px;font-weight:600;min-width:24px;text-align:right">${n}</div>
-        <div style="font-size:12px;color:var(--t3);min-width:64px;text-align:right;font-family:'Nunito',sans-serif">${fmK(r)}</div>
-        <i class="ti ti-arrow-right darr"></i></div>`;})()}
+      ${utRows}
+
     </div>
   </div>`;
 
@@ -1176,13 +1197,6 @@ let projFilter={py:'',ps:'',pm:''};
 let expandedProj=null;
 
 function rp(){
-  // If P is empty but we have a cache, try reloading
-  if(!P||P.length===0){
-    const cached=lc();
-    if(cached&&cached.data&&cached.data.projects&&cached.data.projects.length){
-      apd(cached.data);
-    }
-  }
   const fp=applyProjFilters();
   const el=document.getElementById('n-projects');
 
@@ -1205,14 +1219,14 @@ function rp(){
     return 'color:var(--t3)';
   }
 
-  const PYopts=['PY7','PY8','PY8-2025'].map(py=>`<option value="${py}"${projFilter.py===py?' selected':''}>${py}</option>`).join('');
-  const PSopts=[
+  var PYopts='';['PY7','PY8','PY8-2025'].forEach(function(py){PYopts+='<option value="'+py+'"'+(projFilter.py===py?' selected':'')+'>'+py+'</option>';});
+  var PSopts='';[
     {v:'Under Inspection',l:'Under Inspection'},
     {v:'Further Part II information requested',l:'Corr. Requested'},
     {v:'Approved',l:'Approved'},
     {v:'Part II Submitted',l:'Submitted'},
-  ].map(o=>`<option value="${o.v}"${projFilter.ps===o.v?' selected':''}>${o.l}</option>`).join('');
-  const PMopts=PML.map(pm=>`<option value="${pm}"${projFilter.pm===pm?' selected':''}>${pm}</option>`).join('');
+  ].forEach(function(o){PSopts+='<option value="'+o.v+'"'+(projFilter.ps===o.v?' selected':'')+'>'+o.l+'</option>';});
+  var PMopts='';(PML&&PML.length?PML:DPM).forEach(function(pm){PMopts+='<option value="'+pm+'"'+(projFilter.pm===pm?' selected':'')+'>'+pm+'</option>';});
 
   // Toolbar
   let out=`<div class="proj-toolbar">
@@ -1223,7 +1237,7 @@ function rp(){
     <select class="proj-filter" onchange="projFilter.py=this.value;rp()"><option value="">All Years</option>${PYopts}</select>
     <select class="proj-filter" onchange="projFilter.ps=this.value;rp()"><option value="">All Status</option>${PSopts}</select>
     <select class="proj-filter" onchange="projFilter.pm=this.value;rp()"><option value="">All PMs</option>${PMopts}</select>
-    ${AF?`<button class="proj-filter" onclick="cf()" style="color:var(--et);border-color:rgba(225,29,72,.2)"><i class="ti ti-x" style="font-size:12px"></i> Clear</button>`:''}
+    ${AF?'<button class="proj-filter" onclick="cf()" style="color:var(--et);border-color:rgba(225,29,72,.2)"><i class="ti ti-x" style="font-size:12px"></i> Clear</button>':''}
     <span class="proj-count">${fp.length} of ${P.length} project${P.length!==1?'s':''}</span>
     <button class="add-proj-btn" onclick="openAddModal()"><i class="ti ti-plus" style="font-size:13px"></i> Add Project</button>
   </div>`;
@@ -1251,14 +1265,19 @@ function rp(){
     <tbody id="proj-tbody">`;
 
   fp.forEach(p=>{
+    // Pre-compute values to avoid nested template literals (Safari issue)
+    var pmCell=p.pm?'<span style="display:flex;align-items:center;gap:5px"><span style="width:20px;height:20px;border-radius:50%;background:#0D2147;display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:600;flex-shrink:0">'+p.pm.charAt(0)+'</span>'+p.pm+'</span>':'<span style="color:var(--t3)">—</span>';
+    var corrDiv=p.corr?'<div style="background:var(--wn);border-left:3px solid var(--wb);border-radius:var(--r);padding:9px 12px;margin-bottom:10px;font-size:13.5px;color:var(--wt);line-height:1.6;font-family:Nunito,sans-serif"><strong>Correction:</strong> '+p.corr+'</div>':'';
+    var prFail=gprs(p.id).fa;
+    var prFailSpan=prFail>0?'<span style="font-size:12px;color:var(--et);font-family:Nunito,sans-serif"><i class="ti ti-alert-circle" style="font-size:12px"></i> '+prFail+' post-review failure'+(prFail>1?'s':'')+'</span>':'';
     const isExp=expandedProj===p.id;
     const clPct=ppx(p.id).pct;
-    const prFail=gprs(p.id).fa;
+    
     out+=`<tr class="${isExp?'expanded':''}" onclick="toggleProjRow('${p.id}')">
       <td><span class="proj-id">${p.id}</span>${isp(p)?'<span style="font-size:10px;padding:1px 5px;border-radius:8px;background:var(--wn);color:var(--wt);margin-left:5px;font-family:Nunito,sans-serif">Pilot</span>':''}</td>
       <td class="proj-name" title="${p.name||''}">${p.name||'<span style="color:var(--t3);font-style:italic">—</span>'}</td>
       <td><span style="font-size:12px;padding:2px 8px;border-radius:10px;background:var(--s2);color:var(--t2);font-family:Nunito,sans-serif">${p.py}</span></td>
-      <td>${p.pm?`<span style="display:flex;align-items:center;gap:5px"><span style="width:20px;height:20px;border-radius:50%;background:#0D2147;display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:600;flex-shrink:0">${p.pm.charAt(0)}</span>${p.pm}</span>`:'<span style="color:var(--t3)">—</span>'}</td>
+      <td>${pmCell}</td>
       <td style="color:var(--t2);font-size:13px">${p.ut||'—'}</td>
       <td><span class="proj-rec">${p.recs||'—'}</span></td>
       <td><span class="proj-status" style="${sCls(p.ps)}">${sLabel(p.ps)}</span></td>
@@ -1311,7 +1330,7 @@ function rp(){
           <span style="font-size:12px;color:var(--t3);font-family:Nunito,sans-serif">Team checklist: <strong style="color:${pct===100?'var(--ot)':'var(--tx)'}">${d}/${t} (${pct}%)</strong></span>
           <button class="add-proj-btn" style="font-size:12px;padding:6px 13px;background:rgba(8,145,178,.1);color:#0891B2;border:1px solid rgba(8,145,178,.2)" onclick="gpr('${p.id}');event.stopPropagation()"><i class="ti ti-zoom-check" style="font-size:12px"></i> Open post-review</button>
           <button class="add-proj-btn" style="font-size:12px;padding:6px 13px;background:rgba(8,145,178,.1);color:#0891B2;border:1px solid rgba(8,145,178,.2)" onclick="openChat('${p.id}');event.stopPropagation()"><i class="ti ti-message-circle" style="font-size:12px"></i> Chat${getChatCount(p.id)>0?' ('+getChatCount(p.id)+')':''}</button>
-          ${prFail>0?`<span style="font-size:12px;color:var(--et);font-family:Nunito,sans-serif"><i class="ti ti-alert-circle" style="font-size:12px"></i> ${prFail} post-review failure${prFail>1?'s':''}</span>`:''}
+          ${prFailSpan}
         </div>
       </div></td></tr>`;
     }
@@ -1918,8 +1937,8 @@ function rreport(){
   let out=`<div class="rpt-subtabs" id="rpt-subtabs">
     <button class="rpt-stab a" onclick="switchRptTab('overall',this)"><i class="ti ti-chart-bar" style="font-size:14px"></i> Overall</button>
     <button class="rpt-stab" onclick="switchRptTab('daily',this)"><i class="ti ti-calendar-day" style="font-size:14px"></i> Daily</button>
-    <button class="rpt-stab" onclick="switchRptTab('biweekly',this)"><i class="ti ti-calendar-week" style="font-size:14px"></i> Bi-Weekly</button>
     <button class="rpt-stab" onclick="switchRptTab('monthly',this)"><i class="ti ti-calendar-month" style="font-size:14px"></i> Monthly</button>
+    <button class="rpt-stab" onclick="switchRptTab('monthlyREC',this)"><i class="ti ti-receipt" style="font-size:14px"></i> REC Report</button>
   </div>
   <div id="rpt-content">
   <div class="rpt-hd">
@@ -2237,7 +2256,6 @@ function switchRptTab(tab, btn){
   if(btn) btn.classList.add('a');
   if(tab==='overall') rreport();
   else if(tab==='daily') renderDailyReport();
-  else if(tab==='biweekly') renderBiWeekly();
   else if(tab==='monthly') renderMonthly();
   else if(tab==='monthlyREC') renderMonthlyREC();
 }
@@ -2251,82 +2269,145 @@ function saveDailyLogs(logs){
 }
 
 function renderDailyReport(){
-  const el=document.getElementById('n-report');
-  const logs=getDailyLogs();
-  const today=new Date();
-  const todayKey=today.toISOString().split('T')[0];
-  const todayLabel=today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
-  const hasToday=logs.find(l=>l.id===todayKey);
+  var el=document.getElementById('n-report');
+  var logs=getDailyLogs();
+  var today=new Date();
+  var todayKey=today.toISOString().split('T')[0];
+  var todayLabel=today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  var hasToday=logs.find(function(l){return l.id===todayKey;});
 
-  let out=`<div class="rpt-subtabs">
+  function fmFull(n){return '$'+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function rv2(p){return parseFloat((p.recs||'').replace(/[$,]/g,''))||0;}
+
+  // Program year breakdown - pending Part II approval
+  var pys=['PY7','PY8','PY8-2025'];
+  var pendingByPY={};
+  pys.forEach(function(py){
+    pendingByPY[py]=P.filter(function(p){return p.py===py&&(p.ps==='Part II Submitted'||p.ps==='Under Inspection');}).length;
+  });
+
+  // Pipeline: not yet invoiced
+  var pendingApproval=P.filter(function(p){return p.ps==='Part II Submitted'||p.ps==='Under Inspection';});
+  var pendingApprovalVal=pendingApproval.reduce(function(a,p){return a+rv2(p);},0);
+
+  // Pending PTO/COC = approved but checklist not complete
+  var pendingPTO=P.filter(function(p){return ppx(p.id).pct<100&&p.ps!=='Part II Submitted'&&p.ps!=='Under Inspection';});
+  var pendingPTOVal=pendingPTO.reduce(function(a,p){return a+rv2(p);},0);
+
+  var totalPipeline=pendingApproval.length+pendingPTO.length;
+  var totalPipelineVal=pendingApprovalVal+pendingPTOVal;
+
+  // Approved - ready to invoice
+  var approved=P.filter(function(p){return p.ps==='Approved';});
+  var approvedVal=approved.reduce(function(a,p){return a+rv2(p);},0);
+
+  // Total submitted
+  var totalSubmitted=P.filter(function(p){return p.ps!=='';});
+  var totalSubmittedVal=totalSubmitted.reduce(function(a,p){return a+rv2(p);},0);
+
+  var tblStyle='width:100%;border-collapse:collapse;font-family:Nunito,sans-serif;font-size:13.5px;margin-bottom:14px';
+  var hdrStyle='background:#1a3a6b;color:#fff;font-weight:700;text-align:center;padding:10px;font-size:13px;text-transform:uppercase;letter-spacing:.08em';
+  var subHdrStyle='background:#2d5fa0;color:#fff;font-weight:600;text-align:center;padding:8px;font-size:12.5px;text-transform:uppercase;letter-spacing:.06em';
+  var noteStyle='background:#f0f4f8;color:#555;text-align:center;padding:7px;font-size:12px;font-style:italic;border-bottom:1px solid #ddd';
+  var rowStyle='padding:9px 14px;border-bottom:1px solid #ddd;color:var(--tx)';
+  var boldRowStyle='padding:9px 14px;border-bottom:1px solid #ddd;font-weight:700;color:var(--tx);background:#f5f8ff';
+  var footerStyle='text-align:center;padding:10px;color:#777;font-size:12px;font-style:italic;border-top:1px solid #ddd;background:#fafafa';
+
+  var reportHTML='<div style="background:#fff;border:1px solid #ddd;border-radius:10px;overflow:hidden;box-shadow:0 2px 16px rgba(15,23,42,.08);max-width:700px;margin:0 auto">';
+  reportHTML+='<table style="'+tblStyle+'">';
+
+  // Header
+  reportHTML+='<tr><td colspan="3" style="'+hdrStyle+'">TARGET REPORT</td></tr>';
+  reportHTML+='<tr><td colspan="3" style="'+subHdrStyle+'">PROGRAM YEAR BREAKDOWN</td></tr>';
+  reportHTML+='<tr><td colspan="3" style="'+noteStyle+'">* These are projects currently pending Part II approval</td></tr>';
+  pys.forEach(function(py){
+    reportHTML+='<tr><td style="'+rowStyle+'">'+py+'</td><td></td><td style="'+rowStyle+';text-align:right;font-weight:700">'+pendingByPY[py]+'</td></tr>';
+  });
+
+  // Pipeline Summary
+  reportHTML+='<tr><td colspan="3" style="'+subHdrStyle+'">PIPELINE SUMMARY</td></tr>';
+  reportHTML+='<tr><td colspan="3" style="'+noteStyle+'">Projects not yet Invoiced — awaiting approval or PTO/COC</td></tr>';
+  reportHTML+='<tr><td style="'+rowStyle+'">Pending Part II Approval</td><td style="'+rowStyle+';text-align:center">'+pendingApproval.length+'</td><td style="'+rowStyle+';text-align:right">'+fmFull(pendingApprovalVal)+'</td></tr>';
+  reportHTML+='<tr><td style="'+rowStyle+'">Pending PTO/COC</td><td style="'+rowStyle+';text-align:center">'+pendingPTO.length+'</td><td style="'+rowStyle+';text-align:right">'+fmFull(pendingPTOVal)+'</td></tr>';
+  reportHTML+='<tr><td style="'+boldRowStyle+'">Total Pipeline Value</td><td style="'+boldRowStyle+';text-align:center">'+totalPipeline+'</td><td style="'+boldRowStyle+';text-align:right">'+fmFull(totalPipelineVal)+'</td></tr>';
+
+  // Approved
+  reportHTML+='<tr><td colspan="3" style="'+subHdrStyle+'">APPROVED</td></tr>';
+  reportHTML+='<tr><td colspan="3" style="'+noteStyle+'">Projects fully approved by ILSFA</td></tr>';
+  reportHTML+='<tr><td style="'+boldRowStyle+'">Part II Approved — Ready to Invoice</td><td style="'+boldRowStyle+';text-align:center">'+approved.length+'</td><td style="'+boldRowStyle+';text-align:right">'+fmFull(approvedVal)+'</td></tr>';
+
+  // Total Submitted
+  reportHTML+='<tr><td colspan="3" style="'+subHdrStyle+'">TOTAL SUBMITTED TO PROGRAM</td></tr>';
+  reportHTML+='<tr><td colspan="3" style="'+noteStyle+'">All projects submitted for Part II — includes approved + pending approval</td></tr>';
+  reportHTML+='<tr><td style="'+boldRowStyle+'">Total Projects Submitted</td><td style="'+boldRowStyle+';text-align:center">'+pendingApproval.length+'</td><td style="'+boldRowStyle+';text-align:right">'+fmFull(pendingApprovalVal)+'</td></tr>';
+
+  // Total Portfolio
+  reportHTML+='<tr><td colspan="3" style="'+subHdrStyle+'">TOTAL ESTIMATED PORTFOLIO VALUE</td></tr>';
+  reportHTML+='<tr><td style="'+boldRowStyle+'">Overall Total (All Projects)</td><td style="'+boldRowStyle+';text-align:center">'+totalPipeline+'</td><td style="'+boldRowStyle+';text-align:right">'+fmFull(totalPipelineVal)+'</td></tr>';
+
+  // Footer
+  reportHTML+='<tr><td colspan="3" style="'+footerStyle+'">Sunrise Solar LLC | sunrisesolar-il.com</td></tr>';
+  reportHTML+='</table></div>';
+
+  var out=`<div class="rpt-subtabs">
     <button class="rpt-stab" onclick="switchRptTab('overall',this)"><i class="ti ti-chart-bar" style="font-size:14px"></i> Overall</button>
     <button class="rpt-stab a" onclick="switchRptTab('daily',this)"><i class="ti ti-calendar-day" style="font-size:14px"></i> Daily</button>
-    <button class="rpt-stab" onclick="switchRptTab('biweekly',this)"><i class="ti ti-calendar-week" style="font-size:14px"></i> Bi-Weekly</button>
     <button class="rpt-stab" onclick="switchRptTab('monthly',this)"><i class="ti ti-calendar-month" style="font-size:14px"></i> Monthly</button>
+    <button class="rpt-stab" onclick="switchRptTab('monthlyREC',this)"><i class="ti ti-receipt" style="font-size:14px"></i> REC Report</button>
   </div>
   <div class="rpt-hd">
     <div>
-      <div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:600;color:var(--tx)">Daily Report Log</div>
-      <div class="rpt-ts">${logs.length} log entr${logs.length===1?'y':'ies'} saved · Auto-saved to browser</div>
+      <div style="font-size:22px;font-weight:700;color:var(--tx)">Daily Report</div>
+      <div class="rpt-ts">${todayLabel} · Auto-generated from portal data</div>
     </div>
-    <button class="gen-report-btn" onclick="exportDailyLogs()"><i class="ti ti-download" style="font-size:13px"></i> Export All</button>
-  </div>`;
+    <div style="display:flex;gap:8px">
+      <button class="gen-report-btn" style="margin-left:0" onclick="exportDailyTarget()"><i class="ti ti-download" style="font-size:13px"></i> Export CSV</button>
+      <button class="gen-report-btn" style="margin-left:0;background:rgba(13,33,71,.8)" onclick="window.print()"><i class="ti ti-printer" style="font-size:13px"></i> Print</button>
+    </div>
+  </div>
 
-  // Today's entry form
-  out+=`<div style="background:rgba(8,145,178,.04);border:1.5px solid rgba(8,145,178,.15);border-radius:var(--rl);padding:18px;margin-bottom:16px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div>
-        <div style="font-family:'Inter',sans-serif;font-size:17px;font-weight:600;color:var(--tx)">${hasToday?'Edit Today\'s Report':'New Daily Report'}</div>
-        <div style="font-size:12px;color:var(--t3);font-family:'Nunito',sans-serif;margin-top:2px">${todayLabel}</div>
-      </div>
-      ${hasToday?`<span class="log-badge" style="background:var(--ok);color:var(--ot)">Saved today</span>`:''}
-    </div>
+  ${reportHTML}
+
+  <!-- Daily log section -->
+  <div style="margin-top:20px;background:rgba(8,145,178,.04);border:1.5px solid rgba(8,145,178,.15);border-radius:var(--rl);padding:18px">
+    <div style="font-size:15px;font-weight:600;color:var(--tx);margin-bottom:4px">${hasToday?'Edit Today\'s Notes':'Add Notes for Today'}</div>
+    <div style="font-size:12px;color:var(--t3);font-family:Nunito,sans-serif;margin-bottom:12px">${todayLabel}</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
       <div class="log-field"><label>Submissions made today</label><textarea id="dl-sub" placeholder="e.g. P-13512 submitted to ILSFA portal">${hasToday?hasToday.submissions||'':''}</textarea></div>
       <div class="log-field"><label>Corrections received</label><textarea id="dl-corr" placeholder="e.g. P-10711 — correction request received">${hasToday?hasToday.corrections||'':''}</textarea></div>
-      <div class="log-field"><label>Corrections resolved / addressed</label><textarea id="dl-res" placeholder="e.g. P-13416 — updated and resubmitted">${hasToday?hasToday.resolved||'':''}</textarea></div>
+      <div class="log-field"><label>Corrections resolved</label><textarea id="dl-res" placeholder="e.g. P-13416 — updated and resubmitted">${hasToday?hasToday.resolved||'':''}</textarea></div>
       <div class="log-field"><label>Pending / follow-ups</label><textarea id="dl-pend" placeholder="e.g. Waiting on SO approval for P-12949">${hasToday?hasToday.pending||'':''}</textarea></div>
     </div>
-    <div class="log-field" style="margin-bottom:14px"><label>General notes / updates</label><textarea id="dl-notes" style="min-height:70px" placeholder="Any other updates, team notes, ILSFA communications...">${hasToday?hasToday.notes||'':''}</textarea></div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <button class="gen-report-btn" style="margin-left:0" onclick="saveDailyEntry()"><i class="ti ti-device-floppy" style="font-size:13px"></i> Save Today's Report</button>
-      ${hasToday?`<button class="rpt-export" onclick="deleteDailyEntry('${todayKey}')" style="color:var(--et);border-color:rgba(225,29,72,.2)"><i class="ti ti-trash" style="font-size:13px"></i> Delete</button>`:''}
-    </div>
+    <div class="log-field" style="margin-bottom:14px"><label>General notes</label><textarea id="dl-notes" style="min-height:60px" placeholder="Any updates, communications...">${hasToday?hasToday.notes||'':''}</textarea></div>
+    <button class="gen-report-btn" style="margin-left:0" onclick="saveDailyEntry()"><i class="ti ti-device-floppy" style="font-size:13px"></i> Save Notes</button>
   </div>`;
 
-  // Past entries
-  const past=logs.filter(l=>l.id!==todayKey).sort((a,b)=>b.id.localeCompare(a.id));
-  if(past.length){
-    out+=`<div class="rpt-section-title"><i class="ti ti-history" style="font-size:14px"></i> Past Reports (${past.length})</div>`;
-    past.forEach(log=>{
-      const d=new Date(log.id+'T00:00:00');
-      const label=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
-      const hasData=[log.submissions,log.corrections,log.resolved,log.pending,log.notes].filter(Boolean).length;
-      out+=`<div class="log-entry">
-        <div class="log-entry-hd" onclick="toggleLogEntry('${log.id}')">
-          <div style="flex:1">
-            <div class="log-date">${label}</div>
-            <div class="log-day">${hasData} field${hasData!==1?'s':''} filled</div>
-          </div>
-          ${log.submissions?`<span class="log-badge" style="background:rgba(8,145,178,.1);color:#0891B2">Submitted</span>`:''}
-          ${log.corrections?`<span class="log-badge" style="background:var(--er);color:var(--et);margin-left:4px">Corrections</span>`:''}
-          <button onclick="deleteDailyEntry('${log.id}');event.stopPropagation()" style="background:none;border:none;cursor:pointer;color:var(--t3);font-size:13px;padding:4px;margin-left:8px"><i class="ti ti-trash"></i></button>
-          <i class="ti ti-chevron-down" style="font-size:13px;color:var(--t3);margin-left:4px" id="log-chv-${log.id}"></i>
-        </div>
-        <div id="log-bd-${log.id}" style="display:none" class="log-entry-bd">
-          ${log.submissions?`<div class="log-field"><label>Submissions made</label><div style="font-size:14px;color:var(--tx);line-height:1.6">${log.submissions}</div></div>`:''}
-          ${log.corrections?`<div class="log-field"><label>Corrections received</label><div style="font-size:14px;color:var(--tx);line-height:1.6">${log.corrections}</div></div>`:''}
-          ${log.resolved?`<div class="log-field"><label>Resolved / addressed</label><div style="font-size:14px;color:var(--tx);line-height:1.6">${log.resolved}</div></div>`:''}
-          ${log.pending?`<div class="log-field"><label>Pending / follow-ups</label><div style="font-size:14px;color:var(--tx);line-height:1.6">${log.pending}</div></div>`:''}
-          ${log.notes?`<div class="log-field"><label>Notes</label><div style="font-size:14px;color:var(--tx);line-height:1.6">${log.notes}</div></div>`:''}
-        </div>
-      </div>`;
-    });
-  } else {
-    out+=`<div style="text-align:center;padding:32px;color:var(--t3);font-family:'Nunito',sans-serif"><i class="ti ti-notebook" style="font-size:32px;display:block;margin-bottom:8px;opacity:.3"></i>No past reports yet. Start logging daily!</div>`;
-  }
-
   el.innerHTML=out;
+}
+
+function exportDailyTarget(){
+  function rv2(p){return parseFloat((p.recs||'').replace(/[$,]/g,''))||0;}
+  function fmFull(n){return '$'+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+  var today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  var pys=['PY7','PY8','PY8-2025'];
+  var pendingApproval=P.filter(function(p){return p.ps==='Part II Submitted'||p.ps==='Under Inspection';});
+  var pendingPTO=P.filter(function(p){return ppx(p.id).pct<100&&p.ps!=='Part II Submitted'&&p.ps!=='Under Inspection';});
+  var approved=P.filter(function(p){return p.ps==='Approved';});
+  var csv='TARGET REPORT\n'+today+'\n\n';
+  csv+='PROGRAM YEAR BREAKDOWN\n';
+  pys.forEach(function(py){csv+=py+','+P.filter(function(p){return p.py===py&&(p.ps==='Part II Submitted'||p.ps==='Under Inspection');}).length+'\n';});
+  csv+='\nPIPELINE SUMMARY\n';
+  csv+='Pending Part II Approval,'+pendingApproval.length+','+fmFull(pendingApproval.reduce(function(a,p){return a+rv2(p);},0))+'\n';
+  csv+='Pending PTO/COC,'+pendingPTO.length+','+fmFull(pendingPTO.reduce(function(a,p){return a+rv2(p);},0))+'\n';
+  csv+='Total Pipeline Value,'+(pendingApproval.length+pendingPTO.length)+','+fmFull((pendingApproval.concat(pendingPTO)).reduce(function(a,p){return a+rv2(p);},0))+'\n';
+  csv+='\nAPPROVED\n';
+  csv+='Part II Approved Ready to Invoice,'+approved.length+','+fmFull(approved.reduce(function(a,p){return a+rv2(p);},0))+'\n';
+  csv+='\nSunrise Solar LLC | sunrisesolar-il.com\n';
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='Target_Report_'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+  si('Daily report exported!','ok');
 }
 
 function toggleLogEntry(id){
@@ -2375,116 +2456,6 @@ function exportDailyLogs(){
 }
 
 // ── BI-WEEKLY REPORT ──────────────────────────────────────────────────
-function renderBiWeekly(){
-  const el=document.getElementById('n-report');
-  const today=new Date();
-  const start=new Date(today);
-  start.setDate(start.getDate()-13);
-  const startStr=start.toISOString().split('T')[0];
-  const endStr=today.toISOString().split('T')[0];
-
-  el.innerHTML=`<div class="rpt-subtabs">
-    <button class="rpt-stab" onclick="switchRptTab('overall',this)"><i class="ti ti-chart-bar" style="font-size:14px"></i> Overall</button>
-    <button class="rpt-stab" onclick="switchRptTab('daily',this)"><i class="ti ti-calendar-day" style="font-size:14px"></i> Daily</button>
-    <button class="rpt-stab a" onclick="switchRptTab('biweekly',this)"><i class="ti ti-calendar-week" style="font-size:14px"></i> Bi-Weekly</button>
-    <button class="rpt-stab" onclick="switchRptTab('monthly',this)"><i class="ti ti-calendar-month" style="font-size:14px"></i> Monthly</button>
-  </div>
-  <div class="rpt-hd">
-    <div><div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:600;color:var(--tx)">Bi-Weekly Report</div>
-    <div class="rpt-ts">Select a 2-week period and generate your report</div></div>
-    <button class="gen-report-btn" onclick="exportPeriodReport('biweekly')"><i class="ti ti-download" style="font-size:13px"></i> Export</button>
-  </div>
-  <div class="rpt-period-sel">
-    <div><label>From</label><input type="date" id="bw-start" value="${startStr}"/></div>
-    <div><label>To</label><input type="date" id="bw-end" value="${endStr}"/></div>
-    <button class="gen-report-btn" onclick="generateBiWeekly()"><i class="ti ti-refresh" style="font-size:13px"></i> Generate Report</button>
-  </div>
-  <div id="bw-content"></div>`;
-
-  generateBiWeekly();
-}
-
-function generateBiWeekly(){
-  var startVal=document.getElementById('bw-start')?.value;
-  var endVal=document.getElementById('bw-end')?.value;
-  if(!startVal||!endVal)return;
-  var start=new Date(startVal+'T00:00:00');
-  var end=new Date(endVal+'T23:59:59');
-  var startLabel=start.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-  var endLabel=end.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-
-  // Get daily logs within range
-  var logs=getDailyLogs().filter(function(l){
-    var d=new Date(l.id+'T00:00:00');
-    return d>=start&&d<=end;
-  }).sort(function(a,b){return b.id.localeCompare(a.id);});
-
-  // Extract activity from logs
-  var daysWithSubs=logs.filter(function(l){return l.submissions&&l.submissions.trim();});
-  var daysWithCorr=logs.filter(function(l){return l.corrections&&l.corrections.trim();});
-  var daysWithRes=logs.filter(function(l){return l.resolved&&l.resolved.trim();});
-  var daysWithPend=logs.filter(function(l){return l.pending&&l.pending.trim();});
-
-  // Get overall report data for summary
-  var od=getOverallData();
-  function fmFull(n){return '$'+n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
-
-  var content=document.getElementById('bw-content');
-  var out='';
-
-  // Period header
-  out+='<div style="background:#0D2147;border-radius:var(--rl);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">';
-  out+='<div><div style="font-size:13px;font-weight:600;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;font-family:Nunito,sans-serif">Reporting Period</div>';
-  out+='<div style="font-size:16px;font-weight:600;color:#fff;margin-top:3px;font-family:Nunito,sans-serif">'+startLabel+' — '+endLabel+'</div></div>';
-  out+='<div style="text-align:right"><div style="font-size:22px;font-weight:700;color:#FCD34D">'+logs.length+'</div><div style="font-size:11px;color:rgba(255,255,255,.5);font-family:Nunito,sans-serif">daily logs</div></div>';
-  out+='</div>';
-
-  // Activity summary cards
-  out+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">';
-  out+='<div class="rpt-metric"><div class="rpt-metric-n" style="color:#0891B2">'+daysWithSubs.length+'</div><div class="rpt-metric-l">Days with submissions</div><div class="rpt-metric-sub">'+daysWithSubs.length+' active days</div></div>';
-  out+='<div class="rpt-metric"><div class="rpt-metric-n" style="color:var(--et)">'+daysWithCorr.length+'</div><div class="rpt-metric-l">Corrections received</div><div class="rpt-metric-sub">days with new corrections</div></div>';
-  out+='<div class="rpt-metric"><div class="rpt-metric-n" style="color:var(--ot)">'+daysWithRes.length+'</div><div class="rpt-metric-l">Corrections resolved</div><div class="rpt-metric-sub">days with resolutions</div></div>';
-  out+='<div class="rpt-metric"><div class="rpt-metric-n">'+daysWithPend.length+'</div><div class="rpt-metric-l">Pending follow-ups</div><div class="rpt-metric-sub">days with open items</div></div>';
-  out+='</div>';
-
-  // Overall program totals from Overall Report
-  if(od.totals.projects>0){
-    out+='<div class="ds rpt-section" style="margin-bottom:14px">';
-    out+='<div class="rpt-section-title"><i class="ti ti-chart-bar" style="font-size:14px"></i> Program Totals (from Overall Report)</div>';
-    out+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:0">';
-    out+='<div style="padding:12px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);text-align:center"><div style="font-size:20px;font-weight:700;color:var(--tx)">'+od.totals.projects+'</div><div style="font-size:11px;color:var(--t3);font-family:Nunito,sans-serif;margin-top:2px">Total Projects</div></div>';
-    out+='<div style="padding:12px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);text-align:center"><div style="font-size:20px;font-weight:700;color:#0891B2">'+od.totals.submitted+'</div><div style="font-size:11px;color:var(--t3);font-family:Nunito,sans-serif;margin-top:2px">Part II Submitted</div></div>';
-    out+='<div style="padding:12px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);text-align:center"><div style="font-size:20px;font-weight:700;color:var(--ot)">'+od.totals.approved+'</div><div style="font-size:11px;color:var(--t3);font-family:Nunito,sans-serif;margin-top:2px">Part II Approved</div></div>';
-    out+='<div style="padding:12px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);text-align:center"><div style="font-size:20px;font-weight:700;color:var(--gd)">'+fmFull(od.totals.rec)+'</div><div style="font-size:11px;color:var(--t3);font-family:Nunito,sans-serif;margin-top:2px">Total RECs</div></div>';
-    out+='</div></div>';
-  }
-
-  // Daily log entries for this period
-  if(logs.length){
-    out+='<div class="ds rpt-section">';
-    out+='<div class="rpt-section-title"><i class="ti ti-notes" style="font-size:14px"></i> Daily Log Entries ('+logs.length+')</div>';
-    out+='<table class="rpt-table"><thead><tr><th>Date</th><th>Submissions Made</th><th>Corrections Received</th><th>Resolved</th><th>Pending</th><th>Notes</th></tr></thead><tbody>';
-    logs.forEach(function(l){
-      var d=new Date(l.id+'T00:00:00');
-      var dateLabel=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
-      out+='<tr>';
-      out+='<td style="white-space:nowrap;font-weight:600">'+dateLabel+'</td>';
-      out+='<td>'+(l.submissions||'<span style="color:var(--t3)">—</span>')+'</td>';
-      out+='<td>'+(l.corrections||'<span style="color:var(--t3)">—</span>')+'</td>';
-      out+='<td>'+(l.resolved||'<span style="color:var(--t3)">—</span>')+'</td>';
-      out+='<td>'+(l.pending||'<span style="color:var(--t3)">—</span>')+'</td>';
-      out+='<td>'+(l.notes||'<span style="color:var(--t3)">—</span>')+'</td>';
-      out+='</tr>';
-    });
-    out+='</tbody></table></div>';
-  } else {
-    out+='<div class="hint"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:6px"></i>No daily logs found for this period. Log your daily activity in the <strong>Daily</strong> tab.</div>';
-  }
-
-  content.innerHTML=out;
-}
-
-
 // ── MONTHLY REPORT ────────────────────────────────────────────────────
 function renderMonthly(){
   const el=document.getElementById('n-report');
@@ -2494,7 +2465,6 @@ function renderMonthly(){
   el.innerHTML=`<div class="rpt-subtabs">
     <button class="rpt-stab" onclick="switchRptTab('overall',this)"><i class="ti ti-chart-bar" style="font-size:14px"></i> Overall</button>
     <button class="rpt-stab" onclick="switchRptTab('daily',this)"><i class="ti ti-calendar-day" style="font-size:14px"></i> Daily</button>
-    <button class="rpt-stab" onclick="switchRptTab('biweekly',this)"><i class="ti ti-calendar-week" style="font-size:14px"></i> Bi-Weekly</button>
     <button class="rpt-stab a" onclick="switchRptTab('monthly',this)"><i class="ti ti-calendar-month" style="font-size:14px"></i> Monthly</button>
   </div>
   <div class="rpt-hd">
@@ -2866,6 +2836,235 @@ function rtvProj(){
   el.appendChild(wrap);
 }
 
+
+function navTo(tab){
+  document.querySelectorAll('#v-spl .tab').forEach(function(t){t.classList.remove('a');});
+  document.querySelectorAll('#v-spl .nb').forEach(function(b){b.classList.remove('a');});
+  var e=document.getElementById('n-'+tab);
+  if(e)e.classList.add('a');
+  var m={dashboard:0,report:1,projects:2,postreview:3,standards:4,settings:5};
+  var btns=document.querySelectorAll('#v-spl .nb');
+  if(btns[m[tab]])btns[m[tab]].classList.add('a');
+  if(tab==='dashboard')rdb();
+  else if(tab==='report')rreport();
+  else if(tab==='projects')rp();
+  else if(tab==='postreview')rpr();
+  else if(tab==='standards')rstd();
+  else if(tab==='settings')rset();
+}
+function navDash(field,key,label,count){if(count>0){fg(field,key,label,count);}navTo('projects');}
+var chatPid=null;
+function getChatMsgs(pid){try{return JSON.parse(localStorage.getItem('chat_'+pid)||'[]');}catch(e){return [];}}
+function saveChatMsgs(pid,msgs){localStorage.setItem('chat_'+pid,JSON.stringify(msgs));}
+function getChatCount(pid){return getChatMsgs(pid).length;}
+function renderChatMessages(pid){
+  var msgs=getChatMsgs(pid);var el=document.getElementById('chat-messages');if(!el)return;
+  if(!msgs.length){el.innerHTML='<div class="chat-empty">No messages yet.</div>';return;}
+  var out='';msgs.forEach(function(msg){
+    var d=new Date(msg.ts);var isMine=msg.sender==='SPL'||msg.sender==='Trisha'||msg.sender==='SPL (Trisha)';
+    out+='<div class="chat-msg '+(isMine?'mine':'theirs')+'">';
+    out+='<div class="chat-meta">'+(!isMine?msg.sender+' · ':'')+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})+'</div>';
+    out+='<div class="chat-bubble">'+msg.text.split('\n').join('<br>')+'</div></div>';
+  });
+  el.innerHTML=out;el.scrollTop=el.scrollHeight;
+}
+function openChat(pid){
+  chatPid=pid;var p=P.find(function(x){return x.id===pid;});
+  var panel=document.getElementById('chat-panel');var overlay=document.getElementById('chat-overlay');
+  if(!panel)return;
+  var t=document.getElementById('chat-proj-title');var s=document.getElementById('chat-proj-sub');
+  if(t)t.textContent=pid+(p&&p.name?' - '+p.name:'');
+  if(s)s.textContent=(p&&p.pm?'PM: '+p.pm:'Unassigned')+(p&&p.py?' - '+p.py:'');
+  var sel=document.getElementById('chat-sender');
+  if(sel){sel.innerHTML='<option value="SPL">SPL (Trisha)</option>';(PML.length?PML:DPM).forEach(function(n){var o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});}
+  renderChatMessages(pid);panel.classList.add('open');overlay.classList.add('open');document.body.style.overflow='hidden';
+  setTimeout(function(){var inp=document.getElementById('chat-input');if(inp)inp.focus();},300);
+}
+function closeChat(){
+  var panel=document.getElementById('chat-panel');var overlay=document.getElementById('chat-overlay');
+  if(panel)panel.classList.remove('open');if(overlay)overlay.classList.remove('open');
+  document.body.style.overflow='';chatPid=null;
+  var np=document.getElementById('n-projects');if(np&&np.classList.contains('a'))rp();
+}
+function sendChatMsg(){
+  if(!chatPid)return;var inp=document.getElementById('chat-input');var sel=document.getElementById('chat-sender');
+  if(!inp||!sel||!inp.value.trim())return;
+  var msgs=getChatMsgs(chatPid);msgs.push({sender:sel.value,text:inp.value.trim(),ts:new Date().toISOString()});
+  saveChatMsgs(chatPid,msgs);inp.value='';renderChatMessages(chatPid);
+}
+
+
+function mkRptSubtabs(active){
+  var tabs=[
+    {id:'overall',icon:'ti-chart-bar',label:'Overall'},
+    {id:'daily',icon:'ti-calendar-day',label:'Daily'},
+    {id:'monthly',icon:'ti-calendar-month',label:'Monthly'},
+    {id:'monthlyREC',icon:'ti-receipt',label:'REC Report'}
+  ];
+  var h='<div class="rpt-subtabs">';
+  tabs.forEach(function(t){
+    var cls='rpt-stab'+(active===t.id?' a':'');
+    h+='<button class="'+cls+'" onclick="switchRptTab(\'' +t.id+ '\',this)"><i class="ti '+t.icon+'" style="font-size:14px"></i> '+t.label+'</button>';
+  });
+  h+='</div>';
+  return h;
+}
+
+function renderMonthlyREC(){
+  var el=document.getElementById('n-report');
+
+  function fmFull(n){return '$'+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function rv2(p){
+    // Check for manually entered final approved value first
+    var saved=localStorage.getItem('rec_final_'+p.id);
+    if(saved)return parseFloat(saved)||0;
+    return parseFloat((p.recs||'').replace(/[$,]/g,''))||0;
+  }
+  function getFinalRec(pid){
+    var saved=localStorage.getItem('rec_final_'+pid);
+    if(saved)return saved;
+    var p=P.find(function(x){return x.id===pid;});
+    return p?(p.recs||'').replace('$','').replace(/,/g,''):'';
+  }
+
+  // Only approved projects show in REC Report
+  var approved=P.filter(function(p){return p.ps==='Approved';});
+  var snaps=getSnapshots();
+
+  var totalREC=approved.reduce(function(a,p){return a+rv2(p);},0);
+  var byUT={Ameren:0,ComEd:0,IPA:0};
+  approved.forEach(function(p){var u=p.ut||'';if(byUT[u]!==undefined)byUT[u]+=rv2(p);});
+
+  var gs='background:#4a8f3f;color:#fff;font-weight:700;padding:9px 14px;border:1px solid #3a7a30';
+  var gb='background:#e8f5e3;padding:9px 14px;border:1px solid #c5dfc0';
+  var gbb='background:#e8f5e3;padding:9px 14px;border:1px solid #c5dfc0;font-weight:700';
+  var gh='background:#4a8f3f;color:#fff;font-weight:700;text-align:center;padding:9px 14px;border:1px solid #3a7a30;letter-spacing:.06em;text-transform:uppercase;font-size:12.5px;font-family:Nunito,sans-serif';
+  var td='padding:8px 14px;border:1px solid #ddd;text-align:center;font-family:Nunito,sans-serif;font-size:13.5px';
+
+  function buildTable(projects, editable){
+    var total=projects.reduce(function(a,p){return a+rv2(p);},0);
+    var ut={Ameren:0,ComEd:0,IPA:0};
+    projects.forEach(function(p){var u=p.ut||'';if(ut[u]!==undefined)ut[u]+=rv2(p);});
+    var pending=projects.filter(function(p){return p.ps!=='Approved';}).reduce(function(a,p){return a+rv2(p);},0);
+    var app=projects.filter(function(p){return p.ps==='Approved';}).reduce(function(a,p){return a+rv2(p);},0);
+
+    var t='<table style="width:100%;border-collapse:collapse;font-family:Nunito,sans-serif;font-size:13.5px">';
+    t+='<tr><td style="'+gb+'"><strong>TOTAL RECs SUBMITTED:</strong></td><td style="'+gbb+';text-align:right">'+fmFull(total)+'</td><td style="border:1px solid #c5dfc0"></td></tr>';
+    t+='<tr><td style="'+gb+'"><strong>PENDING PART II APPROVAL:</strong></td><td style="'+gb+';text-align:right">'+fmFull(pending)+'</td><td style="border:1px solid #c5dfc0"></td></tr>';
+    t+='<tr><td style="'+gb+'"><strong>PART II APPROVED:</strong></td><td style="'+gbb+';text-align:right">'+fmFull(app)+'</td><td style="border:1px solid #c5dfc0"></td></tr>';
+    t+='<tr><td colspan="3" style="height:10px;border:none"></td></tr>';
+    ['Ameren','ComEd','IPA'].forEach(function(u){
+      t+='<tr><td style="'+gb+'"><strong>'+u.toUpperCase()+':</strong></td><td style="'+gbb+';text-align:right">'+fmFull(ut[u]||0)+'</td><td style="border:1px solid #c5dfc0"></td></tr>';
+    });
+    t+='<tr><td colspan="3" style="height:14px;border:none"></td></tr>';
+    t+='<tr><th style="'+gh+'">PROJECT ID</th><th style="'+gh+'">REC VALUE</th><th style="'+gh+'">BUYER</th></tr>';
+
+    var sorted=[].concat(projects).sort(function(a,b){
+      var ua=a.ut||'';var ub=b.ut||'';
+      if(ua!==ub)return ua.localeCompare(ub);
+      return (a.id||'').localeCompare(b.id||'');
+    });
+
+    sorted.forEach(function(p){
+      var recVal=getFinalRec(p.id);
+      t+='<tr>';
+      t+='<td style="'+td+'">'+p.id+(p.name?' <span style=\"color:#999;font-size:11px\">'+p.name+'</span>':'')+'</td>';
+      if(editable){
+        t+='<td style="'+td+'"><input type="number" step="0.01" value="'+recVal+'" data-pid="'+p.id+'" onchange="saveRecFinal(this)" oninput="saveRecFinal(this)" style="width:130px;border:1px solid #c5dfc0;border-radius:4px;padding:4px 8px;text-align:right;font-family:Nunito,sans-serif;font-size:13px;background:#f5fbf3" placeholder="Enter final REC"/></td>';
+      } else {
+        t+='<td style="'+td+'">'+fmFull(rv2(p))+'</td>';
+      }
+      t+='<td style="'+td+';"><span style="padding:3px 10px;border-radius:4px;border:1px solid #ccc;font-size:12.5px;background:#f5f5f5">'+(p.ut||'—')+'</span></td>';
+      t+='</tr>';
+    });
+
+    t+='<tr><td style="'+gs+';text-align:center;font-size:13px">Total REC Value</td>';
+    t+='<td colspan="2" style="'+gs+';text-align:center;font-size:15px">'+fmFull(total)+'</td></tr>';
+    t+='</table>';
+    return t;
+  }
+
+  var out='<div class="rpt-subtabs">';
+  out+='</div>';
+
+  out+='<div class="rpt-hd">';
+  out+='<div><div style="font-size:22px;font-weight:700;color:var(--tx)">Monthly REC Report</div>';
+  out+='<div class="rpt-ts">'+approved.length+' approved projects · Edit REC values inline · Auto-saves</div></div>';
+  out+='<div style="display:flex;gap:8px">';
+  out+='<button onclick="openSnapshotModal()" style="font-size:13px;font-weight:600;padding:10px 20px;border-radius:var(--r);border:none;background:#0D2147;color:#fff;cursor:pointer;font-family:Nunito,sans-serif;display:flex;align-items:center;gap:7px"><i class="ti ti-camera" style="font-size:14px"></i> Save Snapshot</button>';
+  out+='<button onclick="exportCurrentRecReport()" style="font-size:13px;padding:10px 16px;border-radius:var(--r);border:1px solid var(--bd);background:transparent;cursor:pointer;color:var(--t2);font-family:Nunito,sans-serif"><i class="ti ti-download"></i> Export</button>';
+  out+='</div></div>';
+
+  if(!approved.length){
+    out+='<div class="hint" style="text-align:center;padding:40px"><i class="ti ti-circle-check" style="font-size:32px;display:block;margin-bottom:10px;opacity:.3"></i>No projects marked as <strong>Part II Approved</strong> yet.<br><span style="font-size:13px;color:var(--t3)">Projects appear here automatically when their status is set to Approved in the Projects tab.</span></div>';
+  } else {
+    out+='<div style="background:rgba(74,143,63,.06);border:1.5px solid rgba(74,143,63,.2);border-radius:var(--rl);padding:12px 16px;margin-bottom:14px;font-size:13px;color:#3a7a30;font-family:Nunito,sans-serif">';
+    out+='<i class="ti ti-info-circle" style="font-size:14px;vertical-align:-2px;margin-right:6px"></i>';
+    out+='Projects with <strong>Part II Approved</strong> status appear here automatically. Click any REC value to edit the final approved amount.';
+    out+='</div>';
+    out+='<div style="background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--gshadow);margin-bottom:20px">';
+    out+='<div style="background:#0D2147;padding:12px 18px;display:flex;align-items:center;justify-content:space-between">';
+    out+='<div style="font-size:14px;font-weight:600;color:#fff">Current Approved Batch — '+approved.length+' projects</div>';
+    out+='<span style="font-size:11px;color:rgba(255,255,255,.4);font-family:Nunito,sans-serif">Edit values below · Auto-saved</span></div>';
+    out+='<div style="padding:16px">';
+    out+=buildTable(approved, true);
+    out+='</div></div>';
+  }
+
+  // Saved snapshots
+  if(snaps.length){
+    out+='<div style="font-size:13px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;font-family:Nunito,sans-serif;margin-bottom:12px"><i class="ti ti-history" style="font-size:14px"></i> Saved Snapshots ('+snaps.length+')</div>';
+    snaps.slice().reverse().forEach(function(snap,si){
+      var realIdx=snaps.length-1-si;
+      out+='<div style="background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--gshadow);margin-bottom:14px">';
+      out+='<div style="background:#0D2147;padding:12px 18px;display:flex;align-items:center;justify-content:space-between">';
+      out+='<div><div style="font-size:14px;font-weight:700;color:#fff">'+snap.label+'</div>';
+      out+='<div style="font-size:11px;color:rgba(255,255,255,.4);font-family:Nunito,sans-serif;margin-top:2px">'+snap.created+' · '+snap.projects.length+' projects</div></div>';
+      out+='<div style="display:flex;gap:8px">';
+      out+='<button onclick="exportSnapshot('+realIdx+')" style="font-size:11px;padding:5px 11px;border-radius:var(--r);border:1px solid rgba(255,255,255,.15);background:transparent;cursor:pointer;color:rgba(255,255,255,.6);font-family:Nunito,sans-serif"><i class="ti ti-download"></i> CSV</button>';
+      out+='<button onclick="deleteSnapshot('+realIdx+')" style="font-size:11px;padding:5px 11px;border-radius:var(--r);border:1px solid rgba(225,29,72,.3);background:transparent;cursor:pointer;color:var(--et);font-family:Nunito,sans-serif"><i class="ti ti-trash"></i></button>';
+      out+='</div></div>';
+      out+='<div style="padding:16px">';
+      out+=buildTable(snap.projects, false);
+      out+='</div></div>';
+    });
+  }
+
+  el.innerHTML=out;
+}
+
+function saveRecFinal(inp){
+  var pid=inp.dataset.pid;
+  if(!pid)return;
+  var val=parseFloat(inp.value)||0;
+  if(val>0) localStorage.setItem('rec_final_'+pid, val.toString());
+  else localStorage.removeItem('rec_final_'+pid);
+  // Refresh totals without full re-render (just update total row)
+  renderMonthlyREC();
+}
+
+function exportCurrentRecReport(){
+  function rv2(p){return parseFloat((p.recs||'').replace(/[$,]/g,''))||0;}
+  function fmFull(n){return '$'+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+  var total=P.reduce(function(a,p){return a+rv2(p);},0);
+  var pending=P.filter(function(p){return p.ps!=='Approved';}).reduce(function(a,p){return a+rv2(p);},0);
+  var approved=P.filter(function(p){return p.ps==='Approved';}).reduce(function(a,p){return a+rv2(p);},0);
+  var csv='MONTHLY REC REPORT\n'+new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'\n\n';
+  csv+='TOTAL RECs SUBMITTED,'+fmFull(total)+'\n';
+  csv+='PENDING PART II APPROVAL,'+fmFull(pending)+'\n';
+  csv+='PART II APPROVED,'+fmFull(approved)+'\n\n';
+  ['Ameren','ComEd','IPA'].forEach(function(u){
+    var val=P.filter(function(p){return p.ut===u;}).reduce(function(a,p){return a+rv2(p);},0);
+    csv+=u.toUpperCase()+','+fmFull(val)+'\n';
+  });
+  csv+='\nPROJECT ID,REC VALUE,BUYER\n';
+  P.forEach(function(p){csv+=p.id+','+p.recs+','+(p.ut||'')+'\n';});
+  csv+='Total REC Value,'+fmFull(total)+'\n';
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='Monthly_REC_Report_'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();si('Exported!','ok');
+}
 </script>
 </body>
 </html>
