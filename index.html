@@ -276,10 +276,13 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
   .rpt-inp{border:none!important;background:transparent!important}
   .rpt-rec-inp{border:none!important}
   #export-menu{display:none!important}
+  .dropdown-menu-popup{display:none!important}
 }
 
 #export-menu{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--bd);border-radius:var(--rl);box-shadow:0 8px 32px rgba(15,23,42,.12);z-index:300;min-width:200px;overflow:hidden;display:none}
 #export-menu.open{display:block}
+.dropdown-menu-popup{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--bd);border-radius:var(--rl);box-shadow:0 8px 32px rgba(15,23,42,.12);z-index:300;min-width:210px;overflow:hidden;display:none}
+.dropdown-menu-popup.open{display:block}
 .exp-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:13.5px;color:var(--tx);cursor:pointer;font-family:'Nunito',sans-serif;transition:background .12s;border-bottom:1px solid var(--bd)}
 .exp-item:last-child{border-bottom:none}
 .exp-item:hover{background:var(--s2)}
@@ -288,7 +291,7 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
 
 
 /* Report sub-tabs */
-.rpt-subtabs{display:flex;gap:4px;margin-bottom:20px;background:var(--s2);border-radius:var(--rl);padding:4px;width:fit-content}
+.rpt-subtabs{display:flex;gap:4px;margin-bottom:20px;background:var(--s2);border:1.5px solid rgba(13,33,71,.16);box-shadow:0 2px 8px rgba(15,23,42,.05);border-radius:var(--rl);padding:4px;width:fit-content}
 .rpt-stab{font-size:13px;font-weight:500;padding:8px 18px;border-radius:var(--r);border:none;background:transparent;cursor:pointer;color:var(--t2);font-family:'Nunito',sans-serif;transition:all .15s;display:flex;align-items:center;gap:6px}
 .rpt-stab.a{background:var(--cd);color:var(--tx);font-weight:600;box-shadow:0 1px 4px rgba(15,23,42,.08)}
 .rpt-stab:hover:not(.a){color:var(--tx)}
@@ -373,6 +376,8 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
 
 
 /* Chat panel */
+@keyframes chatPulse{0%{box-shadow:0 0 0 0 rgba(239,68,68,.55)}70%{box-shadow:0 0 0 6px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
+.chat-unread-badge{position:absolute;background:#EF4444;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:700;animation:chatPulse 1.8s infinite}
 .chat-overlay{position:fixed;inset:0;background:rgba(15,23,42,.35);z-index:400;display:none;backdrop-filter:blur(3px)}
 .chat-overlay.open{display:block}
 .chat-panel{position:fixed;right:0;top:0;bottom:0;width:380px;background:var(--cd);border-left:1px solid var(--bd);display:flex;flex-direction:column;z-index:401;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:-8px 0 32px rgba(15,23,42,.12)}
@@ -610,7 +615,10 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
         <div class="chat-hd-title" id="chat-proj-title">Project Chat</div>
         <div class="chat-hd-sub" id="chat-proj-sub"></div>
       </div>
-      <button onclick="closeChat()" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.5);font-size:18px"><i class="ti ti-x"></i></button>
+      <div style="display:flex;align-items:center;gap:4px">
+        <button id="chat-read-toggle" onclick="toggleChatReadUnread()" title="Mark as unread" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.65);font-size:15px;padding:6px"><i class="ti ti-mail" style="font-size:15px"></i></button>
+        <button onclick="closeChat()" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.5);font-size:18px"><i class="ti ti-x"></i></button>
+      </div>
     </div>
   </div>
   <div class="chat-messages" id="chat-messages"></div>
@@ -1881,7 +1889,7 @@ function rp(){
       <td style="text-align:right;white-space:nowrap">
         <button onclick="openChat('${p.id}');event.stopPropagation()" title="Chat with PM" class="chat-btn" style="position:relative">
           <i class="ti ti-message-circle"></i>
-          ${getChatCount(p.id)>0?'<span style="position:absolute;top:-2px;right:-2px;background:#0891B2;color:#fff;border-radius:50%;width:14px;height:14px;font-size:9px;display:flex;align-items:center;justify-content:center;font-family:Nunito,sans-serif">'+getChatCount(p.id)+'</span>':''}
+          ${chatBadgeHtml(p.id,false,'SPL',14)}
         </button>
         <button onclick="openEditModal('${p.id}');event.stopPropagation()" title="Edit project" class="chat-btn" onmouseover="this.style.color='var(--tx)'" onmouseout="this.style.color='var(--t3)'"><i class="ti ti-pencil"></i></button>
         <button onclick="rmP('${p.id}');event.stopPropagation()" title="Delete project" class="chat-btn" onmouseover="this.style.color='var(--et)'" onmouseout="this.style.color='var(--t3)'"><i class="ti ti-trash"></i></button>
@@ -2108,7 +2116,7 @@ function tpc(p){
       <span class="badge ${csc(p.cs)}" style="margin-left:4px">${p.cs}</span>
       <button onclick="openChatTeam('${p.id}','${p.pm||''}');event.stopPropagation()" title="Chat with SPL" class="chat-btn" style="position:relative;margin-left:4px">
         <i class="ti ti-message-circle"></i>
-        ${getChatCount(p.id)>0?'<span style="position:absolute;top:-2px;right:-2px;background:#0891B2;color:#fff;border-radius:50%;width:14px;height:14px;font-size:9px;display:flex;align-items:center;justify-content:center;font-family:Nunito,sans-serif">'+getChatCount(p.id)+'</span>':''}
+        ${chatBadgeHtml(p.id,true,p.pm||'PM',14)}
       </button>
       <button style="background:none;border:none;cursor:pointer;padding:5px" onclick="tpTeam('${p.id}');event.stopPropagation()">
         <i class="ti ti-chevron-down" style="font-size:14px;color:var(--t3);transform:rotate(${o?180:0}deg);transition:transform .2s"></i>
@@ -2383,9 +2391,9 @@ function rpr(){
         </div>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           ${allDone?'<span style="display:flex;align-items:center;gap:6px;background:var(--ok);color:var(--ot);font-size:13px;font-weight:600;padding:7px 16px;border-radius:20px;font-family:Nunito,sans-serif"><i class="ti ti-circle-check" style="font-size:16px"></i> Review Complete</span>':'<span style="font-size:13px;color:var(--t3);font-family:Nunito,sans-serif">'+pct+'% done</span>'}
-          <button onclick="openChatTeam('${pid}','${(P.find(x=>x.id===pid)||{}).pm||''}')" style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:7px 16px;border-radius:20px;border:none;background:#0D2147;cursor:pointer;color:#fff;font-family:'Nunito',sans-serif;position:relative">
-            <i class="ti ti-message-circle" style="font-size:14px;color:#D4AF37"></i> Chat with SPL
-            ${getChatCount(pid)>0?'<span style="position:absolute;top:-5px;right:-5px;background:#0891B2;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">'+getChatCount(pid)+'</span>':''}
+          <button onclick="openChat('${pid}')" style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:7px 16px;border-radius:20px;border:none;background:#0D2147;cursor:pointer;color:#fff;font-family:'Nunito',sans-serif;position:relative">
+            <i class="ti ti-message-circle" style="font-size:14px;color:#D4AF37"></i> Chat with PM
+            ${chatBadgeHtml(pid,false,'SPL',18)}
           </button>
         </div>
       </div>
@@ -3371,7 +3379,7 @@ function rtvProj(){
     var chatBtnRow=document.createElement('button');
     chatBtnRow.title='Chat with SPL';
     chatBtnRow.style.cssText='background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px;padding:5px 6px;border-radius:var(--r);display:flex;align-items:center;position:relative';
-    chatBtnRow.innerHTML='<i class="ti ti-message-circle"></i>'+(getChatCount(p.id)>0?'<span style="position:absolute;top:-2px;right:-2px;background:#0891B2;color:#fff;border-radius:50%;width:14px;height:14px;font-size:9px;display:flex;align-items:center;justify-content:center;font-family:Nunito,sans-serif">'+getChatCount(p.id)+'</span>':'');
+    chatBtnRow.innerHTML='<i class="ti ti-message-circle"></i>'+chatBadgeHtml(p.id,true,p.pm||'PM',14);
     chatBtnRow.addEventListener('click',function(e){e.stopPropagation();openChatTeam(p.id,p.pm||'');});
     right.appendChild(chatBtnRow);
 
@@ -3462,6 +3470,50 @@ function getUnreadChats(forPM){
   });
   return count;
 }
+function getChatUnreadCount(pid,forPM,viewerKey){
+  var msgs=getChatMsgs(pid);
+  var key=forPM?(viewerKey||'PM'):'SPL';
+  var lastSeen=parseInt(localStorage.getItem('chat_seen_'+key+'_'+pid)||'0');
+  var count=0;
+  msgs.forEach(function(m){
+    var isFromOther=forPM?(m.sender==='SPL'||m.sender==='SPL (Trisha)'):(m.sender!=='SPL'&&m.sender!=='SPL (Trisha)');
+    if(isFromOther&&new Date(m.ts).getTime()>lastSeen)count++;
+  });
+  return count;
+}
+function isManualUnread(pid){return localStorage.getItem('chat_manual_unread_'+pid)==='1';}
+function setManualUnread(pid,val){
+  if(val)localStorage.setItem('chat_manual_unread_'+pid,'1');
+  else localStorage.removeItem('chat_manual_unread_'+pid);
+}
+function chatBadgeInfo(pid,forPM,viewerKey){
+  var unreadCount=getChatUnreadCount(pid,forPM,viewerKey);
+  var manual=isManualUnread(pid);
+  return {show:unreadCount>0||manual,count:unreadCount>0?unreadCount:null};
+}
+function chatBadgeHtml(pid,forPM,viewerKey,size){
+  var info=chatBadgeInfo(pid,forPM,viewerKey);
+  if(!info.show)return '';
+  var s=size||14;
+  var content=info.count?(info.count>9?'9+':info.count):'';
+  return '<span class="chat-unread-badge" style="top:-'+(s/7)+'px;right:-'+(s/7)+'px;width:'+s+'px;height:'+s+'px;font-size:'+(s*0.64)+'px">'+content+'</span>';
+}
+function playChatNotifSound(){
+  try{
+    var AudioCtx=window.AudioContext||window.webkitAudioContext;
+    if(!AudioCtx)return;
+    var ctx=new AudioCtx();
+    var o=ctx.createOscillator();var g=ctx.createGain();
+    o.type='sine';o.frequency.setValueAtTime(880,ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(1320,ctx.currentTime+0.1);
+    g.gain.setValueAtTime(0.001,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.18,ctx.currentTime+0.02);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.35);
+    o.connect(g);g.connect(ctx.destination);
+    o.start();o.stop(ctx.currentTime+0.36);
+    o.onended=function(){ctx.close();};
+  }catch(e){}
+}
 function markChatsRead(pid,viewer){
   localStorage.setItem('chat_seen_'+viewer+'_'+pid,Date.now().toString());
 }
@@ -3474,6 +3526,7 @@ function updateChatBadges(){
 function openChatTeam(pid, pmName){
   // Open chat with PM as default sender
   chatPid=pid;
+  chatCtx={forPM:true,viewerKey:pmName||'PM'};
   var p=P.find(function(x){return x.id===pid;});
   var panel=document.getElementById('chat-panel');
   var overlay=document.getElementById('chat-overlay');
@@ -3501,6 +3554,9 @@ function openChatTeam(pid, pmName){
   overlay.classList.add('open');
   document.body.style.overflow='hidden';
   setTimeout(function(){var inp=document.getElementById('chat-input');if(inp)inp.focus();},300);
+  markChatsRead(pid,pmName||'PM');
+  setManualUnread(pid,false);
+  updateReadToggleBtn();
 }
 
 function navTo(tab){
@@ -3521,6 +3577,7 @@ function navTo(tab){
 }
 function navDash(field,key,label,count){if(count>0){fg(field,key,label,count);}navTo('projects');}
 var chatPid=null;
+var chatCtx={forPM:false,viewerKey:'SPL'};
 function getChatMsgs(pid){try{return JSON.parse(localStorage.getItem('chat_'+pid)||'[]');}catch(e){return [];}}
 function saveChatMsgs(pid,msgs){localStorage.setItem('chat_'+pid,JSON.stringify(msgs));}
 function getChatCount(pid){return getChatMsgs(pid).length;}
@@ -3536,8 +3593,9 @@ function renderChatMessages(pid){
   el.innerHTML=out;el.scrollTop=el.scrollHeight;
 }
 function openChat(pid){
-  markChatsRead(pid,'SPL');updateChatBadges();
-  chatPid=pid;var p=P.find(function(x){return x.id===pid;});
+  chatPid=pid;
+  chatCtx={forPM:false,viewerKey:'SPL'};
+  var p=P.find(function(x){return x.id===pid;});
   var panel=document.getElementById('chat-panel');var overlay=document.getElementById('chat-overlay');
   if(!panel)return;
   var t=document.getElementById('chat-proj-title');var s=document.getElementById('chat-proj-sub');
@@ -3548,33 +3606,74 @@ function openChat(pid){
   renderChatMessages(pid);panel.classList.add('open');overlay.classList.add('open');document.body.style.overflow='hidden';
   setTimeout(function(){var inp=document.getElementById('chat-input');if(inp)inp.focus();},300);
   markChatsRead(pid,'SPL');
+  setManualUnread(pid,false);
+  updateReadToggleBtn();
   updateChatBadges();
 }
 function closeChat(){
   var panel=document.getElementById('chat-panel');var overlay=document.getElementById('chat-overlay');
   if(panel)panel.classList.remove('open');if(overlay)overlay.classList.remove('open');
-  document.body.style.overflow='';chatPid=null;
+  document.body.style.overflow='';
+  chatPid=null;
   var np=document.getElementById('n-projects');if(np&&np.classList.contains('a'))rp();
+  var vTeam=document.getElementById('v-team');
+  if(vTeam&&vTeam.classList.contains('a')&&typeof rtv==='function')rtv();
+  var nDash=document.getElementById('n-dashboard');if(nDash&&nDash.classList.contains('a'))rdb();
+  var nPr=document.getElementById('n-postreview');if(nPr&&nPr.classList.contains('a'))rpr();
+}
+function toggleChatReadUnread(){
+  if(!chatPid)return;
+  var info=chatBadgeInfo(chatPid,chatCtx.forPM,chatCtx.viewerKey);
+  if(info.show){
+    // Currently showing as unread -> mark fully read
+    markChatsRead(chatPid,chatCtx.viewerKey);
+    setManualUnread(chatPid,false);
+  }else{
+    // Currently read -> flag it back as unread for follow-up
+    setManualUnread(chatPid,true);
+  }
+  updateReadToggleBtn();
+  updateChatBadges();
+}
+function updateReadToggleBtn(){
+  var btn=document.getElementById('chat-read-toggle');
+  if(!btn||!chatPid)return;
+  var info=chatBadgeInfo(chatPid,chatCtx.forPM,chatCtx.viewerKey);
+  if(info.show){
+    btn.innerHTML='<i class="ti ti-mail-opened" style="font-size:15px"></i>';
+    btn.title='Mark as read';
+  }else{
+    btn.innerHTML='<i class="ti ti-mail" style="font-size:15px"></i>';
+    btn.title='Mark as unread';
+  }
 }
 function sendChatMsg(){
   if(!chatPid)return;var inp=document.getElementById('chat-input');var sel=document.getElementById('chat-sender');
   if(!inp||!sel||!inp.value.trim())return;
   var msgs=getChatMsgs(chatPid);msgs.push({sender:sel.value,text:inp.value.trim(),ts:new Date().toISOString()});
   saveChatMsgs(chatPid,msgs);inp.value='';renderChatMessages(chatPid);
+  playChatNotifSound();
+  // The sender has obviously just seen their own message; mark read from their perspective
+  markChatsRead(chatPid,chatCtx.forPM?chatCtx.viewerKey:'SPL');
+  setManualUnread(chatPid,false);
+  updateReadToggleBtn();
+  updateChatBadges();
 }
 
 
 function mkRptSubtabs(active){
+  var sunSvg='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="vertical-align:-2px;margin-right:4px"><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.9" y1="4.9" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.1" y2="19.1"/><line x1="4.9" y1="19.1" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.1" y2="4.9"/></g><circle cx="12" cy="12" r="4.5" fill="currentColor"/></svg>';
+  var gridSvg='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="vertical-align:-2px;margin-right:4px"><rect x="3" y="4" width="18" height="17" rx="2" stroke="currentColor" stroke-width="2"/><line x1="3" y1="9" x2="21" y2="9" stroke="currentColor" stroke-width="2"/><line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="6" y="12" width="3" height="3" fill="currentColor"/><rect x="10.5" y="12" width="3" height="3" fill="currentColor"/><rect x="15" y="12" width="3" height="3" fill="currentColor"/><rect x="6" y="16.5" width="3" height="3" fill="currentColor"/><rect x="10.5" y="16.5" width="3" height="3" fill="currentColor"/></svg>';
   var tabs=[
     {id:'overall',icon:'ti-chart-bar',label:'Overall'},
-    {id:'daily',icon:'ti-calendar-day',label:'Daily'},
-    {id:'monthly',icon:'',label:'Monthly'},
+    {id:'daily',svg:sunSvg,label:'Daily'},
+    {id:'monthly',svg:gridSvg,label:'Monthly'},
     {id:'monthlyREC',icon:'ti-receipt',label:'REC Report'}
   ];
   var h='<div class="rpt-subtabs no-print" id="rpt-stabs-wrap">';
   tabs.forEach(function(t){
     var cls='rpt-stab'+(active===t.id?' a':'');
-    var iconHtml=t.icon?'<i class="ti '+t.icon+'" style="font-size:14px"></i> ':'';
+    var iconHtml=t.svg?t.svg:(t.icon?'<i class="ti '+t.icon+'" style="font-size:14px"></i> ':'');
     h+='<button type="button" class="'+cls+'" data-tab="'+t.id+'">'+iconHtml+t.label+'</button>';
   });
   h+='</div>';
@@ -4088,6 +4187,15 @@ function switchRecReportTab(name){
   saveRecReports(data);
   renderMonthlyREC();
 }
+function stepRecMonth(dir){
+  var data=getRecReports();
+  var idx=data.order.indexOf(data.active);
+  var newIdx=idx+dir;
+  if(newIdx<0||newIdx>=data.order.length)return;
+  data.active=data.order[newIdx];
+  saveRecReports(data);
+  renderMonthlyREC();
+}
 function addRecReportTab(){
   var name=prompt('New report name (e.g. December REC Value):');
   if(!name||!name.trim())return;
@@ -4186,6 +4294,85 @@ function exportCurrentRecReport(){
   a.download=data.active.replace(/\s+/g,'_')+'_'+centralDateKey()+'.csv';
   a.click();si('Exported!','ok');
 }
+function exportAllRecReports(){
+  function fmFull(n){return '$'+Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+  var data=getRecReports();
+  var csv='MONTHLY REC VALUE REPORT — ALL MONTHS\n'+new Date().toLocaleDateString('en-US',{timeZone:'America/Chicago',month:'long',day:'numeric',year:'numeric'})+'\n\n';
+  var grandTotal=0;
+  data.order.forEach(function(month){
+    var rpt=data.reports[month];
+    var rows=rpt.rows||[];
+    var approvedTotal=rows.reduce(function(a,r){return a+(parseFloat(r.value)||0);},0);
+    grandTotal+=approvedTotal;
+    var byBuyer={Ameren:0,ComEd:0,IPA:0};
+    rows.forEach(function(r){if(byBuyer[r.buyer]!==undefined)byBuyer[r.buyer]+=(parseFloat(r.value)||0);});
+    csv+='========================================\n';
+    csv+=month.toUpperCase()+'\n';
+    csv+='========================================\n';
+    csv+="TOTAL REC's SUBMITTED,"+fmFull(rpt.totalSubmitted)+'\n';
+    csv+='PENDING PART II APPROVAL,'+fmFull(rpt.pendingApproval)+'\n';
+    csv+='PART II APPROVED,'+fmFull(approvedTotal)+'\n\n';
+    csv+='AMEREN,'+fmFull(byBuyer.Ameren)+'\n';
+    csv+='COMED,'+fmFull(byBuyer.ComEd)+'\n';
+    csv+='IPA,'+fmFull(byBuyer.IPA)+'\n\n';
+    csv+='PROJECT ID,REC VALUE,BUYER\n';
+    rows.forEach(function(r){csv+=r.id+','+r.value+','+r.buyer+'\n';});
+    csv+='Total REC Value,'+fmFull(approvedTotal)+'\n\n';
+  });
+  csv+='========================================\n';
+  csv+='GRAND TOTAL (ALL MONTHS),'+fmFull(grandTotal)+'\n';
+  var a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='REC_Report_All_Months_'+centralDateKey()+'.csv';
+  a.click();si('Exported all months!','ok');
+}
+function printAllRecReports(){
+  function fmFull(n){return '$'+Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+  var data=getRecReports();
+  var el=document.getElementById('n-report');
+  if(!el)return;
+  var out='<div class="rpt-hd"><div><div style="font-size:22px;font-weight:700;color:var(--tx)">Monthly REC Value Report — All Months</div>'
+    +'<div class="rpt-ts">Generated '+new Date().toLocaleDateString('en-US',{timeZone:'America/Chicago',month:'long',day:'numeric',year:'numeric'})+'</div></div></div>';
+  var grandTotal=0;
+  data.order.forEach(function(month,idx){
+    var rpt=data.reports[month];
+    var rows=rpt.rows||[];
+    var approvedTotal=rows.reduce(function(a,r){return a+(parseFloat(r.value)||0);},0);
+    grandTotal+=approvedTotal;
+    var byBuyer={Ameren:0,ComEd:0,IPA:0};
+    rows.forEach(function(r){if(byBuyer[r.buyer]!==undefined)byBuyer[r.buyer]+=(parseFloat(r.value)||0);});
+
+    out+='<div style="'+(idx>0?'page-break-before:always;':'')+'margin-top:'+(idx>0?'0':'16px')+'">';
+    out+='<h2 style="font-family:Inter,sans-serif;font-size:19px;color:var(--tx);margin-bottom:12px">'+month+'</h2>';
+
+    out+='<div class="rpt-grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px">';
+    out+='<div class="rpt-card"><div class="rpt-card-hd"><h3>Program Summary</h3></div>';
+    out+='<div class="rpt-row"><span class="rpt-row-l">Total RECs Submitted</span><span class="rpt-row-v">'+fmFull(rpt.totalSubmitted)+'</span></div>';
+    out+='<div class="rpt-row"><span class="rpt-row-l">Pending Part II Approval</span><span class="rpt-row-v">'+fmFull(rpt.pendingApproval)+'</span></div>';
+    out+='<div class="rpt-footer"><span class="rpt-footer-l">Part II Approved</span><span class="rpt-footer-v">'+fmFull(approvedTotal)+'</span></div></div>';
+    out+='<div class="rpt-card"><div class="rpt-card-hd"><h3>Utility Breakdown</h3></div>';
+    out+='<div class="rpt-row"><span class="rpt-row-l">Ameren</span><span class="rpt-row-v">'+fmFull(byBuyer.Ameren)+'</span></div>';
+    out+='<div class="rpt-row"><span class="rpt-row-l">ComEd</span><span class="rpt-row-v">'+fmFull(byBuyer.ComEd)+'</span></div>';
+    out+='<div class="rpt-row"><span class="rpt-row-l">IPA</span><span class="rpt-row-v">'+fmFull(byBuyer.IPA)+'</span></div>';
+    out+='<div class="rpt-footer"><span class="rpt-footer-l">Total</span><span class="rpt-footer-v">'+fmFull(byBuyer.Ameren+byBuyer.ComEd+byBuyer.IPA)+'</span></div></div>';
+    out+='</div>';
+
+    out+='<table class="rpt-table dark-hd" style="width:100%;margin-bottom:8px"><thead><tr><th>Project ID</th><th style="text-align:right">REC Value</th><th style="text-align:center">Buyer</th></tr></thead><tbody>';
+    rows.forEach(function(r){
+      out+='<tr><td>'+r.id+'</td><td style="text-align:right">'+fmFull(r.value)+'</td><td style="text-align:center">'+(r.buyer||'—')+'</td></tr>';
+    });
+    out+='<tr class="rpt-total-row"><td>Total REC Value</td><td colspan="2" style="text-align:right;padding-right:24px;color:#FCD34D">'+fmFull(approvedTotal)+'</td></tr>';
+    out+='</tbody></table>';
+    out+='</div>';
+  });
+  out+='<div style="page-break-before:always;margin-top:0;padding:20px;background:#0D2147;border-radius:var(--rl);text-align:center">'
+    +'<div style="font-size:14px;color:rgba(255,255,255,.7);font-family:Nunito,sans-serif;margin-bottom:6px">GRAND TOTAL — ALL MONTHS</div>'
+    +'<div style="font-size:28px;font-weight:700;color:#FCD34D;font-family:Inter,sans-serif">'+fmFull(grandTotal)+'</div></div>';
+
+  el.innerHTML=out;
+  window.print();
+  setTimeout(function(){renderMonthlyREC();},300);
+}
 function renderMonthlyREC(){
   var el=document.getElementById('n-report');
   function fmFull(n){return '$'+Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -4201,19 +4388,36 @@ function renderMonthlyREC(){
 
   out+='<div class="rpt-hd"><div><div style="font-size:22px;font-weight:700;color:var(--tx)">Monthly REC Value Report</div>';
   out+='<div class="rpt-ts">Click any value to edit &middot; Auto-saved &middot; One report per month, just like your spreadsheet</div></div>';
-  out+='<div style="display:flex;gap:8px"><button class="add-proj-btn" onclick="exportCurrentRecReport()" style="background:transparent;border:1px solid var(--bd);color:var(--t2)"><i class="ti ti-download" style="font-size:13px"></i> Export</button><button class="gen-report-btn" style="margin-left:0;background:#0891B2" onclick="window.print()"><i class="ti ti-printer" style="font-size:13px"></i> Print</button></div>';
+  out+='<div style="display:flex;gap:8px">'
+    +'<div style="position:relative">'
+      +'<button class="add-proj-btn" onclick="toggleDropdown(event,\'rec-export-menu\')" style="background:transparent;border:1px solid var(--bd);color:var(--t2)"><i class="ti ti-download" style="font-size:13px"></i> Export <i class="ti ti-chevron-down" style="font-size:11px;margin-left:2px"></i></button>'
+      +'<div id="rec-export-menu" class="dropdown-menu-popup">'
+        +'<div class="exp-item" onclick="exportCurrentRecReport()"><i class="ti ti-file-spreadsheet"></i><div><div>This month only</div></div></div>'
+        +'<div class="exp-item" onclick="exportAllRecReports()"><i class="ti ti-files"></i><div><div>All months combined</div></div></div>'
+      +'</div>'
+    +'</div>'
+    +'<div style="position:relative">'
+      +'<button class="gen-report-btn" style="margin-left:0;background:#0891B2" onclick="toggleDropdown(event,\'rec-print-menu\')"><i class="ti ti-printer" style="font-size:13px"></i> Print <i class="ti ti-chevron-down" style="font-size:11px;margin-left:2px"></i></button>'
+      +'<div id="rec-print-menu" class="dropdown-menu-popup">'
+        +'<div class="exp-item" onclick="window.print()"><i class="ti ti-file"></i><div><div>This month only</div></div></div>'
+        +'<div class="exp-item" onclick="printAllRecReports()"><i class="ti ti-files"></i><div><div>All months combined</div></div></div>'
+      +'</div>'
+    +'</div>'
+    +'</div>';
   out+='</div>';
 
-  // Month tabs — same pill pattern as the main report subtabs
-  out+='<div class="rpt-subtabs" style="margin-bottom:18px;flex-wrap:wrap">';
-  data.order.forEach(function(name){
-    var nEsc=name.replace(/'/g,"\\'");
-    var isActive=name===data.active;
-    out+='<button type="button" class="rpt-stab'+(isActive?' a':'')+'" onclick="switchRecReportTab(\''+nEsc+'\')"><i class="ti ti-calendar-event" style="font-size:13px;'+(isActive?'color:var(--gd)':'')+'"></i> '+name
-      +(data.order.length>1?' <span class="no-print" onclick="event.stopPropagation();removeRecReportTab(\''+nEsc+'\')" style="opacity:.4;margin-left:2px" title="Remove this report">&times;</span>':'')
-      +'</button>';
-  });
-  out+='<button type="button" class="rpt-stab no-print" onclick="addRecReportTab()" title="Add a new month"><i class="ti ti-plus" style="font-size:13px"></i></button>';
+  // Compact month navigator — prev/next arrows instead of a wide tab row
+  var curIdx=data.order.indexOf(data.active);
+  out+='<div class="no-print" style="display:flex;align-items:center;gap:8px;margin-bottom:18px">';
+  out+='<button type="button" onclick="stepRecMonth(-1)" '+(curIdx<=0?'disabled':'')+' style="width:34px;height:34px;flex-shrink:0;border-radius:50%;border:1px solid var(--bd);background:var(--cd);cursor:'+(curIdx<=0?'default':'pointer')+';opacity:'+(curIdx<=0?'.35':'1')+';display:flex;align-items:center;justify-content:center;color:var(--tx)" title="Previous month"><i class="ti ti-chevron-left" style="font-size:16px"></i></button>';
+  out+='<div style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:#0D2147;color:#fff;border-radius:10px;padding:9px 14px;font-family:Nunito,sans-serif;font-size:13.5px;font-weight:600">';
+  out+='<i class="ti ti-calendar-event" style="font-size:14px;color:var(--gd)"></i> '+data.active;
+  out+='</div>';
+  out+='<button type="button" onclick="stepRecMonth(1)" '+(curIdx>=data.order.length-1?'disabled':'')+' style="width:34px;height:34px;flex-shrink:0;border-radius:50%;border:1px solid var(--bd);background:var(--cd);cursor:'+(curIdx>=data.order.length-1?'default':'pointer')+';opacity:'+(curIdx>=data.order.length-1?'.35':'1')+';display:flex;align-items:center;justify-content:center;color:var(--tx)" title="Next month"><i class="ti ti-chevron-right" style="font-size:16px"></i></button>';
+  out+='<button type="button" onclick="addRecReportTab()" title="Add a new month" style="width:34px;height:34px;flex-shrink:0;border-radius:50%;border:1px dashed var(--bd);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t3)"><i class="ti ti-plus" style="font-size:15px"></i></button>';
+  if(data.order.length>1){
+    out+='<button type="button" onclick="removeRecReportTab(\''+data.active.replace(/'/g,"\\'")+'\')" title="Remove this month" style="width:34px;height:34px;flex-shrink:0;border-radius:50%;border:1px solid var(--bd);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t3)"><i class="ti ti-trash" style="font-size:14px"></i></button>';
+  }
   out+='</div>';
 
   // Summary + utility cards, matching the Overall Report card pattern
@@ -4698,6 +4902,17 @@ function toggleExportMenu(e){
   if(!m)return;
   m.classList.toggle('open');
   document.addEventListener('click',function(){m.classList.remove('open');},{once:true});
+}
+function toggleDropdown(e,menuId){
+  e.stopPropagation();
+  var m=document.getElementById(menuId);
+  if(!m)return;
+  var wasOpen=m.classList.contains('open');
+  document.querySelectorAll('.dropdown-menu-popup.open').forEach(function(el){el.classList.remove('open');});
+  if(!wasOpen){
+    m.classList.add('open');
+    document.addEventListener('click',function(){m.classList.remove('open');},{once:true});
+  }
 }
 
 function exportCSV(){
