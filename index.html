@@ -21,22 +21,22 @@
   --r:10px;--rl:16px;
   --glass:rgba(255,255,255,.8);--gborder:rgba(255,255,255,.6);
   --gshadow:0 2px 20px rgba(15,23,42,.07),0 1px 4px rgba(15,23,42,.04);
-  --hh:68px;--sb:232px;--max:1300px
+  --hh:88px;--sb:232px;--max:1300px
 }
 html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color:var(--tx);font-size:15.5px;line-height:1.7;-webkit-font-smoothing:antialiased}
 
-.top-header{position:sticky;top:0;z-index:200;background:#0D2147;border-bottom:none}
+.top-header{position:sticky;top:0;z-index:200;background:#070F26;border-bottom:none}
 .top-header::after{content:"";position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.55),transparent);pointer-events:none}
 .hdr{max-width:var(--max);margin:0 auto;padding:0 28px;height:var(--hh);display:flex;align-items:center;gap:20px}
 .logo-d{font-size:10px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--gd);margin-bottom:3px;opacity:.9}
 .logo-t{font-family:"Inter",sans-serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:.02em;line-height:1.1}
-.logo-t span{color:rgba(255,255,255,.25);margin:0 6px}
+.logo-t span{color:rgba(255,255,255,.4);margin:0 6px}
 .hdiv{width:1px;height:28px;background:rgba(255,255,255,.1);flex-shrink:0}
 .hsrch{flex:1;max-width:420px;position:relative}
 .hsrch input{width:100%;padding:10px 16px 10px 40px;border-radius:var(--rl);border:1px solid rgba(212,175,55,.12);background:rgba(255,255,255,.07);color:#fff;font-size:14px;font-family:"Nunito",sans-serif;outline:none;transition:all .2s}
 .hsrch input:focus{border-color:rgba(212,175,55,.38);background:rgba(255,255,255,.11)}
-.hsrch input::placeholder{color:rgba(255,255,255,.25)}
-.hsrch-ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;color:rgba(255,255,255,.3);pointer-events:none}
+.hsrch input::placeholder{color:rgba(255,255,255,.4)}
+.hsrch-ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;color:rgba(255,255,255,.45);pointer-events:none}
 .hsrch-cl{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(255,255,255,.3);font-size:14px;padding:3px;display:none}
 .hsrch-cl.v{display:block}
 .srw{position:absolute;top:calc(100% + 8px);left:0;right:0;background:#fff;border:1px solid rgba(8,145,178,.15);border-radius:var(--rl);box-shadow:0 8px 32px rgba(15,23,42,.12);overflow:hidden;display:none;z-index:300}
@@ -48,10 +48,10 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
 .hst-n{font-family:"Inter",sans-serif;font-size:20px;font-weight:600;color:#fff;line-height:1}
 .hst-l{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
 .hr{display:flex;align-items:center;gap:10px;margin-left:auto}
-.vbtn{font-size:13px;font-weight:500;padding:8px 16px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);cursor:pointer;color:rgba(255,255,255,.55);border-radius:var(--r);display:flex;align-items:center;gap:6px;transition:all .2s;font-family:"Nunito",sans-serif}
+.vbtn{font-size:13px;font-weight:500;padding:8px 16px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);cursor:pointer;color:rgba(255,255,255,.72);border-radius:var(--r);display:flex;align-items:center;gap:6px;transition:all .2s;font-family:"Nunito",sans-serif}
 .vbtn.a{background:rgba(212,175,55,.14);border-color:rgba(212,175,55,.42);color:var(--gd)}
 .vbtn:hover:not(.a){background:rgba(255,255,255,.1);color:#fff}
-.rfbtn{font-size:11px;color:rgba(255,255,255,.28);cursor:pointer;background:none;border:none;padding:8px;border-radius:var(--r);transition:all .2s}
+.rfbtn{font-size:11px;color:rgba(255,255,255,.45);cursor:pointer;background:none;border:none;padding:8px;border-radius:var(--r);transition:all .2s}
 .rfbtn:hover{color:rgba(255,255,255,.6)}
 
 .pw{max-width:var(--max);margin:0 auto;padding:0 28px;display:flex;min-height:calc(100vh - var(--hh))}
@@ -132,7 +132,7 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
 .cls-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .cls-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
 @media (max-width:640px){.cls-grid{grid-template-columns:1fr}}
-.ct{font-size:12.5px;font-weight:500;padding:8px 13px;border-radius:var(--r);border:.5px solid var(--bd);background:var(--sf);cursor:pointer;color:var(--t2);display:flex;align-items:center;gap:6px;white-space:nowrap;font-family:"Nunito",sans-serif;transition:all .15s}
+.ct{font-size:12.5px;font-weight:500;padding:8px 13px;border-radius:var(--r);border:.5px solid var(--bd);background:var(--sf);cursor:pointer;color:var(--tx);display:flex;align-items:center;gap:6px;white-space:nowrap;font-family:"Nunito",sans-serif;transition:all .15s}
 .ct:hover{border-color:rgba(212,175,55,.3);background:rgba(212,175,55,.04)}
 .ct.a{background:linear-gradient(135deg,var(--nv),var(--nm));color:var(--gd);border-color:transparent;font-weight:600}
 .ct .tp{font-size:11px;padding:1px 6px;border-radius:10px;background:rgba(255,255,255,.15);margin-left:2px}
@@ -150,7 +150,7 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
 .sch{font-size:12.5px;padding:5px 12px;border-radius:20px;border:.5px solid var(--b2);cursor:pointer;font-weight:500;background:var(--sf);color:var(--t2);transition:all .15s;font-family:"Nunito",sans-serif}
 .sch.ns{background:var(--er);color:var(--et);border-color:var(--eb)}.sch.ip{background:var(--wn);color:var(--wt);border-color:var(--wb)}.sch.up{background:var(--ok);color:var(--ot);border-color:var(--ob)}
 
-.dbrow{display:flex;align-items:center;gap:12px;padding:9px 10px;border-bottom:.5px solid var(--bd);cursor:pointer;border-radius:var(--r);margin:2px 0;transition:background .12s,transform .1s}
+.dbrow{display:flex;align-items:center;gap:12px;padding:6px 10px;border-bottom:.5px solid var(--bd);cursor:pointer;border-radius:var(--r);margin:0;transition:background .12s,transform .1s}
 .dbrow:last-child{border-bottom:none}
 .dbrow:not(.z):hover{background:rgba(212,175,55,.05);transform:translateX(4px)}
 .dbrow:not(.z):hover .darr{opacity:1}
@@ -161,17 +161,18 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
 .dbrc{font-size:13.5px;font-weight:600;min-width:28px;text-align:right;flex-shrink:0}
 .dbrr{font-size:12.5px;color:var(--t3);min-width:70px;text-align:right;flex-shrink:0}
 .darr{font-size:13px;color:var(--gd);flex-shrink:0;opacity:0;transition:opacity .12s}
-.ds{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:16px;margin-bottom:12px;box-shadow:var(--gshadow)}
+.ds{background:var(--cd);border:1.5px solid rgba(13,33,71,.16);border-radius:var(--rl);padding:16px;margin-bottom:12px;box-shadow:var(--gshadow)}
 .dt{font-family:"Inter",sans-serif;font-size:18px;font-weight:600;margin-bottom:13px;display:flex;align-items:center;gap:9px;letter-spacing:.01em}
 .d2c{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.d3c{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
 .dbs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-.dbc{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);padding:14px;text-align:center;box-shadow:var(--gshadow);position:relative;overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .15s}
+.dbc{background:var(--cd);border:1.5px solid rgba(13,33,71,.16);border-radius:var(--rl);padding:14px;text-align:center;box-shadow:var(--gshadow);position:relative;overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .15s}
 .dbc:hover{box-shadow:0 4px 20px rgba(15,23,42,.08);transform:translateY(-2px);border-color:var(--b2)}
 .dbc::before{content:"";position:absolute;top:0;left:0;right:0;height:3px}
 .dbc.g::before{background:var(--gd)}.dbc.gr::before{background:#10B981}
 .dbc.b::before{background:var(--bd) repeating-linear-gradient(90deg,var(--gd) 0,var(--gd) 100%)}.dbc.r::before{background:#E11D48}
 .dbc.g::before{background:#0891B2}.dbc.gr::before{background:#10B981}.dbc.b::before{background:#6366F1}.dbc.r::before{background:#E11D48}
-.dbn{font-family:"Inter",sans-serif;font-size:26px;font-weight:600;line-height:1;margin-bottom:4px}
+.dbn{font-family:"Inter",sans-serif;font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
 .ts{font-size:12px;color:var(--t3);text-align:right;margin-bottom:14px;font-style:italic}
 .pbar{height:2px;background:rgba(15,23,42,.06)}
 .pfil{height:100%;background:var(--gd);transition:width .4s;border-radius:inherit}
@@ -236,13 +237,13 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
 .rpt-row:last-child{border-bottom:none}
 .rpt-row:hover{background:#EFF8FF}
 .rpt-row-l{color:var(--t2);font-weight:400}
-.rpt-row-v{font-weight:600;color:var(--tx);font-family:'Inter',sans-serif;font-size:14px}
+.rpt-row-v{font-weight:700;color:var(--tx);font-family:'Inter',sans-serif;font-size:14px}
 .rpt-row.hl{background:rgba(8,145,178,.04)}
 .rpt-row.hl .rpt-row-l{color:var(--tx);font-weight:600}
 .rpt-row.hl .rpt-row-v{color:#0891B2}
 .rpt-footer{background:#0D2147;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;height:52px;gap:8px}
 .rpt-footer-l{font-size:11px;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.08em;font-family:'Nunito',sans-serif;white-space:nowrap;flex-shrink:0}
-.rpt-footer-v{font-family:'Inter',sans-serif;font-size:16px;font-weight:600;color:#FCD34D}
+.rpt-footer-v{font-family:'Inter',sans-serif;font-size:16px;font-weight:700;color:#FCD34D}
 .rpt-overall{background:#0D2147;border-radius:var(--rl);padding:20px;margin-bottom:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid rgba(255,255,255,.08)}
 .rpt-ov-item{text-align:center;padding:12px 16px;border-right:1px solid rgba(255,255,255,.08)}
 .rpt-ov-item:last-child{border-right:none}
@@ -292,7 +293,7 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
 
 /* Report sub-tabs */
 .rpt-subtabs{display:flex;gap:4px;margin-bottom:20px;background:var(--s2);border:1.5px solid rgba(13,33,71,.16);box-shadow:0 2px 8px rgba(15,23,42,.05);border-radius:var(--rl);padding:4px;width:fit-content}
-.rpt-stab{font-size:13px;font-weight:500;padding:8px 18px;border-radius:var(--r);border:none;background:transparent;cursor:pointer;color:var(--t2);font-family:'Nunito',sans-serif;transition:all .15s;display:flex;align-items:center;gap:6px}
+.rpt-stab{font-size:13px;font-weight:500;padding:8px 18px;border-radius:var(--r);border:none;background:transparent;cursor:pointer;color:var(--tx);font-family:'Nunito',sans-serif;transition:all .15s;display:flex;align-items:center;gap:6px}
 .rpt-stab.a{background:var(--cd);color:var(--tx);font-weight:600;box-shadow:0 1px 4px rgba(15,23,42,.08)}
 .rpt-stab:hover:not(.a){color:var(--tx)}
 
@@ -359,7 +360,7 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
 .proj-table tbody tr.expanded td{background:#F0F7FF;border-bottom:none}
 .proj-id{font-weight:700;color:#0D2147;white-space:nowrap;font-family:'Inter',sans-serif;font-size:14px}
 .proj-name{color:var(--tx);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.proj-rec{font-weight:600;color:var(--tx);white-space:nowrap;font-family:'Inter',sans-serif}
+.proj-rec{font-weight:700;color:var(--tx);white-space:nowrap;font-family:'Inter',sans-serif}
 .proj-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;white-space:nowrap;font-family:'Nunito',sans-serif}
 .proj-detail-row td{padding:0!important;border-bottom:1px solid var(--bd)}
 .proj-detail-inner{padding:16px;background:#F8FBFF;border-top:2px solid #0891B2}
@@ -415,25 +416,25 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
 
 /* Header brand lockup */
 .brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
-.brand-ic{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--gd),var(--gl));display:flex;align-items:center;justify-content:center;font-size:19px;color:#1a1000;flex-shrink:0;box-shadow:0 2px 10px rgba(212,175,55,.35)}
+.brand-ic{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--gd),var(--gl));display:flex;align-items:center;justify-content:center;font-size:22px;color:#1a1000;flex-shrink:0;box-shadow:0 2px 10px rgba(212,175,55,.35)}
 .brand-tx{display:flex;flex-direction:column;gap:3px;min-width:0}
-.brand-name{font-family:'Inter',sans-serif;font-size:16.5px;font-weight:700;color:#fff;letter-spacing:.01em;display:flex;align-items:center;gap:9px;line-height:1;white-space:nowrap}
+.brand-name{font-family:'Inter',sans-serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:.01em;display:flex;align-items:center;gap:9px;line-height:1;white-space:nowrap}
 .brand-badge{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 9px;border-radius:20px;background:linear-gradient(135deg,var(--gd),var(--gl));color:#1a1000;flex-shrink:0}
-.brand-sub{font-size:11px;color:rgba(255,255,255,.4);font-family:'Nunito',sans-serif;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.brand-tagline{font-size:9px;font-weight:600;color:var(--gd);font-family:'Nunito',sans-serif;letter-spacing:.15em;text-transform:uppercase;opacity:.9;white-space:nowrap}
+.brand-sub{font-size:12px;color:rgba(255,255,255,.55);font-family:'Nunito',sans-serif;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-tagline{font-size:10px;font-weight:600;color:var(--gd);font-family:'Nunito',sans-serif;letter-spacing:.15em;text-transform:uppercase;opacity:.9;white-space:nowrap}
 
 .addbtn{font-size:13px;font-weight:600;padding:8px 15px;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--gd),var(--gl));color:#1a1000;cursor:pointer;font-family:'Nunito',sans-serif;display:flex;align-items:center;gap:6px;transition:transform .12s,box-shadow .12s;box-shadow:0 2px 10px rgba(212,175,55,.25);flex-shrink:0}
 .addbtn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(212,175,55,.35)}
 
 /* Layout: full-width content, no side rail — top tabs instead */
 .pw{display:block}
-.main{padding:32px 0 40px;min-width:0}
+.main{padding:18px 0 40px;min-width:0}
 .view{width:100%}
 
 /* Horizontal tab bar (replaces the old vertical .sb sidebar) */
 .tabbar{display:flex;align-items:flex-start;gap:4px;background:transparent;max-width:var(--max);margin:0 auto;padding:6px 28px 0;overflow-x:auto;width:100%}
 .tabbar::-webkit-scrollbar{display:none}
-.tabbar .nb,.pmbar .sb-pm{width:auto;flex-shrink:0;margin-bottom:0;padding:9px 16px!important;border-radius:calc(var(--rl) - 4px);border:1.5px solid transparent!important;color:rgba(255,255,255,.55);font-weight:500;font-size:13.5px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;transition:background .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease}
+.tabbar .nb,.pmbar .sb-pm{width:auto;flex-shrink:0;margin-bottom:0;padding:9px 16px!important;border-radius:calc(var(--rl) - 4px);border:1.5px solid transparent!important;color:rgba(255,255,255,.7);font-weight:500;font-size:13.5px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;transition:background .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease}
 .tabbar .nb i,.pmbar .sb-pm i{opacity:1;font-size:15px}
 .tabbar .nb:hover:not(.a),.pmbar .sb-pm:hover:not(.a){background:rgba(255,255,255,.08);color:#fff}
 .tabbar .nb.a,.pmbar .sb-pm.a{background:#fff;color:var(--nv);font-weight:700;box-shadow:0 8px 20px rgba(15,23,42,.14);border-radius:14px 14px 0 0!important;border-color:var(--gd) var(--gd) transparent var(--gd)!important}
@@ -465,7 +466,7 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
 .dbc::before{display:none}
 .dbc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:8px}
 .dbc-lbl{font-size:10.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;line-height:1.4;padding-top:5px}
-.dbc-ic{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.dbc-ic{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
 .dbc-ic.ic-g{background:rgba(8,145,178,.12);color:#0891B2}
 .dbc-ic.ic-gr{background:rgba(16,185,129,.14);color:#0e9f68}
 .dbc-ic.ic-b{background:rgba(99,102,241,.13);color:#6366F1}
@@ -599,7 +600,7 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
   <button class="nb" onclick="nt('postreview',this)" id="pr-nav-btn" style="position:relative"><i class="ti ti-zoom-check"></i> Post-review <span class="tbadge" id="tb-postreview" style="display:none">0</span></button>
   <button class="nb" onclick="nt('standards',this)"><i class="ti ti-shield-check"></i> Standards</button>
   <button class="nb" onclick="nt('scope',this)"><i class="ti ti-tools"></i> Scope of Work &amp; Tools <span class="tbadge" id="tb-scope">0</span></button>
-  <button class="nb" onclick="nt('grid',this)"><i class="ti ti-list-details"></i> Grid Editor &amp; Settings</button>
+  <button class="nb" onclick="nt('grid',this)"><i class="ti ti-list-details"></i> Settings</button>
 </div>
 <div class="tabbar pmbar" id="sb-pm" style="display:none"></div>
 </header>
@@ -645,12 +646,12 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
     <div id="n-scope" class="tab"></div>
     <div id="n-grid" class="tab">
       <div id="n-grid-settings"></div>
-      <div id="n-grid-editor"></div>
     </div>
   </main>
 </div>
 <div id="v-team" class="view" style="display:none;width:100%">
   <main class="main">
+    <div id="flag-alert-wrap"></div>
     <div class="ti2" id="team-guide-banner"><strong>Team Submission Guide</strong> &mdash; Select your name to see your assigned projects and checklist.<br><span style="font-size:14px;opacity:.75">All uploads happen in the <strong>ILSFA portal</strong> and <strong>Zoho</strong>.</span></div>
     <div id="pmc"></div>
   </main>
@@ -708,19 +709,19 @@ window.addEventListener('unhandledrejection',function(e){
 });
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxfxa06AhxkCMFBj87pjbjaIFQDBdKMhyST4T7Gce4-W43m5sjqoVInPN9GjrSmiBRE/exec';
 const DP=[
-  {id:'P-10711',name:'',py:'PY7',sub:'Oct 21, 2025',pilot:false,ps:'Further Part II information requested',cs:'Addressed',recs:'$39,198',ut:'ComEd',corr:'(1) Submit 15-module South array panel layout photo. (2) Submit system production report.',cmt:'Pending review.',pm:''},
-  {id:'P-13512',name:'',py:'PY8-2025',sub:'May 13, 2026',pilot:false,ps:'Under Inspection',cs:'No feedback',recs:'$52,460',ut:'ComEd',corr:'',cmt:'Upload separate clear full array photos. Pending Approved SO.',pm:'Allaiza'},
-  {id:'P-13053',name:'',py:'PY8-2025',sub:'May 13, 2026',pilot:false,ps:'Under Inspection',cs:'No feedback',recs:'$29,058',ut:'Ameren',corr:'',cmt:'Upload separate clear full array photos. Pending Approved SO.',pm:'Genneva'},
-  {id:'P-13457',name:'',py:'PY8-2025',sub:'May 13, 2026',pilot:false,ps:'Under Inspection',cs:'No feedback',recs:'$48,950',ut:'ComEd',corr:'',cmt:'Pending Approved SO.',pm:'Francheska'},
-  {id:'P-12833',name:'',py:'PY8-2025',sub:'May 14, 2026',pilot:false,ps:'Under Inspection',cs:'No feedback',recs:'$34,519',ut:'Ameren',corr:'',cmt:'Upload separate clear full array photos.',pm:'Angelica'},
-  {id:'P-13416',name:'',py:'PY8-2025',sub:'May 18, 2026',pilot:false,ps:'Under Inspection',cs:'Addressed',recs:'$49,475',ut:'ComEd',corr:'Submit array layout photo of the 6-module South array.',cmt:'Pending SO approval.',pm:'May'},
-  {id:'P-12949',name:'',py:'PY8-2025',sub:'May 21, 2026',pilot:false,ps:'Under Inspection',cs:'No feedback',recs:'$37,834',ut:'ComEd',corr:'',cmt:'Pending Approved SO.',pm:'Allaiza'},
-  {id:'P-11988',name:'',py:'PY8-2025',sub:'May 21, 2026',pilot:false,ps:'Further Part II information requested',cs:'Pending',recs:'$34,714',ut:'Ameren',corr:'(1) Submit Cold Water Grounding mitigation photos. (2) Submit system production report.',cmt:'Monitoring photos showing system offline.',pm:'Genneva'},
-  {id:'P-12990',name:'',py:'PY8-2025',sub:'May 22, 2026',pilot:false,ps:'Under Inspection',cs:'No feedback',recs:'$32,568',ut:'ComEd',corr:'',cmt:'Pending Approved SO.',pm:'Francheska'},
-  {id:'P-13054 - PY25-26',name:'',py:'PY8-2025',sub:'Aug 6, 2026',pilot:false,ps:'Under Inspection',cs:'No feedback',recs:'$57,335.88',ut:'ComEd',corr:'',cmt:'Pending SO approval.',pm:'Francheska'},
-  {id:'P-13487 - PY25-26',name:'',py:'PY8-2025',sub:'Aug 20, 2026',pilot:false,ps:'Part II Submitted',cs:'No feedback',recs:'$42,904.40',ut:'ComEd',corr:'',cmt:'Pending SO approval.',pm:'Francheska'},
-  {id:'P-12983 - PY25-26',name:'',py:'PY8-2025',sub:'Aug 20, 2026',pilot:false,ps:'Part II Submitted',cs:'No feedback',recs:'$44,074.52',ut:'ComEd',corr:'',cmt:'Pending SO approval.',pm:'Francheska'},
-  {id:'P-13135 - PY25-26',name:'',py:'PY8-2025',sub:'Aug 18, 2026',pilot:false,ps:'Part II Submitted',cs:'No feedback',recs:'$43,664.72',ut:'ComEd',corr:'COC document has no address.\nNo passed Inspection card uploaded.\nPending SO approval.',cmt:'',pm:'Francheska'},
+  {id:'P-14210 - PY25-26',name:'Alaa Alananbeh - 11663 Glenview Dr - ILSFA',py:'PY8-2025',sub:'Sep 9, 2026',pilot:false,ps:'Part II Submitted',cs:'No feedback',recs:'$46,024.72',ut:'ComEd',corr:'',cmt:'',pm:'Allaiza'},
+  {id:'P-13611 - PY25-26',name:'Rad Taha - 2101 Victoria Lakes Dr - ILSFA',py:'PY8-2025',sub:'Sep 14, 2026',pilot:false,ps:'Part II Submitted',cs:'No feedback',recs:'$37,004.00',ut:'ComEd',corr:'',cmt:'',pm:'Allaiza'},
+  {id:'P-13661 - PY25-26',name:'Rayford Neely - 412 North Day Avenue - ILSFA',py:'PY8-2025',sub:'Sep 25, 2026',pilot:false,ps:'Part II Submitted',cs:'No feedback',recs:'$20,867.14',ut:'ComEd',corr:'',cmt:'',pm:'Allaiza'},
+  {id:'P-13447 - PY25-26',name:'John Muhia - 1826 Clarendon Lane - ILSFA',py:'PY8-2025',sub:'Sep 17, 2026',pilot:false,ps:'Part II Submitted',cs:'No feedback',recs:'$25,742.64',ut:'ComEd',corr:'',cmt:'',pm:'Francheska'},
+  {id:'P-13324 - PY25-26',name:'MUHAMMAD FAROOQ - 1236 N Scarlet dr - ILSFA',py:'PY8-2025',sub:'Sep 14, 2026',pilot:false,ps:'Part II Submitted',cs:'No feedback',recs:'$49,340.06',ut:'ComEd',corr:'',cmt:'',pm:'Allaiza'},
+  {id:'P-13260 - PY25-26',name:'Omar Iweenaat - 6934 W Fletcher St - ILSFA',py:'PY8-2025',sub:'Sep 14, 2026',pilot:false,ps:'Part II Submitted',cs:'No feedback',recs:'$44,074.52',ut:'ComEd',corr:'',cmt:'',pm:'Francheska'},
+  {id:'P-12982 - PY25-26',name:'Karolis Senkus - 3604 Oak Knoll Rd - ILSFA',py:'PY8-2025',sub:'Sep 28, 2026',pilot:false,ps:'Part II Submitted',cs:'No feedback',recs:'$53,435.48',ut:'Ameren',corr:'',cmt:'',pm:'Francheska'},
+  {id:'P-12962 - PY25-26',name:'Atif Ghafoor - 2611 Cody Ct - ILSFA',py:'PY8-2025',sub:'Sep 15, 2026',pilot:false,ps:'Part II Submitted',cs:'No feedback',recs:'$56,360.78',ut:'ComEd',corr:'',cmt:'',pm:'Allaiza'},
+  {id:'P-12559 - PY25-26',name:'Yunus Gen - 4826 W Winnemac Ave - ILSFA',py:'PY8-2025',sub:'Sep 22, 2026',pilot:false,ps:'Part II Submitted',cs:'No feedback',recs:'$46,804.80',ut:'ComEd',corr:'',cmt:'',pm:'Allaiza'},
+  {id:'P-11905 - PY25-26',name:'Francisco Perez - 717 N Ohio St - ILSFA',py:'PY8',sub:'Sep 14, 2026',pilot:false,ps:'Part II Submitted',cs:'No feedback',recs:'$39,004.00',ut:'IPA',corr:'',cmt:'',pm:'Allaiza'},
+  {id:'P-12018 - PY25-26',name:'Teresa Diaz - 124 Nobes Ave - ILSFA',py:'PY8',sub:'Sep 14, 2026',pilot:false,ps:'Part II Submitted',cs:'No feedback',recs:'$28,472.92',ut:'Ameren',corr:'',cmt:'',pm:'Allaiza'},
+  {id:'P-13057 - PY25-26',name:'Loretta Lee - 13166 S Rhodes Ave - ILSFA',py:'PY8-2025',sub:'Sep 14, 2026',pilot:false,ps:'Part II Submitted',cs:'No feedback',recs:'$19,697.02',ut:'IPA',corr:'',cmt:'',pm:'Allaiza'},
+  {id:'P-12262 - PY25-26',name:'Sylvester Boines - 10155 S Emerald Ave - ILSFA',py:'PY8',sub:'Sep 17, 2026',pilot:false,ps:'Part II Submitted',cs:'No feedback',recs:'$35,103.60',ut:'IPA',corr:'',cmt:'',pm:'Allaiza'},
 ];
 const DPM=['Mary','Allaiza','Francheska','Angelica','May'];
 const MGR='Mary';
@@ -989,7 +990,7 @@ function ra(){
     var id=activeTab.id.replace('n-','');
     if(id==='dashboard')rdb();
     else if(id==='scope')rscope();
-    else if(id==='grid'){rset();rgrid();}
+    else if(id==='grid'){rset();}
     else if(id==='projects')rp();
     else if(id==='postreview')rpr();
     else if(id==='standards')rstd();
@@ -1014,7 +1015,7 @@ function aP(){
 function apm(){const n=document.getElementById('npm').value.trim();if(!n)return;if(PML.map(x=>x.toLowerCase()).includes(n.toLowerCase())){alert('PM exists.');return;}PML=[...PML,n];showPMAF=false;rset();rtv();api({action:'setPMs',data:JSON.stringify(PML)});}
 function dpm(n){if(n===MGR){alert('Mary cannot be removed.');return;}if(!confirm('Remove '+n+'?'))return;PML=PML.filter(x=>x!==n);P.filter(p=>p.pm===n).forEach(p=>{p.pm='';api({action:'upsertProject',data:JSON.stringify(p)});});rset();rtv();api({action:'setPMs',data:JSON.stringify(PML)});}
 
-function fpg(){if(!AF)return P;const{t,v}=AF;if(t==='all')return P;if(t==='ps')return P.filter(p=>p.ps===v);if(t==='cs')return P.filter(p=>p.cs===v);if(t==='py')return P.filter(p=>p.py===v);if(t==='pilot')return P.filter(p=>String(p.pilot)===v);if(t==='ut')return P.filter(p=>(p.ut||'')===v);if(t==='pm')return P.filter(p=>p.pm===v);if(t==='jts')return P.filter(p=>(p.jts||'—')===v);return P;}
+function fpg(){if(!AF)return P;const{t,v}=AF;if(t==='all')return P;if(t==='ps')return P.filter(p=>p.ps===v);if(t==='cs')return P.filter(p=>p.cs===v);if(t==='py')return P.filter(p=>p.py===v);if(t==='pilot')return P.filter(p=>String(p.pilot)===v);if(t==='ut')return P.filter(p=>(p.ut||'')===v);if(t==='pm')return P.filter(p=>p.pm===v);if(t==='jts')return P.filter(p=>(p.jts||'—')===v);if(t==='hrp')return P.filter(p=>isp(p)&&(p.hrp||'Not Applicable')===v);return P;}
 function fg(t,v,label,count){if(count===0&&t!=='all')return;AF={t,v,label};ntid('n-projects');rp();}
 function cf(){AF=null;rp();}
 function fgpm(pm,c){if(c===0)return;svid('team');activePM=pm;rtv();}
@@ -1116,6 +1117,23 @@ function dbRow(label,n,recs,color,max,fn){
   return el.outerHTML;
 }
 
+function buildDonutStopsWithGaps(keys,colors,counts,total){
+  var gapPct=0.6;
+  var visibleIdx=keys.map(function(k,i){return i;}).filter(function(i){return counts[i]>0;});
+  var totalGap=gapPct*visibleIdx.length;
+  var usablePct=Math.max(0,100-totalGap);
+  var acc=0,stops=[];
+  visibleIdx.forEach(function(i){
+    var segPct=counts[i]/total*usablePct;
+    var s=acc,e=acc+segPct;
+    stops.push(colors[keys[i]]+' '+s.toFixed(2)+'% '+e.toFixed(2)+'%');
+    acc=e;
+    var gapEnd=acc+gapPct;
+    stops.push('#fff '+acc.toFixed(2)+'% '+gapEnd.toFixed(2)+'%');
+    acc=gapEnd;
+  });
+  return stops;
+}
 function rdb(){
   updateTabBadges();
   const tot=P.length;
@@ -1170,8 +1188,8 @@ function rdb(){
     var row='<div class="dbrow'+(n===0?' z':'')+'" onclick="'+onclick+'">';
     row+='<div class="dbrl"><span style="width:8px;height:8px;border-radius:50%;background:'+color+';flex-shrink:0;display:inline-block"></span>'+label+'</div>';
     row+='<div style="flex:1;height:6px;background:var(--s2);border-radius:3px;overflow:hidden;margin:0 10px"><div style="height:100%;width:'+w+'%;background:'+color+';border-radius:3px"></div></div>';
-    row+='<div style="font-size:13px;font-weight:600;min-width:24px;text-align:right">'+n+'</div>';
-    row+='<div style="font-size:12px;color:var(--t3);min-width:64px;text-align:right;font-family:Nunito,sans-serif">'+fmK(r)+'</div>';
+    row+='<div style="font-size:13px;font-weight:700;min-width:24px;text-align:right">'+n+'</div>';
+    row+='<div style="font-size:12px;color:var(--t2);min-width:64px;text-align:right;font-family:Nunito,sans-serif">'+fmK(r)+'</div>';
     row+='<i class="ti ti-arrow-right darr"></i></div>';
     return row;
   }
@@ -1181,7 +1199,7 @@ function rdb(){
   sl.forEach(function(s){
     var n=P.filter(function(p){return p.ps===s.k;}).length;
     var r=P.filter(function(p){return p.ps===s.k;}).reduce(function(a,p){return a+rv(p);},0);
-    slRows+=mkRow(s.l,n,tot,r,s.c,'navDash("ps","'+s.k+'","'+s.l+'",'+n+')');
+    slRows+=mkRow(s.l,n,tot,r,s.c,'navDash(\'ps\',\''+s.k+'\',\''+s.l+'\','+n+')');
   });
 
   // Correction status rows
@@ -1189,7 +1207,7 @@ function rdb(){
   cl.forEach(function(c){
     var n=P.filter(function(p){return p.cs===c.k;}).length;
     var r=P.filter(function(p){return p.cs===c.k;}).reduce(function(a,p){return a+rv(p);},0);
-    clRows+=mkRow(c.l,n,tot,r,c.c,'navDash("cs","'+c.k+'","'+c.l+'",'+n+')');
+    clRows+=mkRow(c.l,n,tot,r,c.c,'navDash(\'cs\',\''+c.k+'\',\''+c.l+'\','+n+')');
   });
 
   // PM workload cards
@@ -1218,15 +1236,25 @@ function rdb(){
   pl.forEach(function(py){
     var n=P.filter(function(p){return p.py===py;}).length;
     var r=P.filter(function(p){return p.py===py;}).reduce(function(a,p){return a+rv(p);},0);
-    pyRows+=mkRow(py,n,tot,r,pc[py],'navDash("py","'+py+'","'+py+'",'+n+')');
+    pyRows+=mkRow(py,n,tot,r,pc[py],'navDash(\'py\',\''+py+'\',\''+py+'\','+n+')');
   });
 
   // Utility rows
   var utRows='';
+  var utKeysArr=['ComEd','Ameren','IPA'];
+  var utColorsMap={'ComEd':'#0D2147','Ameren':'#0891B2','IPA':'#6366F1'};
   [{u:'ComEd',c:'#0D2147'},{u:'Ameren',c:'#0891B2'},{u:'IPA',c:'#6366F1'}].forEach(function(u){
     var n=P.filter(function(p){return p.ut===u.u;}).length;
     var r=P.filter(function(p){return p.ut===u.u;}).reduce(function(a,p){return a+rv(p);},0);
-    utRows+=mkRow(u.u,n,tot,r,u.c,'navDash("ut","'+u.u+'","'+u.u+'",'+n+')');
+    utRows+=mkRow(u.u,n,tot,r,u.c,'navDash(\'ut\',\''+u.u+'\',\''+u.u+'\','+n+')');
+  });
+  var utCountsArr=utKeysArr.map(function(u){return P.filter(function(p){return p.ut===u;}).length;});
+  var utTotalCount=utCountsArr.reduce(function(a,b){return a+b;},0)||1;
+  var utDonutStops=buildDonutStopsWithGaps(utKeysArr,utColorsMap,utCountsArr,utTotalCount);
+  var utDonutLegend='';
+  utKeysArr.forEach(function(u,i){
+    if(utCountsArr[i]===0)return;
+    utDonutLegend+='<div class="donut-leg-row" onclick="navDash(\'ut\',\''+u+'\',\''+u+'\','+utCountsArr[i]+')"><span class="dot" style="background:'+utColorsMap[u]+'"></span>'+u+'<span class="donut-leg-n">'+utCountsArr[i]+'</span></div>';
   });
 
 
@@ -1245,7 +1273,7 @@ function rdb(){
     {l:'Total Submitted',v:tr,c:'#6366F1'},
     {l:'Part II Pending',v:pendApprovalSum,c:'#D97706'},
     {l:'Pending PTO/COC',v:ptoSum,c:'#0891B2'},
-    {l:'Approved Projects',v:readyInvoiceSum,c:'#10B981'},
+    {l:'Approved - Ready to Invoice',v:readyInvoiceSum,c:'#10B981'},
   ].forEach(function(b){
     barChart+='<div class="bch-col"><div class="bch-val">'+fmK(b.v)+'</div><div class="bch-bar" style="height:'+barH(b.v)+'%;background:'+b.c+'"></div><div class="bch-lbl">'+b.l+'</div></div>';
   });
@@ -1255,21 +1283,17 @@ function rdb(){
     {l:'Submitted ('+subCount+')',v:subSum,c:'#6366F1',bg:'rgba(99,102,241,.07)'},
     {l:'Part II Pending ('+pendApprovalCount+')',v:pendApprovalSum,c:'#D97706',bg:'rgba(217,119,6,.07)'},
     {l:'Pending PTO/COC ('+ui.length+')',v:ptoSum,c:'#0891B2',bg:'rgba(8,145,178,.07)'},
-    {l:'Approved Projects ('+app.length+')',v:readyInvoiceSum,c:'#10B981',bg:'rgba(16,185,129,.07)'},
+    {l:'Approved - Ready to Invoice ('+app.length+')',v:readyInvoiceSum,c:'#10B981',bg:'rgba(16,185,129,.07)'},
   ].forEach(function(c){
     chipRow+='<div class="bch-chip" style="background:'+c.bg+'"><div class="bch-chip-v" style="color:'+c.c+'">'+fm(c.v)+'</div><div class="bch-chip-l">'+c.l+'</div></div>';
   });
 
   const pyKeys=['PY7','PY8','PY8-2025'];
-  const pyColors={'PY7':'#0891B2','PY8':'#0D2147','PY8-2025':'#94A3B8'};
+  const pyColors={'PY7':'#CBD5E1','PY8':'#3B82F6','PY8-2025':'#0F172A'};
   const pyAdjustStore=getPYAdjust();
   const pyCounts=pyKeys.map(function(py){return (typeof pyAdjustStore[py]==='number')?pyAdjustStore[py]:P.filter(function(p){return p.py===py;}).length;});
   const pyTotal=pyCounts.reduce(function(a,b){return a+b;},0)||1;
-  var acc=0,donutStops=[];
-  pyKeys.forEach(function(py,i){
-    var s=acc/pyTotal*100;acc+=pyCounts[i];var e=acc/pyTotal*100;
-    donutStops.push(pyColors[py]+' '+s.toFixed(2)+'% '+e.toFixed(2)+'%');
-  });
+  var donutStops=buildDonutStopsWithGaps(pyKeys,pyColors,pyCounts,pyTotal);
   var donutLegend='';
   pyKeys.forEach(function(py,i){
     donutLegend+='<div class="donut-leg-row" onclick="navDash(\'py\',\''+py+'\',\''+py+'\','+pyCounts[i]+')"><span class="dot" style="background:'+pyColors[py]+'"></span>'+py+'<span class="donut-leg-n">'+pyCounts[i]+'</span></div>';
@@ -1299,35 +1323,35 @@ function rdb(){
   let html=`<div class="ts">Last updated: ${now}</div>
 
   <div class="dbs dbs6">
-    <div class="dbc" onclick="navTo('projects')" title="View all projects">
+    <div class="dbc" onclick="navToDailyReport()" title="View Daily Report">
       <div class="dbc-top"><span class="dbc-lbl">Overall Portfolio Value</span><span class="dbc-ic ic-gr"><i class="ti ti-currency-dollar"></i></span></div>
       <div class="dbn">${fm(tr)}</div>
       <div class="dbc-sub">${tot} Overall Projects</div>
     </div>
-    <div class="dbc" onclick="(()=>{fg('ps','Part II Submitted','Submitted',${subCount});navTo('projects');})()" title="View submitted projects">
+    <div class="dbc" onclick="navToDailyReport()" title="View Daily Report">
       <div class="dbc-top"><span class="dbc-lbl">Submitted to Program</span><span class="dbc-ic ic-nv"><i class="ti ti-circle-check"></i></span></div>
       <div class="dbn">${fm(subSum)}</div>
       <div class="dbc-sub">${subCount} Projects Submitted</div>
     </div>
-    <div class="dbc" onclick="navTo('projects')" title="View projects pending Part II approval">
+    <div class="dbc" onclick="navToDailyReport()" title="View Daily Report">
       <div class="dbc-top"><span class="dbc-lbl">Pending Part II Approval</span><span class="dbc-ic ic-o"><i class="ti ti-clock"></i></span></div>
       <div class="dbn">${fm(pendApprovalSum)}</div>
       <div class="dbc-sub">${pendApprovalCount} Projects Pending</div>
     </div>
-    <div class="dbc" onclick="navTo('postreview')" title="View projects pending PTO / COC">
+    <div class="dbc" onclick="navToDailyReport()" title="View Daily Report">
       <div class="dbc-top"><span class="dbc-lbl">Pending PTO / COC</span><span class="dbc-ic ic-g"><i class="ti ti-activity"></i></span></div>
       <div class="dbn">${fm(ptoSum)}</div>
       <div class="dbc-sub">${ui.length} Projects Pending</div>
     </div>
-    <div class="dbc" onclick="(()=>{fg('ps','Approved','Approved',${app.length});navTo('projects');})()" title="View approved projects">
+    <div class="dbc" onclick="navToDailyReport()" title="View Daily Report">
       <div class="dbc-top"><span class="dbc-lbl">Approved Projects</span><span class="dbc-ic ic-gr"><i class="ti ti-circle-check"></i></span></div>
       <div class="dbn">${fm(readyInvoiceSum)}</div>
       <div class="dbc-sub">${app.length} Projects Approved</div>
     </div>
-    <div class="dbc" onclick="(()=>{fg('ps','Further Part II information requested','Need correction',${fi.length});navTo('projects');})()" title="View active PM corrections">
-      <div class="dbc-top"><span class="dbc-lbl">Active PM Corrections</span><span class="dbc-ic ic-r"><i class="ti ti-alert-triangle"></i></span></div>
-      <div class="dbn">${fi.length} PM Item${fi.length!==1?'s':''}</div>
-      <div class="dbc-sub">${fi.length===0?'All Cleared':fi.length+' Active'} <span style="color:#0891B2;font-weight:600">View &rarr;</span></div>
+    <div class="dbc" style="cursor:default" title="Progress toward the $2,000,000 portfolio target">
+      <div class="dbc-top"><span class="dbc-lbl">2M Target</span><span class="dbc-ic ic-nv"><i class="ti ti-target-arrow"></i></span></div>
+      <div class="dbn">${tPct}%</div>
+      <div class="dbc-sub">${fm(tr)} of $2,000,000</div>
     </div>
   </div>
 
@@ -1351,7 +1375,6 @@ function rdb(){
           <div class="donut-center"><div class="donut-n">${tot}</div><div class="donut-l">Projects</div></div>
         </div>
       </div>
-      <div class="donut-legend">${donutLegend}</div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 8px">
         <span style="font-size:10.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em">Adjust Counts (syncs live)</span>
         <button onclick="resetPYAdjust()" style="font-size:11px;color:#0891B2;background:none;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:600">Reset to live</button>
@@ -1381,49 +1404,47 @@ function rdb(){
     html+=`</div>`;
   }
 
-  // ── SECTION: REC Target + Checklist progress ─────────────
-  html+=`<div class="d2c">
-    <div class="ds" onclick="navTo('report')" style="cursor:pointer" title="View full report">
-      <div class="dt"><i class="ti ti-target" style="font-size:16px;color:var(--gd)"></i> $2M REC Target</div>
-      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
-        <span style="font-family:'Inter',sans-serif;font-size:36px;font-weight:600;color:var(--tx)">${tPct}%</span>
-        <span style="font-size:13px;color:var(--t3);font-family:'Nunito',sans-serif">${fmK(tr)} of $2M</span>
+  // ── SECTION: Portal Status + Correction Status (stacked) + Job Training ─────────────
+  html+=`<div class="d2c" style="margin-bottom:10px">
+    <div id="ps-cs-wrapper" style="display:flex;flex-direction:column;gap:10px">
+      <div class="ds" id="portal-status-card" style="margin-bottom:0;padding:12px">
+        <div class="dt" style="margin-bottom:8px"><i class="ti ti-activity" style="font-size:15px;color:var(--gd)"></i> Portal Status</div>
+${slRows}
       </div>
-      <div style="height:8px;background:var(--s2);border-radius:4px;overflow:hidden;margin-bottom:8px">
-        <div style="height:100%;width:${tPct}%;background:linear-gradient(90deg,#0891B2,var(--gd));border-radius:4px;transition:width .8s"></div>
+      <div class="ds" id="correction-status-card" style="margin-bottom:0;overflow:hidden;padding:12px">
+        <div class="dt" style="margin-bottom:8px"><i class="ti ti-message-report" style="font-size:15px;color:var(--gd)"></i> Correction Status</div>
+${clRows}
       </div>
-      <div style="font-size:12px;color:var(--t3);font-family:'Nunito',sans-serif">$${Math.max(TARGET-tr,0).toLocaleString()} remaining · <span style="color:#0891B2">View full report →</span></div>
     </div>
-    <div class="ds" onclick="navTo('projects')" style="cursor:pointer" title="View team checklists">
-      <div class="dt"><i class="ti ti-list-check" style="font-size:16px;color:var(--gd)"></i> Team Checklist Progress</div>
-      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
-        <span style="font-family:'Inter',sans-serif;font-size:36px;font-weight:600;color:var(--tx)">${clAvg}%</span>
-        <span style="font-size:13px;color:var(--t3);font-family:'Nunito',sans-serif">avg completion</span>
+    <div class="ds" id="job-training-card" style="padding:12px">
+      <div class="dt" style="margin-bottom:4px"><i class="ti ti-school" style="font-size:15px;color:var(--gd)"></i> Job Training Status</div>
+      <div style="font-size:12px;color:var(--t3);font-family:'Nunito',sans-serif;margin-bottom:8px">All projects by job training status</div>
+      <div class="donut-wrap" style="margin:2px 0 10px">
+        <div class="donut" style="width:110px;height:110px;background:conic-gradient(${jtsDonutStops.join(',')})">
+          <div class="donut-center"><div class="donut-n" style="font-size:20px">${tot}</div><div class="donut-l" style="font-size:11px">Projects</div></div>
+        </div>
       </div>
-      <div style="height:8px;background:var(--s2);border-radius:4px;overflow:hidden;margin-bottom:8px">
-        <div style="height:100%;width:${clAvg}%;background:linear-gradient(90deg,#0891B2,var(--ot));border-radius:4px;transition:width .8s"></div>
-      </div>
-      <div style="font-size:12px;color:var(--t3);font-family:'Nunito',sans-serif">${clDone}/${tot} projects complete · <span style="color:#0891B2">View projects →</span></div>
+      <div class="donut-legend">${jtsDonutLegend}</div>
     </div>
   </div>`;
 
   // ── SECTION: Post-review overview ────────────────────────
-  html+=`<div class="ds">
-    <div class="dt"><i class="ti ti-zoom-check" style="font-size:16px;color:var(--gd)"></i> Post-review Overview
+  html+=`<div class="ds" style="padding:12px;margin-bottom:10px">
+    <div class="dt" style="margin-bottom:10px"><i class="ti ti-zoom-check" style="font-size:15px;color:var(--gd)"></i> Post-review Overview
       <button onclick="navTo('postreview')" style="margin-left:auto;font-size:12px;padding:4px 12px;border-radius:var(--r);border:1px solid var(--bd);background:transparent;cursor:pointer;color:var(--t2);font-family:'Nunito',sans-serif">Open post-review →</button>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px">
-      <div style="text-align:center;padding:12px;background:var(--sf);border-radius:var(--r);border:1px solid var(--bd)">
-        <div style="font-family:'Inter',sans-serif;font-size:24px;font-weight:600;color:var(--ot)">${prPass}</div>
-        <div style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif;margin-top:3px">Fully Passed</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
+      <div style="text-align:center;padding:8px;background:var(--sf);border-radius:var(--r);border:1px solid var(--bd)">
+        <div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:700;color:var(--ot)">${prPass}</div>
+        <div style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif;margin-top:2px">Fully Passed</div>
       </div>
-      <div style="text-align:center;padding:12px;background:var(--sf);border-radius:var(--r);border:1px solid var(--bd)">
-        <div style="font-family:'Inter',sans-serif;font-size:24px;font-weight:600;color:var(--et)">${prFail}</div>
-        <div style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif;margin-top:3px">Has Failures</div>
+      <div style="text-align:center;padding:8px;background:var(--sf);border-radius:var(--r);border:1px solid var(--bd)">
+        <div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:700;color:var(--et)">${prFail}</div>
+        <div style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif;margin-top:2px">Has Failures</div>
       </div>
-      <div style="text-align:center;padding:12px;background:var(--sf);border-radius:var(--r);border:1px solid var(--bd)">
-        <div style="font-family:'Inter',sans-serif;font-size:24px;font-weight:600;color:var(--t2)">${tot-prDone}</div>
-        <div style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif;margin-top:3px">Not Reviewed</div>
+      <div style="text-align:center;padding:8px;background:var(--sf);border-radius:var(--r);border:1px solid var(--bd)">
+        <div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:700;color:var(--t2)">${tot-prDone}</div>
+        <div style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif;margin-top:2px">Not Reviewed</div>
       </div>
     </div>
     <div style="height:6px;background:var(--s2);border-radius:3px;overflow:hidden;display:flex">
@@ -1437,44 +1458,58 @@ function rdb(){
     </div>
   </div>`;
 
-  // ── SECTION: Status + Correction breakdown ───────────────
-
-  html+=`<div class="d2c">
-    <div class="ds">
-      <div class="dt"><i class="ti ti-activity" style="font-size:16px;color:var(--gd)"></i> Portal Status</div>
-${slRows}
-    </div>
-    <div class="ds">
-      <div class="dt"><i class="ti ti-message-report" style="font-size:16px;color:var(--gd)"></i> Correction Status</div>
-${clRows}
-    </div>
-  </div>`;
-
-  // ── SECTION: PM workload ─────────────────────────────────
-  html+=`<div class="ds">
-    <div class="dt"><i class="ti ti-users" style="font-size:16px;color:var(--gd)"></i> PM Workload
-      <button onclick="svid('team')" style="margin-left:auto;font-size:12px;padding:4px 12px;border-radius:var(--r);border:1px solid var(--bd);background:transparent;cursor:pointer;color:var(--t2);font-family:'Nunito',sans-serif">Team view →</button>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
-    ${pmCards}
-    </div>
-  </div>`;
-
-  // ── SECTION: Utility + Job Training Status ────────────────
-  html+=`<div class="d2c">
-    <div class="ds">
-      <div class="dt"><i class="ti ti-plug" style="font-size:16px;color:var(--gd)"></i> Utility</div>
-      ${utRows}
-    </div>
-    <div class="ds">
-      <div class="dt"><i class="ti ti-school" style="font-size:16px;color:var(--gd)"></i> Job Training Status</div>
-      <div style="font-size:12.5px;color:var(--t3);font-family:'Nunito',sans-serif;margin-bottom:14px">All projects by job training status</div>
-      <div class="donut-wrap">
-        <div class="donut" style="background:conic-gradient(${jtsDonutStops.join(',')})">
-          <div class="donut-center"><div class="donut-n">${tot}</div><div class="donut-l">Projects</div></div>
+  // ── SECTION: Utility + HRP Pending Part II Status Tracker (same row) ───────────────
+  (function(){
+    var hrpKeys=['Not Applicable','Dropped','Part 2 Pilot Program Pending','Part 2 Pilot Program In review','Approved'];
+    var hrpShort={'Approved':'Approved','Dropped':'Dropped','Part 2 Pilot Program Pending':'Pending','Part 2 Pilot Program In review':'In Review','Not Applicable':'Not Applicable'};
+    var hrpColors={'Approved':'#10B981','Dropped':'#7C2D12','Part 2 Pilot Program Pending':'#D97706','Part 2 Pilot Program In review':'#0891B2','Not Applicable':'#9CA3AF'};
+    var pilotProjects=P.filter(isp);
+    var categoriesWithItems=0;
+    var hrpTiles='';
+    hrpKeys.forEach(function(k){
+      var matching=pilotProjects.filter(function(p){return (p.hrp||'Not Applicable')===k;});
+      var n=matching.length;
+      if(n>0)categoriesWithItems++;
+      var kEsc=k.replace(/'/g,"\\'");
+      var isZero=n===0;
+      hrpTiles+='<div onclick="'+(isZero?'':'navDash(\'hrp\',\''+kEsc+'\',\''+kEsc+'\','+n+')')+'" style="background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:9px 6px;text-align:center;cursor:'+(isZero?'default':'pointer')+';opacity:'+(isZero?'.5':'1')+'">'
+        +'<div style="width:7px;height:7px;border-radius:50%;background:'+hrpColors[k]+';margin:0 auto 5px"></div>'
+        +'<div style="font-family:\'Inter\',sans-serif;font-size:17px;font-weight:700;color:var(--tx);line-height:1">'+n+'</div>'
+        +'<div style="font-size:10px;color:var(--t2);font-family:\'Nunito\',sans-serif;margin-top:3px;line-height:1.2">'+hrpShort[k]+'</div>'
+        +'</div>';
+    });
+    html+=`<div class="d2c" style="margin-bottom:10px">
+      <div class="ds" style="padding:12px;margin-bottom:0">
+        <div class="dt" style="margin-bottom:8px"><i class="ti ti-plug" style="font-size:15px;color:var(--gd)"></i> Utility</div>
+        <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+          <div style="width:84px;height:84px;border-radius:50%;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center;background:conic-gradient(${utDonutStops.join(',')})">
+            <div style="position:relative;z-index:1;text-align:center;width:48px;height:48px;background:var(--cd);border-radius:50%;display:flex;align-items:center;justify-content:center">
+              <div style="font-family:'Inter',sans-serif;font-size:16px;font-weight:700;color:var(--tx)">${tot}</div>
+            </div>
+          </div>
+          <div style="flex:1;min-width:140px;display:flex;flex-direction:column;gap:1px">${utDonutLegend}</div>
         </div>
       </div>
-      <div class="donut-legend">${jtsDonutLegend}</div>
+      <div class="ds" style="padding:12px;margin-bottom:0">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          <div>
+            <div class="dt" style="margin-bottom:2px"><i class="ti ti-building-community" style="font-size:15px;color:var(--gd)"></i> HRP Pending Approval Status Tracker</div>
+            <div style="font-size:12px;color:var(--t3);font-family:'Nunito',sans-serif">Breakdown of active workflow items across pending HRP stages</div>
+          </div>
+          <span style="background:rgba(8,145,178,.1);color:#0891B2;font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;font-family:'Nunito',sans-serif;white-space:nowrap">${categoriesWithItems} Status Categories (${pilotProjects.length} Items)</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">${hrpTiles}</div>
+      </div>
+    </div>`;
+  })();
+
+  // ── SECTION: PM workload ─────────────────────────────────
+  html+=`<div class="ds" style="padding:12px;margin-bottom:10px">
+    <div class="dt" style="margin-bottom:10px"><i class="ti ti-users" style="font-size:15px;color:var(--gd)"></i> PM Workload
+      <button onclick="svid('team')" style="margin-left:auto;font-size:12px;padding:4px 12px;border-radius:var(--r);border:1px solid var(--bd);background:transparent;cursor:pointer;color:var(--t2);font-family:'Nunito',sans-serif">Team view →</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px">
+    ${pmCards}
     </div>
   </div>`;
 
@@ -1482,6 +1517,13 @@ ${clRows}
   html+=pmCorrHTML();
 
   el.innerHTML=html;
+  requestAnimationFrame(function(){
+    var stack=document.getElementById('ps-cs-wrapper');
+    var jtsCard=document.getElementById('job-training-card');
+    if(stack&&jtsCard){
+      jtsCard.style.minHeight=stack.offsetHeight+'px';
+    }
+  });
 }
 
 
@@ -1596,13 +1638,54 @@ function setPMCorrField(pm,field,val){
   all[pm]=rec;
   savePMCorr(all);
 }
+function navToDailyReport(){
+  navTo('report');
+  var btn=document.querySelector('.rpt-stab[data-tab="daily"]');
+  switchRptTab('daily',btn);
+}
+function scrollToPMCorrReport(){
+  var el=document.getElementById('pm-corr-report');
+  if(!el)return;
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+}
 function togglePMFlag(pm){
   const all=getPMCorr();
   const rec=all[pm]||{count:'',detail:'',status:'Cleared'};
   rec.status=rec.status==='Cleared'?'Flagged':'Cleared';
   all[pm]=rec;
   savePMCorr(all);
+  if(rec.status==='Cleared')delete dismissedFlagAlerts[pm];
   rdb();
+  renderFlagAlerts();
+}
+var dismissedFlagAlerts={};
+function flagAlertHtml(pm,detail){
+  var pmEsc=pm.replace(/'/g,"\\'");
+  var showWho=activePM===MGR?' — '+pm:'';
+  return '<div style="background:#0D2147;color:#fff;border-left:4px solid #EF4444;border-radius:0 var(--r) var(--r) 0;padding:12px 16px;margin-bottom:12px;font-size:13.5px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:Nunito,sans-serif">'
+    +'<div style="display:flex;align-items:center;gap:10px"><i class="ti ti-alert-triangle" style="font-size:17px;color:#EF4444;flex-shrink:0"></i><span><strong>Active correction flag'+showWho+':</strong> '+(detail&&detail.trim()?detail:'No detail provided.')+' Please avoid this moving forward.</span></div>'
+    +'<button onclick="dismissFlagAlert(\''+pmEsc+'\')" title="Dismiss for this session" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.6);flex-shrink:0;padding:4px"><i class="ti ti-x" style="font-size:15px"></i></button>'
+    +'</div>';
+}
+function renderFlagAlerts(){
+  var wrap=document.getElementById('flag-alert-wrap');
+  if(!wrap)return;
+  var corr=getPMCorr();
+  var html='';
+  if(activePM===MGR){
+    PML.forEach(function(pm){
+      var rec=corr[pm];
+      if(rec&&rec.status==='Flagged'&&!dismissedFlagAlerts[pm])html+=flagAlertHtml(pm,rec.detail);
+    });
+  }else if(PML.indexOf(activePM)>=0){
+    var rec=corr[activePM];
+    if(rec&&rec.status==='Flagged'&&!dismissedFlagAlerts[activePM])html+=flagAlertHtml(activePM,rec.detail);
+  }
+  wrap.innerHTML=html;
+}
+function dismissFlagAlert(pm){
+  dismissedFlagAlerts[pm]=true;
+  renderFlagAlerts();
 }
 function quickAddPMFromCorr(){
   const n=prompt('New PM full name:');
@@ -1626,11 +1709,11 @@ function pmCorrHTML(){
       '</tr>';
   }).join('');
   return `
-    <div class="ds" style="padding:0;overflow:hidden">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--bd);flex-wrap:wrap;gap:10px">
+    <div class="ds" id="pm-corr-report" style="padding:0;overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--bd);flex-wrap:wrap;gap:8px">
         <div>
-          <div class="dt" style="margin-bottom:2px"><i class="ti ti-alert-circle" style="font-size:16px;color:var(--gd)"></i> Part II Weekly Correction Report</div>
-          <div style="font-size:12.5px;color:var(--t3);font-family:'Nunito',sans-serif">Track project manager correction counts and document notes</div>
+          <div class="dt" style="margin-bottom:2px"><i class="ti ti-alert-circle" style="font-size:15px;color:var(--gd)"></i> Part II Weekly Correction Report</div>
+          <div style="font-size:12px;color:var(--t3);font-family:'Nunito',sans-serif">Track project manager correction counts and document notes</div>
         </div>
         <button class="add-proj-btn" onclick="quickAddPMFromCorr()"><i class="ti ti-plus" style="font-size:13px"></i> Add PM Record</button>
       </div>
@@ -1927,6 +2010,9 @@ function rp(){
           <div class="proj-detail-field"><span class="proj-detail-label">Job Training Status</span>
             <select style="border:1px solid var(--bd);padding:6px 9px;border-radius:var(--r);background:var(--cd);font-family:Nunito,sans-serif;font-size:13px" onchange="upf('${p.id}','jts',this.value)"><option value="">—</option><option value="Approved"${p.jts==='Approved'?' selected':''}>Approved</option><option value="Under Review"${p.jts==='Under Review'?' selected':''}>Under Review</option><option value="Pending Review"${p.jts==='Pending Review'?' selected':''}>Pending Review</option><option value="On Hold"${p.jts==='On Hold'?' selected':''}>On Hold</option></select>
           </div>
+          <div class="proj-detail-field"><span class="proj-detail-label">Pilot Program Status</span>
+            <select style="border:1px solid var(--bd);padding:6px 9px;border-radius:var(--r);background:var(--cd);font-family:Nunito,sans-serif;font-size:13px" onchange="upf('${p.id}','hrp',this.value)"><option value="Not Applicable"${(!p.hrp||p.hrp==='Not Applicable')?' selected':''}>Not Applicable</option><option value="Approved"${p.hrp==='Approved'?' selected':''}>Approved</option><option value="Submitted"${p.hrp==='Submitted'?' selected':''}>Submitted</option><option value="Not Approved"${p.hrp==='Not Approved'?' selected':''}>Not Approved</option><option value="Dropped"${p.hrp==='Dropped'?' selected':''}>Dropped</option><option value="Part 2 Pilot Program Pending"${p.hrp==='Part 2 Pilot Program Pending'?' selected':''}>Part 2 Pilot Program Pending</option><option value="Part 2 Pilot Program In review"${p.hrp==='Part 2 Pilot Program In review'?' selected':''}>Part 2 Pilot Program In review</option><option value="Part 2 Pilot Program Approved"${p.hrp==='Part 2 Pilot Program Approved'?' selected':''}>Part 2 Pilot Program Approved</option></select>
+          </div>
         </div>
         ${corrDiv}
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
@@ -2096,14 +2182,25 @@ function saveEditProj(pid){
 }
 
 
-function tpTeam(pid){openCards['team::'+pid]=openCards['team::'+pid]===true?false:true;rtv();}
+function tpTeam(pid){
+  var wasOpen=openCards['team::'+pid]===true;
+  openCards['team::'+pid]=wasOpen?false:true;
+  if(!wasOpen){
+    var proj=P.find(function(x){return x.id===pid;});
+    markPrCommentsSeenForPM(pid,proj?proj.pm:'PM');
+  }
+  rtv();
+}
 function tpc(p){
   const o=openCards['team::'+p.id]===true;const{d,t,pct}=ppx(p.id);
   const ub=p.ut?`<span class="badge bn">${p.ut}</span>`:'';
   const ch=p.corr?`<div style="background:var(--wn);border-left:3px solid var(--wb);border-radius:var(--r);padding:10px 14px;margin-bottom:12px;font-size:14px;color:var(--wt);line-height:1.7"><strong>Action needed:</strong> ${p.corr}</div>`:'';
   const cm=p.cmt?`<div style="background:rgba(212,175,55,.04);border-left:3px solid rgba(212,175,55,.4);border-radius:var(--r);padding:10px 14px;margin-bottom:12px;font-size:14px;color:var(--nm);line-height:1.7"><strong>Note:</strong> ${p.cmt}</div>`:'';
   const psCls=p.ps==='Approved'?'bo':p.ps==='Further Part II information requested'?'br':p.ps==='Under Inspection'?'bd2':'bsub';
+  const unreadComments=getPrCommentsUnreadForPM(p.id,p.pm||'PM');
+  const commentBanner=unreadComments>0?`<div class="pr-comment-alert" onclick="tpTeam('${p.id}')" style="background:#EF4444;color:#fff;padding:9px 16px;font-size:12.5px;font-weight:700;font-family:Nunito,sans-serif;display:flex;align-items:center;gap:8px;cursor:pointer;animation:chatPulse 1.8s infinite"><i class="ti ti-message-2-bolt" style="font-size:15px"></i> SPL left ${unreadComments} new post-review comment${unreadComments!==1?'s':''} on this project — tap to view</div>`:'';
   return `<div class="card">
+    ${commentBanner}
     <div class="card-hd" onclick="tpTeam('${p.id}')">
       <div style="flex:1">
         <div style="font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
@@ -2143,6 +2240,7 @@ function rtv(){
 
   var guideBanner=document.getElementById('team-guide-banner');
   if(guideBanner)guideBanner.style.display=(activePM==='__db'||activePM==='__proj')?'none':'block';
+  renderFlagAlerts();
 
   if(activePM==='__db'){rtdb();return;}
   if(activePM==='__proj'){rtvProj();return;}
@@ -2203,14 +2301,10 @@ function rtdb(){
 
   // Program Year Breakdown donut — same component & colors as the Executive Overview, counts only
   const pyKeysT=['PY7','PY8','PY8-2025'];
-  const pyColorsT={'PY7':'#0891B2','PY8':'#0D2147','PY8-2025':'#94A3B8'};
+  const pyColorsT={'PY7':'#CBD5E1','PY8':'#3B82F6','PY8-2025':'#0F172A'};
   const pyCountsT=pyKeysT.map(function(py){return P.filter(function(p){return p.py===py;}).length;});
   const pyTotalT=pyCountsT.reduce(function(a,b){return a+b;},0)||1;
-  var accT=0,donutStopsT=[];
-  pyKeysT.forEach(function(py,i){
-    var s=accT/pyTotalT*100;accT+=pyCountsT[i];var e=accT/pyTotalT*100;
-    donutStopsT.push(pyColorsT[py]+' '+s.toFixed(2)+'% '+e.toFixed(2)+'%');
-  });
+  var donutStopsT=buildDonutStopsWithGaps(pyKeysT,pyColorsT,pyCountsT,pyTotalT);
   var donutLegendT='';
   pyKeysT.forEach(function(py,i){
     donutLegendT+='<div class="donut-leg-row"><span class="dot" style="background:'+pyColorsT[py]+'"></span>'+py+'<span class="donut-leg-n">'+pyCountsT[i]+'</span></div>';
@@ -2248,7 +2342,6 @@ function rtdb(){
           <div class="donut-center"><div class="donut-n">${tot}</div><div class="donut-l">Projects</div></div>
         </div>
       </div>
-      <div class="donut-legend">${donutLegendT}</div>
     </div>
   </div>`;
 
@@ -2416,27 +2509,27 @@ function rpr(){
         <button onclick="prClearAll('${pid}')" style="font-size:12.5px;padding:7px 14px;border-radius:var(--r);border:1px solid var(--bd);background:transparent;cursor:pointer;color:var(--t2);font-family:'Nunito',sans-serif">Clear all</button>
         <span style="font-size:12px;color:var(--t3);font-family:'Nunito',sans-serif;font-style:italic">Saved automatically</span>
       </div>
-    </div>
 
-    <!-- Post-Review Comments -->
-    <div style="background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--gshadow);margin-top:14px">
-      <div style="background:#0D2147;padding:13px 18px;display:flex;align-items:center;justify-content:space-between">
-        <div style="font-size:14px;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px">
-          <i class="ti ti-message-2" style="font-size:15px;color:#D4AF37"></i> Post-Review Comments
-          <span id="pr-comment-count" style="font-size:11px;background:rgba(255,255,255,.1);padding:2px 8px;border-radius:10px;color:rgba(255,255,255,.6)">0</span>
+      <!-- Post-Review Comments — merged into the same card -->
+      <div style="border-top:1px solid var(--bd)">
+        <div style="background:#0D2147;padding:13px 18px;display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:14px;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px">
+            <i class="ti ti-message-2" style="font-size:15px;color:#D4AF37"></i> Post-Review Comments
+            <span id="pr-comment-count" style="font-size:11px;background:rgba(255,255,255,.1);padding:2px 8px;border-radius:10px;color:rgba(255,255,255,.6)">0</span>
+          </div>
+          <span style="font-size:11px;color:rgba(255,255,255,.35);font-family:Nunito,sans-serif">Visible to team</span>
         </div>
-        <span style="font-size:11px;color:rgba(255,255,255,.35);font-family:Nunito,sans-serif">Visible to team</span>
-      </div>
-      <div id="pr-comments-list" style="padding:0 16px;max-height:340px;overflow-y:auto"></div>
-      <div style="padding:14px 16px;border-top:1px solid var(--bd);background:var(--sf)">
-        <textarea id="pr-comment-input" placeholder="Type your review comment here — visible to team..." style="width:100%;min-height:80px;padding:10px 12px;border:1.5px solid var(--bd);border-radius:var(--r);font-family:Nunito,sans-serif;font-size:13.5px;color:var(--tx);background:var(--cd);resize:vertical;box-sizing:border-box;line-height:1.6;outline:none;margin-bottom:10px"></textarea>
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <select id="pr-comment-priority" style="font-size:12.5px;padding:5px 10px;border-radius:var(--r);border:1px solid var(--bd);background:var(--cd);color:var(--tx);font-family:Nunito,sans-serif">
-            <option value="normal">Normal</option>
-            <option value="urgent">🔴 Urgent</option>
-            <option value="info">🔵 Info only</option>
-          </select>
-          <button onclick="addPrComment(prPid||(P.length?P[0].id:''))" style="font-size:13px;font-weight:600;padding:9px 20px;border-radius:var(--r);border:none;background:#0D2147;color:#fff;cursor:pointer;font-family:Nunito,sans-serif"><i class="ti ti-send" style="font-size:13px"></i> Send to Team</button>
+        <div id="pr-comments-list" style="padding:0 16px;max-height:340px;overflow-y:auto"></div>
+        <div style="padding:14px 16px;border-top:1px solid var(--bd);background:var(--sf)">
+          <textarea id="pr-comment-input" placeholder="Type your review comment here — visible to team..." style="width:100%;min-height:80px;padding:10px 12px;border:1.5px solid var(--bd);border-radius:var(--r);font-family:Nunito,sans-serif;font-size:13.5px;color:var(--tx);background:var(--cd);resize:vertical;box-sizing:border-box;line-height:1.6;outline:none;margin-bottom:10px"></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <select id="pr-comment-priority" style="font-size:12.5px;padding:5px 10px;border-radius:var(--r);border:1px solid var(--bd);background:var(--cd);color:var(--tx);font-family:Nunito,sans-serif">
+              <option value="normal">Normal</option>
+              <option value="urgent">🔴 Urgent</option>
+              <option value="info">🔵 Info only</option>
+            </select>
+            <button onclick="addPrComment(prPid||(P.length?P[0].id:''))" style="font-size:13px;font-weight:600;padding:9px 20px;border-radius:var(--r);border:none;background:#0D2147;color:#fff;cursor:pointer;font-family:Nunito,sans-serif"><i class="ti ti-send" style="font-size:13px"></i> Send to Team</button>
+          </div>
         </div>
       </div>
     </div>`;
@@ -2477,9 +2570,34 @@ function rstd(){
 
 function rset(){
   const af=showPMAF?`<div class="pmaf"><div style="font-family:Inter,sans-serif;font-size:18px;font-weight:600;margin-bottom:13px;color:var(--nv)">Add new PM</div><div class="fl" style="margin-bottom:13px"><label>Full name</label><input id="npm" placeholder="e.g. Katrina Santos"/></div><div style="display:flex;gap:10px"><button class="btn" onclick="apm()"><i class="ti ti-check" style="font-size:13px"></i> Add PM</button><button class="btn2" onclick="showPMAF=false;rset()">Cancel</button></div></div>`:'<button class="ab" onclick="showPMAF=true;rset()"><i class="ti ti-plus" style="font-size:14px"></i> Add new PM</button>';
-  document.getElementById('n-grid-settings').innerHTML='<div class="dt" style="margin-bottom:10px"><i class="ti ti-settings" style="font-size:16px;color:var(--gd)"></i> Settings — Project Manager List</div>'+af+
+
+  var pys=getPYS();
+  var pyRowsHtml=pys.map(function(py){
+    var count=P.filter(function(p){return p.py===py.key;}).length;
+    return '<div class="pmc"><div class="pma" style="background:#0891B2">'+py.key.slice(0,2)+'</div><div style="flex:1"><div style="font-size:15px;font-weight:600">'+py.key+'</div><div style="font-size:13.5px;color:var(--t3);margin-top:2px">'+count+' project'+(count!==1?'s':'')+' &middot; '+py.label+'</div></div><button class="pmr" onclick="removePY(\''+py.key+'\')"><i class="ti ti-trash" style="font-size:12px"></i> Remove</button></div>';
+  }).join('');
+
+  document.getElementById('n-grid-settings').innerHTML=
+    '<div class="dt" style="margin-bottom:10px"><i class="ti ti-settings" style="font-size:16px;color:var(--gd)"></i> Settings — Project Manager List</div>'+af+
     PML.map(n=>{const c=P.filter(p=>p.pm===n).length;const m=n===MGR;return `<div class="pmc"><div class="pma">${n.substring(0,2).toUpperCase()}</div><div style="flex:1"><div style="font-size:15px;font-weight:600">${n}${m?' <span class="mgr">Manager</span>':''}</div><div style="font-size:13.5px;color:var(--t3);margin-top:2px">${c} project${c!==1?'s':''} assigned</div></div>${(!m)?'<button class="pmr" onclick="dpm(\''+n+'\')" ><i class="ti ti-trash" style="font-size:12px"></i> Remove</button>':'<span style="font-size:13px;color:var(--t3)">Protected</span>'}</div>`;}).join('')+
-    '<div class="hint" style="margin-top:13px"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:5px"></i>Mary is protected as PM Manager and cannot be removed.</div>';
+    '<div class="hint" style="margin-top:13px;margin-bottom:24px"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:5px"></i>Mary is protected as PM Manager and cannot be removed.</div>'+
+
+    '<div class="dt" style="margin-bottom:10px"><i class="ti ti-calendar" style="font-size:16px;color:var(--gd)"></i> Program Years</div>'+
+    '<button class="ab" onclick="addProgramYear(rset)"><i class="ti ti-plus" style="font-size:14px"></i> Add Program Year</button>'+
+    pyRowsHtml+
+    '<div class="hint" style="margin-top:13px;margin-bottom:24px"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:5px"></i>Removing a program year here also clears its saved Overall Report data. Projects already assigned to it are not deleted.</div>'+
+
+    '<div class="dt" style="margin-bottom:10px"><i class="ti ti-database" style="font-size:16px;color:var(--gd)"></i> Data &amp; Backup</div>'+
+    '<div class="ds" style="margin-bottom:20px">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">'+
+        '<div><div style="font-size:14px;font-weight:600;color:var(--tx)">Full portal backup</div><div style="font-size:12.5px;color:var(--t3);margin-top:2px;font-family:Nunito,sans-serif">Projects, checklists, reports, REC data — everything in one file.</div></div>'+
+        '<div style="display:flex;gap:8px">'+
+          '<button class="add-proj-btn" onclick="exportReportBackup()"><i class="ti ti-database-export" style="font-size:13px"></i> Download</button>'+
+          '<button class="btn2" onclick="document.getElementById(\'settings-backup-file\').click()"><i class="ti ti-database-import" style="font-size:13px"></i> Restore</button>'+
+          '<input type="file" id="settings-backup-file" accept="application/json" style="display:none" onchange="importReportBackup(this)"/>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
 }
 
 // ── PORTAL ASSISTANT — pattern-based command parser (no external AI dependency) ──
@@ -2666,7 +2784,7 @@ function nt(id,btn){
     document.getElementById('n-'+id).classList.add('a');btn.classList.add('a');
     if(id==='dashboard')rdb();
     else if(id==='scope')rscope();
-    else if(id==='grid'){rset();rgrid();}
+    else if(id==='grid'){rset();}
     else if(id==='projects')rp();
     else if(id==='postreview'){rpr();markPrCommentsRead();}
     else if(id==='standards')rstd();
@@ -3569,7 +3687,7 @@ function navTo(tab){
   if(btns[m[tab]])btns[m[tab]].classList.add('a');
   if(tab==='dashboard')rdb();
   else if(tab==='scope')rscope();
-  else if(tab==='grid'){rset();rgrid();}
+  else if(tab==='grid'){rset();}
   else if(tab==='report')rreport();
   else if(tab==='projects')rp();
   else if(tab==='postreview')rpr();
@@ -4406,14 +4524,16 @@ function renderMonthlyREC(){
     +'</div>';
   out+='</div>';
 
-  // Compact month navigator — prev/next arrows instead of a wide tab row
-  var curIdx=data.order.indexOf(data.active);
-  out+='<div class="no-print" style="display:flex;align-items:center;gap:8px;margin-bottom:18px">';
-  out+='<button type="button" onclick="stepRecMonth(-1)" '+(curIdx<=0?'disabled':'')+' style="width:34px;height:34px;flex-shrink:0;border-radius:50%;border:1px solid var(--bd);background:var(--cd);cursor:'+(curIdx<=0?'default':'pointer')+';opacity:'+(curIdx<=0?'.35':'1')+';display:flex;align-items:center;justify-content:center;color:var(--tx)" title="Previous month"><i class="ti ti-chevron-left" style="font-size:16px"></i></button>';
-  out+='<div style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:#0D2147;color:#fff;border-radius:10px;padding:9px 14px;font-family:Nunito,sans-serif;font-size:13.5px;font-weight:600">';
-  out+='<i class="ti ti-calendar-event" style="font-size:14px;color:var(--gd)"></i> '+data.active;
+  // Compact month navigator — short labels in a horizontal scroll strip
+  out+='<div class="no-print" style="display:flex;align-items:center;gap:6px;margin-bottom:18px">';
+  out+='<div style="display:flex;gap:6px;overflow-x:auto;padding:2px 2px 6px;flex:1" id="rec-month-strip">';
+  data.order.forEach(function(name){
+    var nEsc=name.replace(/'/g,"\\'");
+    var isActive=name===data.active;
+    var shortLabel=name.split(' ')[0].slice(0,3);
+    out+='<button type="button" onclick="switchRecReportTab(\''+nEsc+'\')" title="'+name+'" style="flex-shrink:0;padding:8px 14px;border-radius:20px;border:1px solid '+(isActive?'#0D2147':'var(--bd)')+';background:'+(isActive?'#0D2147':'var(--cd)')+';color:'+(isActive?'#fff':'var(--tx)')+';font-family:Nunito,sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap">'+shortLabel+'</button>';
+  });
   out+='</div>';
-  out+='<button type="button" onclick="stepRecMonth(1)" '+(curIdx>=data.order.length-1?'disabled':'')+' style="width:34px;height:34px;flex-shrink:0;border-radius:50%;border:1px solid var(--bd);background:var(--cd);cursor:'+(curIdx>=data.order.length-1?'default':'pointer')+';opacity:'+(curIdx>=data.order.length-1?'.35':'1')+';display:flex;align-items:center;justify-content:center;color:var(--tx)" title="Next month"><i class="ti ti-chevron-right" style="font-size:16px"></i></button>';
   out+='<button type="button" onclick="addRecReportTab()" title="Add a new month" style="width:34px;height:34px;flex-shrink:0;border-radius:50%;border:1px dashed var(--bd);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t3)"><i class="ti ti-plus" style="font-size:15px"></i></button>';
   if(data.order.length>1){
     out+='<button type="button" onclick="removeRecReportTab(\''+data.active.replace(/'/g,"\\'")+'\')" title="Remove this month" style="width:34px;height:34px;flex-shrink:0;border-radius:50%;border:1px solid var(--bd);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t3)"><i class="ti ti-trash" style="font-size:14px"></i></button>';
@@ -4423,18 +4543,18 @@ function renderMonthlyREC(){
   // Summary + utility cards, matching the Overall Report card pattern
   out+='<div class="rpt-grid" style="grid-template-columns:1fr 1fr;margin-bottom:20px">';
   out+='<div class="rpt-card">';
-  out+='<div class="rpt-card-hd"><h3>Program Summary</h3></div>';
+  out+='<div class="rpt-card-hd" style="min-height:0;padding:11px 16px"><h3>Program Summary</h3></div>';
   out+=recFieldWithComment(rpt,'totalSubmitted','Total RECs Submitted');
   out+=recFieldWithComment(rpt,'pendingApproval','Pending Part II Approval');
-  out+='<div class="rpt-footer"><span class="rpt-footer-l">Part II Approved</span><span class="rpt-footer-v">'+fmFull(approvedTotal)+'</span></div>';
+  out+='<div class="rpt-footer" style="height:auto;min-height:0;padding:12px 14px"><span class="rpt-footer-l">Part II Approved</span><span class="rpt-footer-v">'+fmFull(approvedTotal)+'</span></div>';
   out+='</div>';
 
   out+='<div class="rpt-card">';
-  out+='<div class="rpt-card-hd"><h3>Utility Breakdown</h3></div>';
+  out+='<div class="rpt-card-hd" style="min-height:0;padding:11px 16px"><h3>Utility Breakdown</h3></div>';
   out+='<div class="rpt-row"><span class="rpt-row-l">Ameren</span><span class="rpt-row-v">'+fmFull(byBuyer.Ameren)+'</span></div>';
   out+='<div class="rpt-row"><span class="rpt-row-l">ComEd</span><span class="rpt-row-v">'+fmFull(byBuyer.ComEd)+'</span></div>';
   out+='<div class="rpt-row"><span class="rpt-row-l">IPA</span><span class="rpt-row-v">'+fmFull(byBuyer.IPA)+'</span></div>';
-  out+='<div class="rpt-footer"><span class="rpt-footer-l">Total</span><span class="rpt-footer-v">'+fmFull(buyerTotal)+'</span></div>';
+  out+='<div class="rpt-footer" style="height:auto;min-height:0;padding:12px 14px"><span class="rpt-footer-l">Total</span><span class="rpt-footer-v">'+fmFull(buyerTotal)+'</span></div>';
   out+='</div>';
   out+='</div>';
 
@@ -4702,7 +4822,8 @@ function switchRptBody(tab){
   out2+='<div id="rpt-content"><div class="rpt-hd"><div>';
   out2+='<div style="font-family:Inter,sans-serif;font-size:22px;font-weight:600;color:var(--tx)">Overall Report</div>';
   out2+='<div class="rpt-ts">Click any value to edit &middot; Auto-saved &middot; <span style="color:#0891B2">'+PYS2.length+' program years</span></div>';
-  out2+='</div><div style="display:flex;gap:8px;align-items:center;position:relative">';
+  out2+='</div><div style="display:flex;gap:8px;align-items:center;position:relative;flex-wrap:wrap">';
+  out2+='<button class="add-proj-btn" onclick="addProgramYear(rreport)"><i class="ti ti-plus" style="font-size:13px"></i> Add Program Year</button>';
   out2+='<button class="gen-report-btn" style="margin-left:0;background:#0891B2" onclick="window.print()"><i class="ti ti-printer" style="font-size:13px"></i> Print</button>';
   out2+='<button class="rpt-export" onclick="toggleExportMenu(event)" id="exp-btn"><i class="ti ti-download" style="font-size:13px"></i> Export <i class="ti ti-chevron-down" style="font-size:11px;margin-left:2px"></i></button>';
   out2+='<div id="export-menu"><div class="exp-item" onclick="exportCSV()"><i class="ti ti-file-spreadsheet"></i><div><div>Export as CSV</div></div></div><div class="exp-item" onclick="exportTXT()"><i class="ti ti-file-text"></i><div><div>Export as Text</div></div></div><div class="exp-item" onclick="printReport()"><i class="ti ti-printer"></i><div><div>Print</div></div></div><div class="exp-item" onclick="copyReport()"><i class="ti ti-copy"></i><div><div>Copy to clipboard</div></div></div><div style="border-top:1px solid var(--bd);margin:4px 0"></div><div class="exp-item" onclick="exportReportBackup()"><i class="ti ti-database-export"></i><div><div>Download full portal backup (.json)</div></div></div><div class="exp-item" onclick="document.getElementById(\'rpt-backup-file\').click()"><i class="ti ti-database-import"></i><div><div>Restore full backup</div></div></div><input type="file" id="rpt-backup-file" accept="application/json" style="display:none" onchange="importReportBackup(this)"/></div>';
@@ -4755,6 +4876,15 @@ function getUnreadPrComments(){
     });
     return total;
   }catch(e){return 0;}
+}
+function getPrCommentsUnreadForPM(pid,pmName){
+  var comments=getPrComments(pid);
+  if(!comments.length)return 0;
+  var lastSeen=parseInt(localStorage.getItem('pr_comments_seen_'+(pmName||'PM')+'_'+pid)||'0');
+  return comments.filter(function(c){return new Date(c.ts).getTime()>lastSeen;}).length;
+}
+function markPrCommentsSeenForPM(pid,pmName){
+  localStorage.setItem('pr_comments_seen_'+(pmName||'PM')+'_'+pid,Date.now().toString());
 }
 function markPrCommentsRead(){
   localStorage.setItem('pr_comments_last_seen',Date.now().toString());
