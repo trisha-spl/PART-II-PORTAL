@@ -869,6 +869,59 @@ function loadData(){
     localStorage.setItem('ilsfa_hard_reset_v1','1');
   })();
 
+  // ── One-time seed: Monthly report data from slides (PY7 + PY8) ──────────────────────
+  (function seedMonthlyData(){
+    if(localStorage.getItem('ilsfa_monthly_seed_v2'))return;
+
+    // PY7 monthly data — May, June, July (August blank)
+    var py7={
+      months:['May','June','July','August'],
+      cells:{
+        'May':    {submitted:'1',  approved:'1',  pending:'0', corrections:'0', invoiced:'1',  pct:'',rec:'36087.14'},
+        'June':   {submitted:'2',  approved:'2',  pending:'0', corrections:'0', invoiced:'2',  pct:'',rec:'83074.07'},
+        'July':   {submitted:'1',  approved:'1',  pending:'0', corrections:'0', invoiced:'0',  pct:'',rec:''},
+        'August': {submitted:'',   approved:'',   pending:'',  corrections:'',  invoiced:'',   pct:'',rec:''},
+      },
+      meta:{
+        pendingSubmission:'1',
+        totalCorrections:'81',
+        correctionsAddressed:'81',
+        pendingCorrection:'0',
+      }
+    };
+
+    // PY7 left-table (overall status) — stored in the manually editable fields
+    // The overall table fields map: submitted→submitted, approved→approved, invoiced→invoiced, rec→rec
+    // These are seeded as the base mdata for PY7 (already live from portal, but set meta for left table override)
+    // Left table: Part2 Submitted:148, PendingCorrection:0, Approved:148, PendingApproval:0, Invoiced:147, TotalREC:5270098.29
+    // These are shown in the left static table from portal data — no override needed for left table (it reads from P)
+
+    // PY8 monthly data — May, June, July, August
+    var py8={
+      months:['May','June','July','August'],
+      cells:{
+        'May':    {submitted:'30', approved:'30', pending:'0', corrections:'10', invoiced:'30', pct:'',rec:'1201489.56'},
+        'June':   {submitted:'68', approved:'68', pending:'0', corrections:'1',  invoiced:'14', pct:'',rec:'571859.23'},
+        'July':   {submitted:'39', approved:'39', pending:'0', corrections:'1',  invoiced:'21', pct:'',rec:'867435.06'},
+        'August': {submitted:'11', approved:'7',  pending:'4', corrections:'0',  invoiced:'0',  pct:'',rec:''},
+      },
+      meta:{
+        pendingSubmission:'104',
+        totalCorrections:'128',
+        correctionsAddressed:'127',
+        pendingCorrection:'1',
+      }
+    };
+
+    // Only seed if not already customized
+    // Force overwrite — replaces any previously empty/default data
+    localStorage.setItem('ilsfa_monthly_PY7',JSON.stringify(py7));
+    localStorage.setItem('ilsfa_monthly_PY8',JSON.stringify(py8));
+
+    localStorage.setItem('ilsfa_monthly_seed_v1','1');
+    localStorage.setItem('ilsfa_monthly_seed_v2','1');
+  })();
+
 
   // Checklist, post-review, settings from cache
   if(cached&&cached.data){
@@ -1256,7 +1309,7 @@ function rdb(){
   // Utility rows
   var utRows='';
   var utKeysArr=['ComEd','Ameren','IPA'];
-  var utColorsMap={'ComEd':'#0D2147','Ameren':'#0891B2','IPA':'#6366F1'};
+  var utColorsMap={'ComEd':'#0891B2','Ameren':'#D97706','IPA':'#8B5CF6'};
   [{u:'ComEd',c:'#0D2147'},{u:'Ameren',c:'#0891B2'},{u:'IPA',c:'#6366F1'}].forEach(function(u){
     var n=P.filter(function(p){return p.ut===u.u;}).length;
     var r=P.filter(function(p){return p.ut===u.u;}).reduce(function(a,p){return a+rv(p);},0);
@@ -1305,7 +1358,11 @@ function rdb(){
   const pyKeys=['PY7','PY8','PY8-2025'];
   const pyColors={'PY7':'#CBD5E1','PY8':'#3B82F6','PY8-2025':'#0F172A'};
   const pyAdjustStore=getPYAdjust();
-  const pyCounts=pyKeys.map(function(py){return (typeof pyAdjustStore[py]==='number')?pyAdjustStore[py]:P.filter(function(p){return p.py===py;}).length;});
+  // PY counts: prefer daily report saved values (via pyAdjustStore), fallback to live project count
+  const pyCounts=pyKeys.map(function(py){
+    var saved=getPYAdjust();
+    return (typeof saved[py]==='number')?saved[py]:P.filter(function(p){return p.py===py;}).length;
+  });
   const pyTotal=pyCounts.reduce(function(a,b){return a+b;},0)||1;
   var donutStops=buildDonutStopsWithGaps(pyKeys,pyColors,pyCounts,pyTotal);
   var donutLegend='';
@@ -2208,29 +2265,28 @@ function toggleProjCol(i,val){var cols=getProjCols();cols[i].visible=val;savePro
 function resetProjCols(){localStorage.removeItem('proj_cols');rp();document.querySelector('.proj-modal-bg')?.remove();}
 let expandedProj=null;
 
+function sCls(ps){
+  if(ps==='Approved')return 'background:var(--ok);color:var(--ot)';
+  if(ps==='Further Part II information requested')return 'background:var(--er);color:var(--et)';
+  if(ps==='Under Inspection')return 'background:rgba(8,145,178,.1);color:#0891B2';
+  if(ps==='Part II Submitted')return 'background:#fff;color:#1D4ED8;border:1px solid rgba(29,78,216,.28)';
+  return 'background:var(--s2);color:var(--t2)';
+}
+function sLabel(ps){
+  if(ps==='Further Part II information requested')return 'Corr. Requested';
+  return ps||'—';
+}
+function csCls(cs){
+  if(cs==='Addressed')return 'color:var(--ot)';
+  if(cs==='Pending')return 'color:var(--et)';
+  if(cs==='Partially addressed')return 'color:var(--wb)';
+  return 'color:var(--t3)';
+}
 function rp(){
   updateTabBadges();
   const el=document.getElementById('n-projects');
 
   // Status color helper
-  function sCls(ps){
-    if(ps==='Approved')return 'background:var(--ok);color:var(--ot)';
-    if(ps==='Further Part II information requested')return 'background:var(--er);color:var(--et)';
-    if(ps==='Under Inspection')return 'background:rgba(8,145,178,.1);color:#0891B2';
-    if(ps==='Part II Submitted')return 'background:#fff;color:#1D4ED8;border:1px solid rgba(29,78,216,.28)';
-    return 'background:var(--s2);color:var(--t2)';
-  }
-  function sLabel(ps){
-    if(ps==='Further Part II information requested')return 'Corr. Requested';
-    return ps||'—';
-  }
-  function csCls(cs){
-    if(cs==='Addressed')return 'color:var(--ot)';
-    if(cs==='Pending')return 'color:var(--et)';
-    if(cs==='Partially addressed')return 'color:var(--wb)';
-    return 'color:var(--t3)';
-  }
-
   const allFP=applyProjFilters();
   const totalPages=Math.max(1,Math.ceil(allFP.length/PROJ_PAGE_SIZE));
   if(projPage>totalPages)projPage=totalPages;
@@ -2657,7 +2713,7 @@ function rtv(){
     `<div class="sbdiv"></div>`+
     `<div class="sb-lbl">Project Managers</div>`+
     PML.map((pm,i)=>{const c=P.filter(p=>p.pm===pm).length;const m=pm===MGR;return `<button class="sb-pm${pm===activePM?' a':''}" data-pm="${i}" onclick="activePM=this.dataset.pmname;rtv()"><div class="pmav">${pm.charAt(0)}</div><span style="flex:1">${pm}${m?'<span class="mgr">MGR</span>':''}</span>${c>0?'<span style="font-size:11px;padding:1px 6px;border-radius:10px;background:rgba(8,145,178,.1);color:#0891B2;font-weight:600">'+c+'</span>':''}</button>`;}).join('')+
-    `<div class="sbdiv"></div><button class="sb-pm${activePM==='__n'?' a':''}" onclick="activePM='__n';rtv()"><i class="ti ti-notes" style="font-size:15px"></i> Doc notes</button>`+
+    ``+
     `<div class="sbdiv"></div><div class="sb-lbl">Quick Stats</div><div id="sbst"></div>`;
   // Set pmname data attribute properly
   PML.forEach((pm,i)=>{const btn=sb.querySelector(`[data-pm="${i}"]`);if(btn)btn.dataset.pmname=pm;});
@@ -2670,7 +2726,7 @@ function rtv(){
 
   if(activePM==='__db'){rtdb();return;}
   if(activePM==='__proj'){rtvProj();return;}
-  if(activePM==='__n'){rtn();return;}
+
   const mp=P.filter(p=>p.pm===activePM);const m=activePM===MGR;
   document.getElementById('pmc').innerHTML=
     `<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:14px 17px;background:var(--glass);border:1px solid var(--gborder);border-radius:var(--rl);box-shadow:var(--gshadow)">
@@ -2703,37 +2759,37 @@ function rtdb(){
 
   // Top stats — read only, no click
   html+=`<div class="dbs" style="margin-bottom:16px">
-    <div class="dbc g" style="cursor:default">
+    <div class="dbc g" onclick="navTeamProj('all','')">
       <div class="dbc-top"><span class="dbc-lbl">Total Projects</span><span class="dbc-ic ic-nv"><i class="ti ti-folder"></i></span></div>
       <div class="dbn">${tot}</div>
       <div class="dbc-sub" style="color:var(--gd);font-weight:600">All active projects</div>
     </div>
-    <div class="dbc gr" style="cursor:default">
-      <div class="dbc-top"><span class="dbc-lbl">Approved</span><span class="dbc-ic ic-gr"><i class="ti ti-circle-check"></i></span></div>
-      <div class="dbn">${app.length}</div>
-      <div class="dbc-sub" style="color:var(--ot);font-weight:600">${tot?Math.round(app.length/tot*100):0}% of total</div>
+    <div class="dbc r" onclick="navTeamProj('Further Part II information requested','')">
+      <div class="dbc-top"><span class="dbc-lbl">Need Correction</span><span class="dbc-ic ic-r"><i class="ti ti-alert-triangle"></i></span></div>
+      <div class="dbn">${fi.length}</div>
+      <div class="dbc-sub" style="color:var(--et);font-weight:600">${tot?Math.round(fi.length/tot*100):0}% of total</div>
     </div>
-    <div class="dbc b" style="cursor:default">
+    <div class="dbc b" onclick="navTeamProj('Under Inspection','')">
       <div class="dbc-top"><span class="dbc-lbl">Under Inspection</span><span class="dbc-ic ic-b"><i class="ti ti-eye"></i></span></div>
       <div class="dbn">${ui.length}</div>
       <div class="dbc-sub" style="color:#0891B2;font-weight:600">${tot?Math.round(ui.length/tot*100):0}% of total</div>
     </div>
-    <div class="dbc r" style="cursor:default">
-      <div class="dbc-top"><span class="dbc-lbl">Need Correction</span><span class="dbc-ic ic-r"><i class="ti ti-alert-triangle"></i></span></div>
-      <div class="dbn">${fi.length}</div>
-      <div class="dbc-sub" style="color:var(--et);font-weight:600">${tot?Math.round(fi.length/tot*100):0}% of total</div>
+    <div class="dbc gr" onclick="navTeamProj('Approved','')">
+      <div class="dbc-top"><span class="dbc-lbl">Approved</span><span class="dbc-ic ic-gr"><i class="ti ti-circle-check"></i></span></div>
+      <div class="dbn">${app.length}</div>
+      <div class="dbc-sub" style="color:var(--ot);font-weight:600">${tot?Math.round(app.length/tot*100):0}% of total</div>
     </div>
   </div>`;
 
   // Program Year Breakdown donut — same component & colors as the Executive Overview, counts only
   const pyKeysT=['PY7','PY8','PY8-2025'];
   const pyColorsT={'PY7':'#CBD5E1','PY8':'#3B82F6','PY8-2025':'#0F172A'};
-  const pyCountsT=pyKeysT.map(function(py){return P.filter(function(p){return p.py===py;}).length;});
+  const pyCountsT=pyKeysT.map(function(py){var saved=getPYAdjust();return (typeof saved[py]==='number')?saved[py]:P.filter(function(p){return p.py===py;}).length;});
   const pyTotalT=pyCountsT.reduce(function(a,b){return a+b;},0)||1;
   var donutStopsT=buildDonutStopsWithGaps(pyKeysT,pyColorsT,pyCountsT,pyTotalT);
   var donutLegendT='';
   pyKeysT.forEach(function(py,i){
-    donutLegendT+='<div class="donut-leg-row"><span class="dot" style="background:'+pyColorsT[py]+'"></span>'+py+'<span class="donut-leg-n">'+pyCountsT[i]+'</span></div>';
+    donutLegendT+='<div class="donut-leg-row" style="cursor:pointer" onclick="navTeamProj(\'all\',\''+py+'\')"><span class="dot" style="background:'+pyColorsT[py]+'"></span>'+py+'<span class="donut-leg-n">'+pyCountsT[i]+'</span></div>';
   });
 
   // Progress — percentages only, no dollar figures
@@ -3348,60 +3404,113 @@ function renderDailyReport(){
       +'</div>';
   }
 
-  var reportHTML='<div style="max-width:700px;margin:0 auto;background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--gshadow)">';
-  reportHTML+='<div style="background:#0D2147;padding:14px 20px;display:flex;align-items:center;justify-content:space-between">';
-  reportHTML+='<div><div style="font-size:16px;font-weight:700;color:#fff;letter-spacing:.05em">TARGET REPORT</div>';
-  reportHTML+='<div style="font-size:12px;color:rgba(255,255,255,.45);font-family:Nunito,sans-serif;margin-top:2px">'+todayLabel+' · <span style="color:rgba(255,255,255,.3)">Click any number to edit</span></div></div>';
-  reportHTML+='<div style="display:flex;align-items:center;gap:8px">';
-  reportHTML+='<button onclick="resetTR()" style="font-size:11px;padding:5px 11px;border-radius:var(--r);border:1px solid rgba(255,255,255,.15);background:transparent;cursor:pointer;color:rgba(255,255,255,.5);font-family:Nunito,sans-serif">Reset</button>';
-  reportHTML+='</div></div>';
-  reportHTML+='<div style="padding:16px 20px">';
+  // Column header widths for consistent alignment across all sections
+  var COL_LABEL='flex:1;font-size:13.5px;font-family:Nunito,sans-serif;color:var(--t2)';
+  var COL_COUNT='width:60px;text-align:right;font-size:14px;font-weight:700;font-family:Inter,sans-serif;color:var(--tx)';
+  var COL_VAL='width:155px;text-align:right;font-size:14px;font-weight:700;font-family:Inter,sans-serif;color:var(--tx)';
+  var ROW='display:flex;align-items:center;gap:0;padding:11px 20px;border-bottom:1px solid var(--bd)';
+  var ROW_LAST='display:flex;align-items:center;gap:0;padding:11px 20px';
 
-  // Program Year Breakdown
-  reportHTML+=sectionHdr('Program Year Breakdown','ti-calendar');
-  reportHTML+='<div style="font-size:12px;color:var(--t3);font-family:Nunito,sans-serif;font-style:italic;margin-bottom:6px">Projects currently pending Part II approval</div>';
-  pys.forEach(function(py){
-    reportHTML+=editRow(py,'py-'+py,pendingByPY[py],null,null);
+  function secBlock(icon,title,color,rows){
+    return '<div style="border-bottom:2px solid var(--bd)">'
+      +'<div style="display:flex;align-items:center;gap:8px;padding:10px 20px 8px;background:var(--sf)">'
+      +'<i class="ti '+icon+'" style="font-size:14px;color:'+color+'"></i>'
+      +'<span style="font-size:11px;font-weight:700;color:'+color+';text-transform:uppercase;letter-spacing:.1em;font-family:Nunito,sans-serif">'+title+'</span>'
+      +'</div>'
+      +rows
+      +'</div>';
+  }
+
+  function tRow(label,countEl,valEl,last,accent){
+    var bg=accent?'background:'+accent+';':'background:var(--cd);';
+    return '<div style="'+bg+(last?ROW_LAST:ROW)+'">'
+      +'<span style="'+COL_LABEL+(accent?';color:var(--tx);font-weight:600':'')+'">'+label+'</span>'
+      +'<span style="'+COL_COUNT+'">'+countEl+'</span>'
+      +'<span style="'+COL_VAL+'">'+valEl+'</span>'
+      +'</div>';
+  }
+
+  // Column headers
+  var colHeaders='<div style="display:flex;align-items:center;gap:0;padding:7px 20px;background:#091a38">'
+    +'<span style="flex:1;font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;font-family:Nunito,sans-serif">Category</span>'
+    +'<span style="width:60px;text-align:right;font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;font-family:Nunito,sans-serif">Count</span>'
+    +'<span style="width:155px;text-align:right;font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;font-family:Nunito,sans-serif">REC Value</span>'
+    +'</div>';
+
+  var reportHTML='<div style="max-width:740px;margin:0 auto;background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--gshadow)">';
+
+  // Header
+  reportHTML+='<div style="background:linear-gradient(135deg,#152d55 0%,#091a38 100%);padding:18px 20px;display:flex;align-items:center;justify-content:space-between">'
+    +'<div>'
+    +'<div style="font-size:18px;font-weight:800;color:#fff;letter-spacing:.08em;font-family:Inter,sans-serif">TARGET REPORT</div>'
+    +'<div style="font-size:12px;color:rgba(255,255,255,.45);font-family:Nunito,sans-serif;margin-top:3px">'+todayLabel+'</div>'
+    +'</div>'
+    +'<div style="display:flex;align-items:center;gap:8px">'
+    +'<span style="font-size:11px;color:rgba(255,255,255,.3);font-family:Nunito,sans-serif;font-style:italic">Click numbers to edit</span>'
+    +'<button onclick="resetTR()" style="font-size:11px;padding:5px 12px;border-radius:var(--r);border:1px solid rgba(255,255,255,.18);background:transparent;cursor:pointer;color:rgba(255,255,255,.55);font-family:Nunito,sans-serif">↺ Reset</button>'
+    +'</div>'
+    +'</div>';
+
+  // Column headers strip
+  reportHTML+=colHeaders;
+
+  // ── Section 1: Program Year Breakdown ──
+  var pyRows='';
+  pys.forEach(function(py,i){
+    var isLast=i===pys.length-1;
+    pyRows+=tRow(py,trInput('py-'+py,pendingByPY[py]),'—',isLast);
   });
+  reportHTML+=secBlock('ti-calendar','Program Year Breakdown','#0891B2',pyRows);
 
-  // Pipeline Summary
-  reportHTML+=sectionHdr('Pipeline Summary','ti-chart-bar');
-  reportHTML+='<div style="font-size:12px;color:var(--t3);font-family:Nunito,sans-serif;font-style:italic;margin-bottom:6px">Not yet invoiced — awaiting approval or PTO/COC</div>';
-  reportHTML+=editRow('Pending Part II Approval','ppa-count',pendingApproval.length,'ppa-val',pendingApprovalVal.toFixed(2));
-  reportHTML+=editRow('Pending PTO/COC','pto-count',pendingPTO.length,'pto-val',pendingPTOVal.toFixed(2));
-  reportHTML+='<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#0D2147;border-radius:var(--r);margin-top:8px">'
-    +'<span style="font-size:13px;font-weight:700;color:#fff">Total Pipeline Value</span>'
-    +'<div style="display:flex;align-items:center;gap:12px" id="tr-pipeline-total">'
-    +'<span style="font-size:14px;font-weight:700;color:rgba(255,255,255,.7)" id="tr-pipe-count">-</span>'
-    +'<span style="font-size:15px;font-weight:700;color:#D4AF37" id="tr-pipe-val">-</span>'
-    +'</div></div>';
+  // ── Section 2: Pipeline Summary ──
+  var pipeRows='';
+  pipeRows+=tRow(
+    'Pending Part II Approval',
+    '<span id="tr-ppa-count-display" style="'+COL_COUNT+'">-</span>',
+    trInputRec('ppa-val',pendingApprovalVal.toFixed(2)),
+    false
+  );
+  pipeRows+=tRow(
+    'Pending PTO / COC',
+    trInput('pto-count',pendingPTO.length),
+    trInputRec('pto-val',pendingPTOVal.toFixed(2)),
+    true
+  );
+  reportHTML+=secBlock('ti-chart-bar','Pipeline Summary','#D97706',pipeRows);
 
-  // Approved
-  reportHTML+=sectionHdr('Part II Approved','ti-circle-check');
-  reportHTML+='<div style="font-size:12px;color:var(--t3);font-family:Nunito,sans-serif;font-style:italic;margin-bottom:6px">Projects fully approved by ILSFA</div>';
-  reportHTML+='<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);border-radius:var(--r)">'
-    +'<span style="font-size:13px;font-weight:600;color:var(--tx)">Part II Approved — Ready to Invoice</span>'
-    +'<div style="display:flex;align-items:center;gap:12px">'
-    +trInput('app-count',approved.length,false)
-    +trInputRec('app-val',approvedVal.toFixed(2))
-    +'</div></div>';
+  // ── Section 3: Part II Approved ──
+  var appRows=tRow(
+    'Part II Approved — Ready to Invoice',
+    trInput('app-count',approved.length),
+    trInputRec('app-val',approvedVal.toFixed(2)),
+    true,
+    'rgba(16,185,129,.06)'
+  );
+  reportHTML+=secBlock('ti-circle-check','Part II Approved','#10B981',appRows);
 
-  // Total Submitted
-  reportHTML+=sectionHdr('Total Submitted to Program','ti-send');
-  reportHTML+='<div style="font-size:12px;color:var(--t3);font-family:Nunito,sans-serif;font-style:italic;margin-bottom:6px">All projects submitted — includes approved + pending</div>';
-  reportHTML+=editRow('Total Projects Submitted','sub-count',pendingApproval.length,'sub-val',pendingApprovalVal.toFixed(2));
+  // ── Section 4: Total Submitted ──
+  var subRows=tRow(
+    'Total Projects Submitted',
+    '<span id="tr-sub-count-display" style="'+COL_COUNT+'">-</span>',
+    trInputRec('sub-val',(pendingApprovalVal+approvedVal).toFixed(2)),
+    true,
+    'rgba(99,102,241,.05)'
+  );
+  reportHTML+=secBlock('ti-send','Total Submitted to Program','#6366F1',subRows);
 
-  // Total Portfolio
-  reportHTML+=sectionHdr('Total Estimated Portfolio Value','ti-wallet');
-  reportHTML+='<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#0D2147;border-radius:var(--r);margin-top:4px">'
-    +'<span style="font-size:13px;font-weight:700;color:#fff">Overall Total (All Projects)</span>'
-    +'<div style="display:flex;align-items:center;gap:12px" id="tr-overall-total">'
-    +'<span style="font-size:14px;font-weight:700;color:rgba(255,255,255,.7)" id="tr-overall-count">-</span>'
-    +'<span style="font-size:15px;font-weight:700;color:#D4AF37" id="tr-overall-val">-</span>'
-    +'</div></div>';
+  // ── Overall Total footer ──
+  reportHTML+='<div style="display:flex;align-items:center;gap:0;padding:14px 20px;background:linear-gradient(135deg,#152d55 0%,#091a38 100%)">'
+    +'<span style="flex:1;font-size:13px;font-weight:700;color:#fff;font-family:Nunito,sans-serif;text-transform:uppercase;letter-spacing:.06em">Overall Total</span>'
+    +'<span style="width:60px;text-align:right;font-size:16px;font-weight:800;color:rgba(255,255,255,.8);font-family:Inter,sans-serif" id="tr-overall-count">-</span>'
+    +'<span style="width:155px;text-align:right;font-size:16px;font-weight:800;color:#D4AF37;font-family:Inter,sans-serif" id="tr-overall-val">-</span>'
+    +'</div>';
 
-  reportHTML+='<div style="font-size:11px;color:var(--t3);font-family:Nunito,sans-serif;text-align:center;padding:10px 0 0;font-style:italic">Sunrise Solar LLC | sunrisesolar-il.com</div>';
-  reportHTML+='</div></div>';
+  // Footer
+  reportHTML+='<div style="padding:8px 20px;background:var(--sf);border-top:1px solid var(--bd);text-align:center">'
+    +'<span style="font-size:11px;color:var(--t3);font-family:Nunito,sans-serif;font-style:italic">Sunrise Solar LLC · sunrisesolar-il.com</span>'
+    +'</div>';
+
+  reportHTML+='</div>';
 
   var out=mkRptSubtabs('daily')+`
   <div class="rpt-hd">
@@ -3431,17 +3540,39 @@ function saveTR(){
     if(el.tagName==='INPUT')data[el.id.replace('tr-','')]=el.value;
   });
   localStorage.setItem(key,JSON.stringify(data));
-  // Update computed totals
-  function n(id){return parseFloat(document.getElementById('tr-'+id)&&document.getElementById('tr-'+id).value||0)||0;}
+
+  function n(id){var el=document.getElementById('tr-'+id);return parseFloat((el&&el.value)||0)||0;}
   function fmFull(v){return '$'+v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
-  var pipeCount=(n('ppa-count')+n('pto-count'));
-  var pipeVal=(n('ppa-val')+n('pto-val'));
-  var ovCount=pipeCount;
-  var ovVal=pipeVal;
-  var pc=document.getElementById('tr-pipe-count');if(pc)pc.textContent=pipeCount;
-  var pv=document.getElementById('tr-pipe-val');if(pv)pv.textContent=fmFull(pipeVal);
+
+  // 1. Pending Part II Approval count = sum of all PY inputs
+  var ppaCount=n('py-PY7')+n('py-PY8')+n('py-PY8-2025');
+  var el_ppa=document.getElementById('tr-ppa-count-display');
+  if(el_ppa)el_ppa.textContent=ppaCount;
+
+  // 2. Total Projects Submitted = PPA count + Approved count
+  var appCount=n('app-count');
+  var subCount=ppaCount+appCount;
+  var el_sub=document.getElementById('tr-sub-count-display');
+  if(el_sub)el_sub.textContent=subCount;
+
+  // 3. Overall Total count = PPA + PTO + Approved
+  var ptoCount=n('pto-count');
+  var ovCount=ppaCount+ptoCount+appCount;
+  var ovVal=n('ppa-val')+n('pto-val')+n('app-val');
   var oc=document.getElementById('tr-overall-count');if(oc)oc.textContent=ovCount;
   var ov=document.getElementById('tr-overall-val');if(ov)ov.textContent=fmFull(ovVal);
+
+  // 4. Sync PY inputs → dashboard donut (update pyAdjust store so donut reflects daily report)
+  var adj={};
+  ['PY7','PY8','PY8-2025'].forEach(function(py){
+    var el=document.getElementById('tr-py-'+py);
+    if(el&&el.value!=='')adj[py]=parseFloat(el.value)||0;
+  });
+  if(Object.keys(adj).length>0){
+    var existing=getPYAdjust();
+    Object.assign(existing,adj);
+    localStorage.setItem('ilsfa_py_adjust',JSON.stringify(existing));
+  }
 }
 function resetTR(){
   if(!confirm('Reset all values to portal data?'))return;
@@ -3463,7 +3594,6 @@ function exportDailyTarget(){
   csv+='\nPIPELINE SUMMARY\n';
   csv+='Pending Part II Approval,'+pendingApproval.length+','+fmFull(pendingApproval.reduce(function(a,p){return a+rv2(p);},0))+'\n';
   csv+='Pending PTO/COC,'+pendingPTO.length+','+fmFull(pendingPTO.reduce(function(a,p){return a+rv2(p);},0))+'\n';
-  csv+='Total Pipeline Value,'+(pendingApproval.length+pendingPTO.length)+','+fmFull((pendingApproval.concat(pendingPTO)).reduce(function(a,p){return a+rv2(p);},0))+'\n';
   csv+='\nAPPROVED\n';
   csv+='Part II Approved Ready to Invoice,'+approved.length+','+fmFull(approved.reduce(function(a,p){return a+rv2(p);},0))+'\n';
   csv+='\nSunrise Solar LLC | sunrisesolar-il.com\n';
@@ -3559,7 +3689,7 @@ function addMonthColumn(pyKey){
   var data=getMonthlyManual(pyKey,function(){return {months:[],cells:{}};});
   if(data.months.indexOf(label)>=0){alert('That column already exists.');return;}
   data.months.push(label);
-  data.cells[label]={submitted:'',approved:'',pending:'',pct:'',corrections:'',rec:''};
+  data.cells[label]={submitted:'',approved:'',pending:'',pct:'',corrections:'',invoiced:'',rec:''};
   saveMonthlyManual(pyKey,data);
   generateMonthly();
 }
@@ -3573,10 +3703,16 @@ function removeMonthColumn(pyKey,label){
 }
 function updateMonthlyCell(pyKey,label,field,val){
   var data=getMonthlyManual(pyKey,function(){return {months:[],cells:{}};});
-  if(!data.cells[label])data.cells[label]={submitted:'',approved:'',pending:'',pct:'',corrections:'',rec:''};
+  if(!data.cells[label])data.cells[label]={submitted:'',approved:'',pending:'',pct:'',corrections:'',invoiced:'',rec:''};
   data.cells[label][field]=val;
   saveMonthlyManual(pyKey,data);
   generateMonthly();
+}
+function updateMonthlyMeta(pyKey,field,val){
+  var data=getMonthlyManual(pyKey,function(){return {months:[],cells:{}};});
+  if(!data.meta)data.meta={};
+  data.meta[field]=val;
+  saveMonthlyManual(pyKey,data);
 }
 function generateMonthly(){
   var content=document.getElementById('mo-content');
@@ -3673,7 +3809,8 @@ function generateMonthly(){
         {key:'submitted',label:'Part 2 Submitted'},
         {key:'approved',label:'Part 2 Approved'},
         {key:'pending',label:'Pending Part 2 Approval'},
-        {key:'corrections',label:'Correction Received'},
+        {key:'corrections',label:'Correction Received/Addressed'},
+        {key:'invoiced',label:'Invoiced'},
       ];
       mrows.forEach(function(r){
         out+='<tr><td>'+r.label+'</td>'+mdata.months.map(function(m){
@@ -3705,11 +3842,44 @@ function generateMonthly(){
     out+='</div>';
 
     out+='</div>'; // close two-column grid
-    out+='<div style="padding:14px 20px 18px;border-top:1px solid var(--bd);font-size:12.5px;color:var(--t2);font-family:Nunito,sans-serif;line-height:1.9">'
-      +'Pending for Part 2 Submission: '+pendingSubmission+' (Not including Close Lost)<br>'
-      +'Total Part 2 Correction Received: '+totalCorrections+'<br>'
-      +'Correction Addressed: '+correctionsAddressed+'<br>'
-      +'Pending Correction: '+pendingCorrection
+
+    // Editable footer fields — saved in meta per PY
+    var meta=(mdata.meta||{});
+    var pyKeyEsc=py.key.replace(/'/g,"\\'");
+    function metaVal(field,def){return meta[field]!==undefined?meta[field]:def;}
+    function metaInput(field,def,extraLabel){
+      var v=metaVal(field,def);
+      return '<input type="number" value="'+v+'" placeholder="0"'
+        +' style="width:52px;text-align:right;border:none;border-bottom:1.5px solid var(--bd);background:transparent;font-family:Nunito,sans-serif;font-size:13px;font-weight:700;color:var(--tx);padding:1px 3px;outline:none;margin:0 4px"'
+        +' onchange="updateMonthlyMeta(\''+pyKeyEsc+'\',\''+field+'\',this.value)"'
+        +' oninput="updateMonthlyMeta(\''+pyKeyEsc+'\',\''+field+'\',this.value)"/>'
+        +(extraLabel?'<span style="color:var(--t3);font-size:12px"> '+extraLabel+'</span>':'');
+    }
+    out+='<div style="padding:14px 20px 18px;border-top:2px solid var(--bd);background:var(--sf)">'
+      +'<div style="font-size:10.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.09em;font-family:Nunito,sans-serif;margin-bottom:10px">Corrections & Submission Status</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+      // Field 1
+      +'<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r)">'
+      +'<span style="font-size:12.5px;color:var(--t2);font-family:Nunito,sans-serif">Pending for Part 2 Submission'
+      +'<br><span style="font-size:11px;color:var(--t3)">(Not including Close Lost)</span></span>'
+      +metaInput('pendingSubmission',pendingSubmission)
+      +'</div>'
+      // Field 2
+      +'<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r)">'
+      +'<span style="font-size:12.5px;color:var(--t2);font-family:Nunito,sans-serif">Total Part 2 Correction Received</span>'
+      +metaInput('totalCorrections',totalCorrections)
+      +'</div>'
+      // Field 3
+      +'<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r)">'
+      +'<span style="font-size:12.5px;color:var(--t2);font-family:Nunito,sans-serif">Correction Addressed</span>'
+      +metaInput('correctionsAddressed',correctionsAddressed)
+      +'</div>'
+      // Field 4
+      +'<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--r)">'
+      +'<span style="font-size:12.5px;color:var(--t2);font-family:Nunito,sans-serif">Pending Correction</span>'
+      +metaInput('pendingCorrection',pendingCorrection)
+      +'</div>'
+      +'</div>'
       +'</div>';
 
     out+='</div>'; // close card
@@ -3741,263 +3911,163 @@ function exportPeriodReport(type){
 }
 
 // ── TEAM VIEW — PROJECTS TAB ─────────────────────────────────────────
-let tvStatusFilter='all'; // 'all' or a project status
+let tvStatusFilter='all';
+let tvPYFilter='';
 let tvSearchQ='';
 let tvExpanded=null;
+let tvPage=1;
+
+function clearTVFilters(){tvStatusFilter="all";tvPYFilter="";tvSearchQ="";tvPage=1;tvExpanded=null;rtvProj();}
+function tvRestoreFocus(){var i=document.getElementById("tv-search");if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}}
+
+function navTeamProj(statusFilter,pyFilter){
+  tvStatusFilter=statusFilter||'all';
+  tvPYFilter=pyFilter||'';
+  tvSearchQ='';
+  tvExpanded=null;
+  tvPage=1;
+  activePM='__proj';
+  rtv();
+}
 
 function rtvProj(){
   var el=document.getElementById('pmc');
   if(!el)return;
 
+  // Apply all filters
   var list=P.filter(function(p){
     if(tvStatusFilter!=='all'&&p.ps!==tvStatusFilter)return false;
-    if(tvSearchQ&&(p.id||'').toLowerCase().indexOf(tvSearchQ.toLowerCase())<0)return false;
+    if(tvPYFilter&&p.py!==tvPYFilter)return false;
+    if(tvSearchQ){
+      var q=tvSearchQ.toLowerCase();
+      var hay=[p.id,p.name||'',p.pm||'',p.ut||'',p.py,p.ps,p.cs||'',p.jts||'',p.hrp||''].join(' ').toLowerCase();
+      if(hay.indexOf(q)<0)return false;
+    }
     return true;
   });
 
-  function sCls(ps){
-    if(ps==='Approved')return 'background:var(--ok);color:var(--ot)';
-    if(ps==='Further Part II information requested')return 'background:var(--er);color:var(--et)';
-    if(ps==='Under Inspection')return 'background:rgba(8,145,178,.1);color:#0891B2';
-    if(ps==='Part II Submitted')return 'background:#fff;color:#1D4ED8;border:1px solid rgba(29,78,216,.28)';
-    return 'background:var(--s2);color:var(--t2)';
-  }
-  function sLbl(ps){
-    return ps==='Further Part II information requested'?'Corr. Req.':ps||'—';
-  }
+  var hasAnyTVFilter=tvStatusFilter!=='all'||tvPYFilter||tvSearchQ;
 
-  // Build container
-  var wrap=document.createElement('div');
+  // Pagination
+  var TPAGE_SIZE=100;
+  var totalTPages=Math.max(1,Math.ceil(list.length/TPAGE_SIZE));
+  if(tvPage>totalTPages)tvPage=totalTPages;
+  var pageList=list.slice((tvPage-1)*TPAGE_SIZE,tvPage*TPAGE_SIZE);
 
-  // Header with title, search, and status filter
-  var hdr=document.createElement('div');
-  hdr.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap';
+  // Visible columns (reuse SPL column manager)
+  var vcols=visibleCols();
+  var colSpan=vcols.length+1;
 
-  var title=document.createElement('div');
-  title.style.cssText='font-size:16px;font-weight:600;color:var(--tx)';
-  title.textContent='All Projects ('+P.length+')';
-  hdr.appendChild(title);
+  var out='';
 
-  var controls=document.createElement('div');
-  controls.style.cssText='margin-left:auto;display:flex;gap:8px;flex-wrap:wrap';
-
-  var searchBox=document.createElement('input');
-  searchBox.type='text';
-  searchBox.placeholder='Search project ID...';
-  searchBox.value=tvSearchQ;
-  searchBox.style.cssText='font-size:12.5px;padding:7px 12px;border-radius:20px;border:1px solid var(--bd);background:var(--cd);color:var(--tx);font-family:Nunito,sans-serif;outline:none;min-width:170px';
-  searchBox.addEventListener('input',function(){tvSearchQ=this.value;tvExpanded=null;rtvProj();
-    // restore focus + cursor after re-render
-    var el2=document.getElementById('pmc').querySelector('input[type="text"]');
-    if(el2){el2.focus();el2.setSelectionRange(el2.value.length,el2.value.length);}
-  });
-
-  var statusSel=document.createElement('select');
-  statusSel.style.cssText='font-size:12.5px;padding:7px 12px;border-radius:20px;border:1px solid var(--bd);background:var(--cd);color:var(--tx);font-family:Nunito,sans-serif;cursor:pointer';
-  var statuses=['all','Part II Submitted','Under Inspection','Approved','Further Part II information requested'];
-  statuses.forEach(function(s){
-    var opt=document.createElement('option');
-    opt.value=s;
-    opt.textContent=s==='all'?'All statuses':s;
-    if(s===tvStatusFilter)opt.selected=true;
-    statusSel.appendChild(opt);
-  });
-  statusSel.addEventListener('change',function(){tvStatusFilter=this.value;tvExpanded=null;rtvProj();});
-
-  controls.appendChild(searchBox);
-  controls.appendChild(statusSel);
-  hdr.appendChild(controls);
-  wrap.appendChild(hdr);
+  // ── Toolbar ──────────────────────────────────────────────────
+  out+='<div class="proj-toolbar">'
+    +'<div class="proj-search"><i class="ti ti-search"></i><input id="tv-search" placeholder="Search projects..." value="'+tvSearchQ.replace(/"/g,'&quot;')+'" oninput="tvSearchQ=this.value;tvPage=1;tvExpanded=null;rtvProj();setTimeout(tvRestoreFocus,10)"/></div>'
+    +(hasAnyTVFilter?'<button class="proj-filter" onclick="clearTVFilters()" style="color:var(--et);border-color:rgba(225,29,72,.2);white-space:nowrap"><i class="ti ti-x" style="font-size:12px"></i> Clear filters</button>':'')
+    +'<span class="proj-count" style="margin-left:auto">'+list.length+' of '+P.length+'</span>'
+    +'<button class="proj-filter" onclick="openColManager()" style="white-space:nowrap"><i class="ti ti-columns" style="font-size:13px"></i> Columns</button>'
+    +'<button class="proj-filter" onclick="exportProjects()" style="white-space:nowrap"><i class="ti ti-download" style="font-size:13px"></i> Export</button>'
+    +'<button class="proj-filter" onclick="printProjects()" style="white-space:nowrap"><i class="ti ti-printer" style="font-size:13px"></i> Print</button>'
+    +'</div>';
 
   if(!list.length){
-    var empty=document.createElement('div');
-    empty.style.cssText='text-align:center;padding:36px;color:var(--t3);font-family:Nunito,sans-serif;background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl)';
-    empty.textContent='No projects found.';
-    wrap.appendChild(empty);
-    el.innerHTML='';el.appendChild(wrap);return;
+    out+='<div style="text-align:center;padding:48px;color:var(--t3);font-family:Nunito,sans-serif;background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl)"><i class="ti ti-folder-off" style="font-size:32px;display:block;margin-bottom:10px;opacity:.3"></i>No projects match your filters.</div>';
+    el.innerHTML=out;return;
   }
 
-  var table=document.createElement('div');
-  table.style.cssText='background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--gshadow)';
+  // ── Table ─────────────────────────────────────────────────────
+  function th(col,label){
+    var fm=COL_FILTER_MAP[col];
+    var isSorted=projSort.col===col;
+    var sortIcon=isSorted?(projSort.dir==='asc'?'<i class="ti ti-chevron-up" style="font-size:11px;opacity:.7"></i>':'<i class="ti ti-chevron-down" style="font-size:11px;opacity:.7"></i>'):'';
+    var isFiltered=(fm&&projFilter[fm.field])||(col==='sub'&&(projDateFilter.preset||projDateFilter.from||projDateFilter.to));
+    var filterDot=isFiltered?'<span class="th-filter-dot"></span>':'';
+    return '<th onclick="openColMenu(\"'+col+'\",this);event.stopPropagation()" style="cursor:pointer;position:relative;'+(isSorted?'background:rgba(8,145,178,.06)':'')+'">'
+      +'<div class="th-wrap">'+label+sortIcon+filterDot+'<i class="ti ti-chevron-down" style="font-size:10px;color:var(--t3);margin-left:auto;opacity:.5"></i></div></th>';
+  }
 
-  list.forEach(function(p,pi){
+  out+='<div class="proj-table-wrap"><table class="proj-table"><thead><tr>'
+    +vcols.map(function(c){return th(c.key,c.label);}).join('')
+    +'<th style="width:60px"></th></tr></thead><tbody>';
+
+  pageList.forEach(function(p){
     var isExp=tvExpanded===p.id;
-    var cl=ppx(p.id);
-    var isLast=pi===list.length-1;
+    var clPct=ppx(p.id).pct;
+    var pmCell=p.pm?'<span style="display:flex;align-items:center;gap:5px"><span style="width:20px;height:20px;border-radius:50%;background:#0D2147;display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:600;flex-shrink:0">'+p.pm.charAt(0)+'</span>'+p.pm+'</span>':'<span style="color:var(--t3)">—</span>';
+    var corrDiv=p.corr?'<div style="background:var(--wn);border-left:3px solid var(--wb);border-radius:var(--r);padding:9px 12px;margin-bottom:10px;font-size:13.5px;color:var(--wt);line-height:1.6;font-family:Nunito,sans-serif"><strong>Correction:</strong> '+p.corr+'</div>':'';
+    var prFail=gprs(p.id).fa;
+    var prFailSpan=prFail>0?'<span style="font-size:12px;color:var(--et);font-family:Nunito,sans-serif"><i class="ti ti-alert-circle" style="font-size:12px"></i> '+prFail+' post-review failure'+(prFail>1?'s':'')+'</span>':'';
 
-    var item=document.createElement('div');
-    item.style.cssText='border-bottom:'+(isExp||isLast?'none':'1px solid var(--bd)');
-
-    // Row
-    var row=document.createElement('div');
-    row.style.cssText='display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;transition:background .1s;'+(isExp?'background:#F0F7FF;':'');
-    row.addEventListener('mouseover',function(){if(tvExpanded!==p.id)this.style.background='#EFF8FF';});
-    row.addEventListener('mouseout',function(){if(tvExpanded!==p.id)this.style.background='';});
-    row.addEventListener('click',function(){tvExpanded=tvExpanded===p.id?null:p.id;rtvProj();});
-
-    // Left content
-    var left=document.createElement('div');
-    left.style.cssText='flex:1;min-width:0';
-
-    var topRow=document.createElement('div');
-    topRow.style.cssText='display:flex;align-items:center;gap:6px;flex-wrap:wrap';
-
-    var idSpan=document.createElement('span');
-    idSpan.style.cssText='font-size:13.5px;font-weight:700;color:#0D2147';
-    idSpan.textContent=p.id;
-    topRow.appendChild(idSpan);
-
-    if(p.name){
-      var nameSpan=document.createElement('span');
-      nameSpan.style.cssText='font-size:12px;color:var(--t2)';
-      nameSpan.textContent=p.name;
-      topRow.appendChild(nameSpan);
+    function cellFor(key){
+      if(key==='id')return '<td><span class="proj-id">'+p.id+'</span>'+(isp(p)?'<span style="font-size:10px;padding:1px 5px;border-radius:8px;background:var(--wn);color:var(--wt);margin-left:5px;font-family:Nunito,sans-serif">Pilot</span>':'')+'</td>';
+      if(key==='name')return '<td class="proj-name" title="'+(p.name||'')+'">'+(p.name||'<span style="color:var(--t3);font-style:italic">—</span>')+'</td>';
+      if(key==='py')return '<td><span style="font-size:12px;padding:2px 8px;border-radius:10px;background:var(--s2);color:var(--t2);font-family:Nunito,sans-serif">'+p.py+'</span></td>';
+      if(key==='pm')return '<td>'+pmCell+'</td>';
+      if(key==='ut')return '<td style="color:var(--t2);font-size:13px">'+(p.ut||'—')+'</td>';
+      if(key==='sub')return '<td style="font-size:12.5px;color:var(--t2);white-space:nowrap">'+(p.sub||'—')+'</td>';
+      if(key==='recs')return '<td><span class="proj-rec">'+(p.recs||'—')+'</span></td>';
+      if(key==='ps')return '<td><span class="proj-status" style="'+sCls(p.ps)+'">'+sLabel(p.ps)+'</span></td>';
+      if(key==='cs')return '<td><span style="'+csCls(p.cs)+';font-size:12.5px;font-family:Nunito,sans-serif">'+(p.cs||'—')+'</span></td>';
+      if(key==='jts')return '<td style="font-size:12.5px;color:var(--t2)">'+(p.jts||'—')+'</td>';
+      if(key==='hrp')return '<td style="font-size:12px;color:var(--t2);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(p.hrp||'N/A')+'</td>';
+      if(key==='pilot')return '<td style="font-size:12.5px;text-align:center">'+(isp(p)?'<span style="color:var(--ot)">✓</span>':'<span style="color:var(--t3)">—</span>')+'</td>';
+      if(key==='cl')return '<td style="font-size:12.5px;color:var(--t2);text-align:center">'+clPct+'%</td>';
+      if(key==='corr')return '<td style="font-size:12px;color:var(--t2);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+(p.corr||'')+'">'+(p.corr||'—')+'</td>';
+      if(key==='cmt')return '<td style="font-size:12px;color:var(--t2);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+(p.cmt||'')+'">'+(p.cmt||'—')+'</td>';
+      return '<td>—</td>';
     }
 
-    var pySpan=document.createElement('span');
-    pySpan.style.cssText='font-size:11px;padding:1px 7px;border-radius:10px;background:var(--s2);color:var(--t2);font-family:Nunito,sans-serif';
-    pySpan.textContent=p.py;
-    topRow.appendChild(pySpan);
+    out+='<tr class="'+(isExp?'expanded':'')+'" onclick="tvExpanded=tvExpanded===\''+p.id+'\' ? null : \''+p.id+'\';rtvProj()">'
+      +vcols.map(function(c){return cellFor(c.key);}).join('')
+      +'<td style="text-align:right;white-space:nowrap">'
+      +'<button class="act-btn" title="Edit" onclick="openEditModal(\''+p.id+'\');event.stopPropagation()"><i class="ti ti-pencil"></i></button>'
+      +'<button class="act-btn" title="Delete" onclick="rmP(\''+p.id+'\');event.stopPropagation()" style="color:var(--et)"><i class="ti ti-trash"></i></button>'
+      +'</td></tr>';
 
-    if(isp(p)){
-      var pilotSpan=document.createElement('span');
-      pilotSpan.style.cssText='font-size:10px;padding:1px 6px;border-radius:8px;background:var(--wn);color:var(--wt)';
-      pilotSpan.textContent='Pilot';
-      topRow.appendChild(pilotSpan);
-    }
-    left.appendChild(topRow);
-
-    // Progress bar
-    var progRow=document.createElement('div');
-    progRow.style.cssText='display:flex;align-items:center;gap:8px;margin-top:5px';
-    var barWrap=document.createElement('div');
-    barWrap.style.cssText='flex:1;max-width:120px;height:4px;background:var(--s2);border-radius:2px;overflow:hidden';
-    var barFill=document.createElement('div');
-    barFill.style.cssText='height:100%;width:'+cl.pct+'%;background:'+(cl.pct===100?'var(--ot)':'#0891B2')+';border-radius:2px';
-    barWrap.appendChild(barFill);
-    var progText=document.createElement('span');
-    progText.style.cssText='font-size:11px;color:'+(cl.pct===100?'var(--ot)':'var(--t3)')+';font-family:Nunito,sans-serif';
-    progText.textContent=cl.d+'/'+cl.t;
-    progRow.appendChild(barWrap);
-    progRow.appendChild(progText);
-    left.appendChild(progRow);
-    row.appendChild(left);
-
-    // Right content
-    var right=document.createElement('div');
-    right.style.cssText='display:flex;align-items:center;gap:8px;flex-shrink:0';
-
-    if(p.ut){
-      var utSpan=document.createElement('span');
-      utSpan.style.cssText='font-size:11.5px;color:var(--t2);font-family:Nunito,sans-serif';
-      utSpan.textContent=p.ut;
-      right.appendChild(utSpan);
-    }
-
-    var recSpan=document.createElement('span');
-    recSpan.className='proj-rec';
-    recSpan.style.cssText='font-size:12.5px';
-    recSpan.textContent=p.recs||'—';
-    right.appendChild(recSpan);
-
-    if(p.pm){
-      var pmSpan=document.createElement('span');
-      pmSpan.style.cssText='font-size:11.5px;color:var(--t2);font-family:Nunito,sans-serif';
-      pmSpan.textContent=p.pm;
-      right.appendChild(pmSpan);
-    }
-
-    var statusSpan=document.createElement('span');
-    statusSpan.style.cssText='font-size:11px;padding:3px 9px;border-radius:12px;font-weight:600;font-family:Nunito,sans-serif;'+sCls(p.ps);
-    statusSpan.textContent=sLbl(p.ps);
-    right.appendChild(statusSpan);
-
-    if(p.cs){
-      var csColor=p.cs==='Addressed'?'var(--ot)':p.cs==='Pending'?'var(--et)':p.cs==='Partially addressed'?'var(--wb)':'var(--t3)';
-      var csSpan=document.createElement('span');
-      csSpan.style.cssText='font-size:11px;color:'+csColor+';font-family:Nunito,sans-serif';
-      csSpan.textContent=p.cs;
-      right.appendChild(csSpan);
-    }
-
-    var chatBtnRow=document.createElement('button');
-    chatBtnRow.title='Chat with SPL';
-    chatBtnRow.style.cssText='background:none;border:none;cursor:pointer;color:var(--t3);font-size:15px;padding:5px 6px;border-radius:var(--r);display:flex;align-items:center;position:relative';
-    chatBtnRow.innerHTML='<i class="ti ti-message-circle"></i>'+chatBadgeHtml(p.id,true,p.pm||'PM',14);
-    chatBtnRow.addEventListener('click',function(e){e.stopPropagation();openChatTeam(p.id,p.pm||'');});
-    right.appendChild(chatBtnRow);
-
-    var chevron=document.createElement('i');
-    chevron.className='ti ti-chevron-down';
-    chevron.style.cssText='font-size:13px;color:var(--t3);transform:rotate('+(isExp?180:0)+'deg);transition:transform .2s';
-    right.appendChild(chevron);
-    row.appendChild(right);
-    item.appendChild(row);
-
-    // Expanded checklist
     if(isExp){
-      var detail=document.createElement('div');
-      detail.style.cssText='border-top:2px solid #0891B2;background:#F8FBFF;padding:14px';
-
-      if(p.corr){
-        var corrDiv=document.createElement('div');
-        corrDiv.style.cssText='background:var(--wn);border-left:3px solid var(--wb);border-radius:var(--r);padding:9px 12px;margin-bottom:12px;font-size:13px;color:var(--wt);line-height:1.6;font-family:Nunito,sans-serif';
-        corrDiv.innerHTML='<strong>Action needed:</strong> '+p.corr;
-        detail.appendChild(corrDiv);
-      }
-
-      var dataTitle=document.createElement('div');
-      dataTitle.style.cssText='font-size:15px;font-weight:600;color:var(--tx);font-family:Inter,sans-serif;margin-bottom:12px;display:flex;align-items:center;gap:8px';
-      dataTitle.innerHTML='<i class="ti ti-info-circle" style="font-size:16px;color:var(--gd)"></i> Project Details';
-      detail.appendChild(dataTitle);
-
-      var dataCard=document.createElement('div');
-      dataCard.style.cssText='background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);box-shadow:var(--gshadow);overflow:hidden;display:grid;grid-template-columns:1fr 1fr';
-
-      var fields=[
-        {l:'Customer Name',v:p.name||'—'},
-        {l:'Submission Date',v:p.sub||'—'},
-        {l:'Utility',v:p.ut||'—'},
-        {l:'REC Value',v:p.recs||'—'},
-        {l:'Program Year',v:p.py||'—'},
-        {l:'Portal Status',v:p.ps||'—'},
-        {l:'Correction Status',v:p.cs||'—'},
-        {l:'Pilot Program',v:isp(p)?'Yes':'No'},
-        {l:'Job Training Status',v:p.jts||'—'},
-      ];
-      fields.forEach(function(f,fi){
-        var isLastRow=fi>=fields.length-2;
-        var isLeftCol=fi%2===0;
-        var fRow=document.createElement('div');
-        fRow.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 14px;'+(isLastRow?'':'border-bottom:1px solid var(--bd);')+(isLeftCol?'border-right:1px solid var(--bd);':'');
-        var fLbl=document.createElement('span');
-        fLbl.style.cssText='font-size:12px;color:var(--t3);font-family:Nunito,sans-serif;white-space:nowrap';
-        fLbl.textContent=f.l;
-        var fVal=document.createElement('span');
-        fVal.style.cssText='font-size:13px;font-weight:600;color:var(--tx);font-family:Nunito,sans-serif;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
-        fVal.textContent=f.v;
-        fRow.appendChild(fLbl);
-        fRow.appendChild(fVal);
-        dataCard.appendChild(fRow);
-      });
-      detail.appendChild(dataCard);
-
-      if(p.corr){
-        var corrDetail=document.createElement('div');
-        corrDetail.style.cssText='margin-top:12px;padding:11px 16px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);font-size:13px;color:var(--t2);line-height:1.6;font-family:Nunito,sans-serif';
-        corrDetail.innerHTML='<span style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px">Correction Details</span>'+p.corr;
-        detail.appendChild(corrDetail);
-      }
-
-      item.appendChild(detail);
+      var cl2=ppx(p.id);
+      out+='<tr class="proj-detail-row"><td colspan="'+colSpan+'"><div class="proj-detail-inner">'
+        +corrDiv
+        +'<div class="proj-detail-grid">'
+        +'<div class="proj-detail-field"><span class="proj-detail-label">Customer Name</span><span class="proj-detail-val">'+(p.name||'—')+'</span></div>'
+        +'<div class="proj-detail-field"><span class="proj-detail-label">Assign PM</span><span class="proj-detail-val">'+(p.pm||'—')+'</span></div>'
+        +'<div class="proj-detail-field"><span class="proj-detail-label">Program Year</span><span class="proj-detail-val">'+p.py+'</span></div>'
+        +'<div class="proj-detail-field"><span class="proj-detail-label">Utility</span><span class="proj-detail-val">'+(p.ut||'—')+'</span></div>'
+        +'<div class="proj-detail-field"><span class="proj-detail-label">REC Value</span><span class="proj-detail-val proj-rec">'+(p.recs||'—')+'</span></div>'
+        +'<div class="proj-detail-field"><span class="proj-detail-label">Submission Date</span><span class="proj-detail-val">'+(p.sub||'—')+'</span></div>'
+        +'<div class="proj-detail-field"><span class="proj-detail-label">Portal Status</span><span class="proj-detail-val"><span class="proj-status" style="'+sCls(p.ps)+'">'+sLabel(p.ps)+'</span></span></div>'
+        +'<div class="proj-detail-field"><span class="proj-detail-label">Pilot</span><span class="proj-detail-val">'+(isp(p)?'Yes':'No')+'</span></div>'
+        +'<div class="proj-detail-field"><span class="proj-detail-label">Pilot Program Status</span><span class="proj-detail-val">'+(p.hrp||'Not Applicable')+'</span></div>'
+        +'<div class="proj-detail-field"><span class="proj-detail-label">Correction Status</span><span class="proj-detail-val">'+(p.cs||'—')+'</span></div>'
+        +'<div class="proj-detail-field"><span class="proj-detail-label">Job Training Status</span><span class="proj-detail-val">'+(p.jts||'—')+'</span></div>'
+        +'</div>'
+        +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
+        +'<span style="font-size:13px;color:var(--t3);font-family:Nunito,sans-serif">Checklist: <strong style="color:'+(cl2.pct===100?'var(--ot)':'var(--tx)')+'">'+cl2.d+'/'+cl2.t+' ('+cl2.pct+'%)</strong></span>'
+        +prFailSpan
+        +'<button class="act-btn" onclick="openPRModal(\''+p.id+'\');event.stopPropagation()" style="margin-left:auto"><i class="ti ti-clipboard-check" style="font-size:13px"></i> Post-review</button>'
+        +'</div>'
+        +'</div></td></tr>';
     }
-
-    table.appendChild(item);
   });
 
-  wrap.appendChild(table);
-  el.innerHTML='';
-  el.appendChild(wrap);
+  out+='</tbody></table></div>';
+
+  // Pagination
+  if(totalTPages>1){
+    var pStart=(tvPage-1)*TPAGE_SIZE+1;
+    var pEnd=Math.min(tvPage*TPAGE_SIZE,list.length);
+    out+='<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);margin-top:8px;font-family:Nunito,sans-serif">'
+      +'<span style="font-size:12.5px;color:var(--t3)">Showing '+pStart+'–'+pEnd+' of '+list.length+'</span>'
+      +'<div style="display:flex;align-items:center;gap:6px">'
+      +'<button onclick="if(tvPage>1){tvPage--;rtvProj()}" '+(tvPage<=1?'disabled':'')+' style="padding:5px 12px;border-radius:var(--r);border:1px solid var(--bd);background:var(--cd);cursor:'+(tvPage<=1?'default':'pointer')+';color:'+(tvPage<=1?'var(--t3)':'var(--tx)')+';font-family:Nunito,sans-serif;font-size:13px"><i class="ti ti-chevron-left"></i></button>'
+      +Array.from({length:totalTPages},function(_,i){return i+1;}).filter(function(n){return n===1||n===totalTPages||Math.abs(n-tvPage)<=1;}).reduce(function(acc,n,i,arr){if(i>0&&n-arr[i-1]>1)acc.push('…');acc.push(n);return acc;},[]).map(function(n){return typeof n==='string'?'<span style="color:var(--t3);padding:0 4px">…</span>':'<button onclick="tvPage='+n+';rtvProj()" style="padding:5px 10px;border-radius:var(--r);border:1px solid '+(n===tvPage?'var(--gd)':'var(--bd)')+';background:'+(n===tvPage?'var(--nv)':'var(--cd)')+';color:'+(n===tvPage?'var(--gd)':'var(--tx)')+';cursor:pointer;font-family:Nunito,sans-serif;font-size:13px;font-weight:'+(n===tvPage?'700':'400')+'">'+n+'</button>';}).join('')
+      +'<button onclick="if(tvPage<'+totalTPages+'){tvPage++;rtvProj()}" '+(tvPage>=totalTPages?'disabled':'')+' style="padding:5px 12px;border-radius:var(--r);border:1px solid var(--bd);background:var(--cd);cursor:'+(tvPage>=totalTPages?'default':'pointer')+';color:'+(tvPage>=totalTPages?'var(--t3)':'var(--tx)')+';font-family:Nunito,sans-serif;font-size:13px"><i class="ti ti-chevron-right"></i></button>'
+      +'</div>'
+      +'<span style="font-size:12.5px;color:var(--t3)">Page '+tvPage+' of '+totalTPages+'</span>'
+      +'</div>';
+  }
+
+  el.innerHTML=out;
 }
 
 
@@ -4992,7 +5062,7 @@ function renderMonthlyREC(){
   out+='<button class="add-proj-btn" onclick="addRecReportRow()"><i class="ti ti-plus" style="font-size:13px"></i> Add Project Row</button>';
   out+='</div>';
   out+='<div style="overflow-x:auto"><table class="rpt-table dark-hd"><thead><tr><th>Project ID</th><th style="text-align:right">REC Value</th><th style="text-align:center">Buyer</th><th></th></tr></thead><tbody>';
-  var buyerColors={Ameren:{bg:'rgba(16,185,129,.12)',fg:'#0e9f68'},ComEd:{bg:'rgba(99,102,241,.13)',fg:'#6366F1'},IPA:{bg:'rgba(139,92,246,.13)',fg:'#8B5CF6'}};
+  var buyerColors={ComEd:{bg:'rgba(8,145,178,.13)',fg:'#0891B2'},Ameren:{bg:'rgba(217,119,6,.13)',fg:'#D97706'},IPA:{bg:'rgba(139,92,246,.13)',fg:'#8B5CF6'}};
   rows.forEach(function(r,i){
     var bc=buyerColors[r.buyer]||{bg:'var(--s2)',fg:'var(--t2)'};
     out+='<tr>'
