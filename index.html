@@ -273,6 +273,11 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
   .rpt-overall{background:#0D2147!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .rpt-card-hd{background:#0D2147!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .rpt-footer{background:#0D2147!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  /* Daily report print — only the card, no UI chrome */
+  .daily-print-only{visibility:visible!important;position:absolute;left:0;top:0;width:100%;margin:0;padding:20px}
+  #daily-report-card{break-inside:avoid;box-shadow:none!important}
+  #daily-report-card div[style*="linear-gradient"]{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #daily-report-card input{border:none!important;background:transparent!important;-webkit-appearance:none}
   .rpt-grid{grid-template-columns:repeat(2,1fr)!important}
   .rpt-inp{border:none!important;background:transparent!important}
   .rpt-rec-inp{border:none!important}
@@ -361,8 +366,9 @@ html,body{height:100%;font-family:"Nunito",sans-serif;background:var(--sf);color
 .proj-count{font-size:12.5px;color:var(--t3);font-family:'Nunito',sans-serif;white-space:nowrap}
 .add-proj-btn{font-size:13px;font-weight:600;padding:8px 16px;border-radius:var(--r);border:none;background:#0D2147;color:#fff;cursor:pointer;font-family:'Nunito',sans-serif;display:flex;align-items:center;gap:6px;transition:background .15s;flex-shrink:0}
 .add-proj-btn:hover{background:#1a3a6b}
-.proj-table-wrap{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--gshadow);margin-bottom:14px}
-.proj-table{width:100%;border-collapse:collapse}
+.proj-table-wrap{background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow-x:auto;overflow-y:visible;box-shadow:var(--gshadow);margin-bottom:14px;-webkit-overflow-scrolling:touch}
+.proj-table{width:max-content;min-width:100%;border-collapse:collapse}
+.proj-table th,.proj-table td{white-space:nowrap}
 .proj-table th{text-align:left;font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;padding:10px 14px;border-bottom:1px solid var(--bd);background:var(--sf);font-family:'Nunito',sans-serif;white-space:nowrap;cursor:pointer;user-select:none}
 .proj-table th:hover{color:var(--tx)}
 .proj-table th.sort-asc::after{content:" ↑"}
@@ -871,16 +877,17 @@ function loadData(){
 
   // ── One-time seed: Monthly report data from slides (PY7 + PY8) ──────────────────────
   (function seedMonthlyData(){
-    if(localStorage.getItem('ilsfa_monthly_seed_v2'))return;
+    if(localStorage.getItem('ilsfa_monthly_seed_v3'))return;
 
-    // PY7 monthly data — May, June, July (August blank)
+    // PY7 monthly data — from screenshot
     var py7={
-      months:['May','June','July','August'],
+      months:['May','June','July','August','September'],
       cells:{
-        'May':    {submitted:'1',  approved:'1',  pending:'0', corrections:'0', invoiced:'1',  pct:'',rec:'36087.14'},
-        'June':   {submitted:'2',  approved:'2',  pending:'0', corrections:'0', invoiced:'2',  pct:'',rec:'83074.07'},
-        'July':   {submitted:'1',  approved:'1',  pending:'0', corrections:'0', invoiced:'0',  pct:'',rec:''},
-        'August': {submitted:'',   approved:'',   pending:'',  corrections:'',  invoiced:'',   pct:'',rec:''},
+        'May':       {submitted:'1', approved:'1', pending:'0', corrections:'0', invoiced:'1', pct:'', rec:'36087.14'},
+        'June':      {submitted:'2', approved:'2', pending:'0', corrections:'0', invoiced:'2', pct:'', rec:'83074.07'},
+        'July':      {submitted:'1', approved:'1', pending:'0', corrections:'0', invoiced:'1', pct:'', rec:'45677.52'},
+        'August':    {submitted:'-', approved:'-', pending:'-', corrections:'-', invoiced:'-', pct:'', rec:''},
+        'September': {submitted:'-', approved:'-', pending:'-', corrections:'-', invoiced:'-', pct:'', rec:''},
       },
       meta:{
         pendingSubmission:'1',
@@ -890,11 +897,16 @@ function loadData(){
       }
     };
 
-    // PY7 left-table (overall status) — stored in the manually editable fields
-    // The overall table fields map: submitted→submitted, approved→approved, invoiced→invoiced, rec→rec
-    // These are seeded as the base mdata for PY7 (already live from portal, but set meta for left table override)
-    // Left table: Part2 Submitted:148, PendingCorrection:0, Approved:148, PendingApproval:0, Invoiced:147, TotalREC:5270098.29
-    // These are shown in the left static table from portal data — no override needed for left table (it reads from P)
+    // PY7 left table overrides — from screenshot
+    var py7Report={
+      'PY7_submitted':'148',
+      'PY7_pendingCorr':'0',
+      'PY7_approved':'148',
+      'PY7_pendingApproval':'0',
+      'PY7_invoiced':'147',
+      'PY7_rec':'5315775.81',
+      'PY7_active':'149',
+    };
 
     // PY8 monthly data — May, June, July, August
     var py8={
@@ -913,13 +925,19 @@ function loadData(){
       }
     };
 
-    // Only seed if not already customized
-    // Force overwrite — replaces any previously empty/default data
+    // Force overwrite with latest data
     localStorage.setItem('ilsfa_monthly_PY7',JSON.stringify(py7));
     localStorage.setItem('ilsfa_monthly_PY8',JSON.stringify(py8));
 
+    // Seed PY7 left table overrides into ilsfa_report
+    var existingReport={};
+    try{existingReport=JSON.parse(localStorage.getItem('ilsfa_report')||'{}');}catch(e){}
+    Object.assign(existingReport,py7Report);
+    localStorage.setItem('ilsfa_report',JSON.stringify(existingReport));
+
     localStorage.setItem('ilsfa_monthly_seed_v1','1');
     localStorage.setItem('ilsfa_monthly_seed_v2','1');
+    localStorage.setItem('ilsfa_monthly_seed_v3','1');
   })();
 
 
@@ -1528,31 +1546,86 @@ ${clRows}
   // ── SECTION: Post-review overview ────────────────────────
   html+=`<div class="ds" style="padding:12px;margin-bottom:10px">
     <div class="dt" style="margin-bottom:10px"><i class="ti ti-zoom-check" style="font-size:15px;color:var(--gd)"></i> Post-review Overview
-      <button onclick="navTo('postreview')" style="margin-left:auto;font-size:12px;padding:4px 12px;border-radius:var(--r);border:1px solid var(--bd);background:transparent;cursor:pointer;color:var(--t2);font-family:'Nunito',sans-serif">Open post-review →</button>
+      <button onclick="navTo('postreview')" style="margin-left:auto;font-size:12px;padding:4px 12px;border-radius:var(--r);border:1px solid var(--bd);background:transparent;cursor:pointer;color:var(--t2);font-family:'Nunito',sans-serif">Open →</button>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
-      <div style="text-align:center;padding:8px;background:var(--sf);border-radius:var(--r);border:1px solid var(--bd)">
-        <div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:700;color:var(--ot)">${prPass}</div>
-        <div style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif;margin-top:2px">Fully Passed</div>
+
+    ${(function(){
+      // Review status counts from PR_STATUSES
+      var statusCounts={good:0,correction:0,pending:0,progress:0,none:0};
+      P.forEach(function(p){
+        var s=getPrStatus(p.id)||'none';
+        statusCounts[s]=(statusCounts[s]||0)+1;
+      });
+      // Re-review alerts
+      var reReviewCount=getSPLReviewAlerts().filter(function(a){return !a.clearedBySPL;}).length;
+      // Active PM notifications
+      var pmNotifCount=0;
+      var pmsSeen={};
+      P.forEach(function(p){
+        var pm=p.pm||'Unassigned';
+        if(!pmsSeen[pm]){
+          pmsSeen[pm]=true;
+          pmNotifCount+=getPMNotifications(pm).filter(function(n){return !n.addressed;}).length;
+        }
+      });
+
+      // Checklist progress bar
+      var passW=Math.round(prPass/tot*100);
+      var failW=Math.round(prFail/tot*100);
+
+      return `
+      <!-- Checklist stats — 3 clickable tiles -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
+        <div onclick="navTo('postreview')" style="text-align:center;padding:10px 8px;background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.2);border-radius:var(--r);cursor:pointer">
+          <div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:700;color:var(--ot)">${prPass}</div>
+          <div style="font-size:11px;color:var(--ot);font-family:'Nunito',sans-serif;margin-top:2px;font-weight:600">Checklist Passed</div>
+        </div>
+        <div onclick="navTo('postreview')" style="text-align:center;padding:10px 8px;background:${prFail>0?'rgba(225,29,72,.07)':'var(--sf)'};border:1px solid ${prFail>0?'rgba(225,29,72,.2)':'var(--bd)'};border-radius:var(--r);cursor:pointer">
+          <div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:700;color:${prFail>0?'var(--et)':'var(--t2)'}">${prFail}</div>
+          <div style="font-size:11px;color:${prFail>0?'var(--et)':'var(--t3)'};font-family:'Nunito',sans-serif;margin-top:2px;font-weight:600">Has Failures</div>
+        </div>
+        <div onclick="navTo('postreview')" style="text-align:center;padding:10px 8px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);cursor:pointer">
+          <div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:700;color:var(--t2)">${tot-prDone}</div>
+          <div style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif;margin-top:2px">Not Reviewed</div>
+        </div>
       </div>
-      <div style="text-align:center;padding:8px;background:var(--sf);border-radius:var(--r);border:1px solid var(--bd)">
-        <div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:700;color:var(--et)">${prFail}</div>
-        <div style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif;margin-top:2px">Has Failures</div>
+
+      <!-- Progress bar -->
+      <div style="height:5px;background:var(--s2);border-radius:3px;overflow:hidden;display:flex;margin-bottom:8px">
+        <div style="height:100%;width:${passW}%;background:var(--ot);transition:width .4s"></div>
+        <div style="height:100%;width:${failW}%;background:var(--et);transition:width .4s"></div>
       </div>
-      <div style="text-align:center;padding:8px;background:var(--sf);border-radius:var(--r);border:1px solid var(--bd)">
-        <div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:700;color:var(--t2)">${tot-prDone}</div>
-        <div style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif;margin-top:2px">Not Reviewed</div>
+
+      <!-- Review status pills row -->
+      <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;font-family:Nunito,sans-serif;margin-bottom:6px">Review Status</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+        ${[
+          {v:'good',l:'Good to go',bg:'var(--ok)',fg:'var(--ot)'},
+          {v:'correction',l:'Needs correction',bg:'var(--er)',fg:'var(--et)'},
+          {v:'pending',l:'Pending docs',bg:'rgba(217,119,6,.1)',fg:'#D97706'},
+          {v:'progress',l:'In progress',bg:'rgba(8,145,178,.1)',fg:'#0891B2'},
+        ].map(function(s){
+          var c=statusCounts[s.v]||0;
+          return '<div onclick="gpr(\'\')" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;background:'+s.bg+';cursor:pointer">'
+            +'<span style="font-size:13px;font-weight:700;color:'+s.fg+'">'+c+'</span>'
+            +'<span style="font-size:11px;color:'+s.fg+';font-family:Nunito,sans-serif">'+s.l+'</span>'
+            +'</div>';
+        }).join('')}
       </div>
-    </div>
-    <div style="height:6px;background:var(--s2);border-radius:3px;overflow:hidden;display:flex">
-      <div style="height:100%;width:${Math.round(prPass/tot*100)}%;background:var(--ot)"></div>
-      <div style="height:100%;width:${Math.round(prFail/tot*100)}%;background:var(--et)"></div>
-    </div>
-    <div style="display:flex;gap:14px;margin-top:6px;font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif">
-      <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:var(--ot);display:inline-block"></span>Passed</span>
-      <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:var(--et);display:inline-block"></span>Failed</span>
-      <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:var(--s2);border:1px solid var(--bd);display:inline-block"></span>Not reviewed</span>
-    </div>
+
+      <!-- Alert banners -->
+      ${reReviewCount>0?`<div onclick="navTo('postreview')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.25);border-radius:var(--r);margin-bottom:6px;cursor:pointer">
+        <i class="ti ti-refresh-alert" style="font-size:15px;color:#D97706;flex-shrink:0"></i>
+        <span style="font-size:12.5px;font-weight:600;color:#D97706;font-family:Nunito,sans-serif">${reReviewCount} project${reReviewCount!==1?'s':''} need${reReviewCount===1?'s':''} re-review — PM marked as addressed</span>
+        <i class="ti ti-chevron-right" style="font-size:13px;color:#D97706;margin-left:auto"></i>
+      </div>`:''}
+      ${pmNotifCount>0?`<div onclick="navTo('postreview')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.2);border-radius:var(--r);cursor:pointer">
+        <i class="ti ti-bell" style="font-size:15px;color:#6366F1;flex-shrink:0"></i>
+        <span style="font-size:12.5px;font-weight:600;color:#6366F1;font-family:Nunito,sans-serif">${pmNotifCount} pending PM notification${pmNotifCount!==1?'s':''} awaiting response</span>
+        <i class="ti ti-chevron-right" style="font-size:13px;color:#6366F1;margin-left:auto"></i>
+      </div>`:''}
+      `;
+    })()}
   </div>`;
 
   // ── SECTION: Utility + HRP Pending Part II Status Tracker (same row) ───────────────
@@ -1710,6 +1783,21 @@ function delScopeItem(part,i){
   saveScope(s);
   rscope();
 }
+const TOOL_URLS={
+  'ILSFA Portal':'https://elevateenergy.my.site.com/ApprovedVendor/s/login/',
+  'Zoho CRM':'https://one.zoho.com/zohoone/sunrisesolar/home/cxapp/crm/ghmcrm/tab/Potentials/custom-view/5184631000163323822/sheet?filter_id=5184631000183874943&page=1',
+  'PJM Portal':'https://gats.pjm-eis.com/GATS2/Home',
+  'SFA Meeting Minutes Doc':'https://docs.google.com/document/d/1-XlsxKS3j_pVr0-K97fMj4hcLP0W6viDcoOgeS4k-_I/edit?tab=t.tkmx5pfwgike',
+  'Meeting Minutes Doc':'https://docs.google.com/document/d/1-XlsxKS3j_pVr0-K97fMj4hcLP0W6viDcoOgeS4k-_I/edit?tab=t.tkmx5pfwgike',
+  'ILSFA Website':'https://www.illinoissfa.com/',
+  'Invoice Meeting Calendar':'https://drive.google.com/file/d/1deCM5G7NTDeJ9Wt9uXthDzJm8PW-mVZS/view?usp=sharing',
+  'ICC Meeting Calendar':'https://icc.illinois.gov/meetings/calendar/commission-meeting/2026',
+  'ChatGPT':'https://chatgpt.com/',
+  'Gmail/ Gchat':'https://mail.google.com/mail/u/0/#inbox',
+  'Gmail':'https://mail.google.com/mail/u/0/#inbox',
+  'Income Eligibility Map':'https://elevate.maps.arcgis.com/apps/webappviewer/index.html?id=924cfbc202f24e22a88f07f21423fad0',
+};
+
 function rscope(){
   const s=getScope();
   const q=scopeSearch;
@@ -1717,8 +1805,12 @@ function rscope(){
     return s[part].map(function(item,i){
       if(q&&item.tool.toLowerCase().indexOf(q)<0&&(item.task||'').toLowerCase().indexOf(q)<0)return '';
       const taskTxt=item.task?item.task:'<span style="font-style:italic;color:var(--t3)">No task assigned</span>';
+      const url=TOOL_URLS[item.tool]||'';
+      const toolLabel=url
+        ?'<a href="'+url+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--tx);text-decoration:none;display:flex;align-items:center;gap:5px">'+item.tool+'<i class="ti ti-external-link" style="font-size:11px;color:var(--t3)"></i></a>'
+        :item.tool;
       return '<div class="sow-row"><span class="dot" style="background:var(--gd);flex-shrink:0;margin-top:7px"></span>'+
-        '<div class="sow-body" onclick="editScopeItem(\''+part+'\','+i+')"><div class="sow-tool">'+item.tool+'</div><div class="sow-task">'+taskTxt+'</div></div>'+
+        '<div class="sow-body" onclick="editScopeItem(\''+part+'\','+i+')"><div class="sow-tool">'+toolLabel+'</div><div class="sow-task">'+taskTxt+'</div></div>'+
         '<button class="sow-del" onclick="event.stopPropagation();delScopeItem(\''+part+'\','+i+')" title="Remove"><i class="ti ti-x"></i></button></div>';
     }).join('');
   }
@@ -2322,8 +2414,9 @@ function rp(){
     var fm=COL_FILTER_MAP[col];
     var isFiltered=(fm&&projFilter[fm.field])||(col==='sub'&&(projDateFilter.preset||projDateFilter.from||projDateFilter.to));
     var filterDot=isFiltered?'<span class="th-filter-dot"></span>':'';
-    var canFilter=!!fm||(col==='id'||col==='name'||col==='recs'||col==='cl'||col==='corr'||col==='cmt');
-    return `<th onclick="openColMenu('${col}',this);event.stopPropagation()" style="cursor:pointer;position:relative;${isSorted?'background:rgba(8,145,178,.06)':''}">`
+    var isPinned=col==='id';
+    var stickyStyle=isPinned?'position:sticky;left:0;z-index:3;background:var(--sf);box-shadow:2px 0 5px rgba(0,0,0,.07);':'position:relative;';
+    return `<th onclick="openColMenu('${col}',this);event.stopPropagation()" style="${stickyStyle}cursor:pointer;${isSorted?'background:rgba(8,145,178,.06)':''}">`
       +`<div class="th-wrap">${label}${sortIcon}${filterDot}<i class="ti ti-chevron-down" style="font-size:10px;color:var(--t3);margin-left:auto;opacity:.5"></i></div></th>`;
   }
 
@@ -2343,7 +2436,7 @@ function rp(){
     const clPct=ppx(p.id).pct;
 
     function cellFor(key){
-      if(key==='id')return '<td><span class="proj-id">'+p.id+'</span>'+(isp(p)?'<span style="font-size:10px;padding:1px 5px;border-radius:8px;background:var(--wn);color:var(--wt);margin-left:5px;font-family:Nunito,sans-serif">Pilot</span>':'')+'</td>';
+      if(key==='id')return '<td style="position:sticky;left:0;background:var(--cd);z-index:2;box-shadow:2px 0 5px rgba(0,0,0,.06)"><span class="proj-id">'+p.id+'</span>'+(isp(p)?'<span style="font-size:10px;padding:1px 5px;border-radius:8px;background:var(--wn);color:var(--wt);margin-left:5px;font-family:Nunito,sans-serif">Pilot</span>':'')+'</td>';
       if(key==='name')return '<td class="proj-name" title="'+(p.name||'')+'">'+(p.name||'<span style="color:var(--t3);font-style:italic">—</span>')+'</td>';
       if(key==='py')return '<td><span style="font-size:12px;padding:2px 8px;border-radius:10px;background:var(--s2);color:var(--t2);font-family:Nunito,sans-serif">'+p.py+'</span></td>';
       if(key==='pm')return '<td>'+pmCell+'</td>';
@@ -2681,8 +2774,26 @@ function tpc(p){
   const psCls=p.ps==='Approved'?'bo':p.ps==='Further Part II information requested'?'br':p.ps==='Under Inspection'?'bd2':'bsub';
   const unreadComments=getPrCommentsUnreadForPM(p.id,p.pm||'PM');
   const commentBanner=unreadComments>0?`<div class="pr-comment-alert" onclick="tpTeam('${p.id}')" style="background:#EF4444;color:#fff;padding:9px 16px;font-size:12.5px;font-weight:700;font-family:Nunito,sans-serif;display:flex;align-items:center;gap:8px;cursor:pointer;animation:chatPulse 1.8s infinite"><i class="ti ti-message-2-bolt" style="font-size:15px"></i> SPL left ${unreadComments} new post-review comment${unreadComments!==1?'s':''} on this project — tap to view</div>`:'';
+  // PM notifications from SPL
+  var pmNotifs=getPMNotifications(p.pm||'Unassigned').filter(function(n){return n.pid===p.id&&!n.addressed;});
+  var pmNotifBanners=pmNotifs.map(function(n){
+    var priColor=n.priority==='urgent'?'#DC2626':n.priority==='info'?'#0891B2':'#D97706';
+    return '<div style="background:rgba(217,119,6,.07);border-left:3px solid '+priColor+';padding:10px 14px;display:flex;align-items:flex-start;gap:10px;border-bottom:1px solid var(--bd)">'
+      +'<i class="ti ti-bell" style="font-size:14px;color:'+priColor+';flex-shrink:0;margin-top:1px"></i>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-size:12px;font-weight:700;color:'+priColor+';margin-bottom:3px">Review comment from SPL</div>'
+      +'<div style="font-size:12.5px;color:var(--tx);line-height:1.5">'+n.text+'</div>'
+      +'<div style="margin-top:6px;display:flex;align-items:center;gap:8px">'
+      +'<span style="font-size:11px;color:var(--t3)">'+new Date(n.ts).toLocaleDateString()+'</span>'
+      +'<button onclick="markPMNotifAddressed(\''+escQ(p.pm||'Unassigned')+'\','+n.id+');event.stopPropagation()" style="font-size:11px;padding:2px 9px;border-radius:var(--r);border:1px solid '+priColor+';background:transparent;color:'+priColor+';cursor:pointer;font-family:Nunito,sans-serif;font-weight:600">Mark addressed</button>'
+      +'<button onclick="clearPMNotif(\''+escQ(p.pm||'Unassigned')+'\','+n.id+');event.stopPropagation()" style="font-size:11px;padding:2px 9px;border-radius:var(--r);border:1px solid var(--bd);background:transparent;color:var(--t2);cursor:pointer;font-family:Nunito,sans-serif">Dismiss</button>'
+      +'</div>'
+      +'</div>'
+      +'</div>';
+  }).join('');
   return `<div class="card">
     ${commentBanner}
+    ${pmNotifBanners}
     <div class="card-hd" onclick="tpTeam('${p.id}')">
       <div style="flex:1">
         <div style="font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
@@ -2884,6 +2995,20 @@ function rtn(){
   document.getElementById('pmc').innerHTML='<div class="hint">Detailed instructions for each of the 20 required documents.</div>'+docs.map(x=>`<div class="sc-card"><div class="sc-hd"><span style="font-size:12px;font-weight:600;color:var(--gd);min-width:32px">${x.n}</span><span style="font-size:14.5px;font-weight:600;flex:1">${x.t}</span></div><div class="sc-bd"><span style="font-size:14px;color:var(--t2);line-height:1.75">${x.v}</span></div></div>`).join('');
 }
 
+// Review status per project
+var PR_STATUSES=[
+  {v:'good',l:'Good to go',icon:'ti-circle-check',bg:'var(--ok)',fg:'var(--ot)',border:'var(--ob)'},
+  {v:'correction',l:'Needs correction',icon:'ti-alert-triangle',bg:'var(--er)',fg:'var(--et)',border:'rgba(225,29,72,.3)'},
+  {v:'pending',l:'Pending docs',icon:'ti-clock',bg:'rgba(217,119,6,.1)',fg:'#D97706',border:'rgba(217,119,6,.3)'},
+  {v:'progress',l:'In progress',icon:'ti-loader',bg:'rgba(8,145,178,.1)',fg:'#0891B2',border:'rgba(8,145,178,.3)'},
+];
+function getPrStatus(pid){try{return localStorage.getItem('pr_status_'+pid)||'';}catch(e){return '';}}
+function setPrStatus(pid,v){
+  localStorage.setItem('pr_status_'+pid,v);
+  rpr();
+}
+function getPrStatusObj(pid){return PR_STATUSES.find(function(s){return s.v===getPrStatus(pid);})||null;}
+
 function rpr(){
   updateTabBadges();
   if(prPid && !P.find(p=>p.id===prPid))prPid=''; // clear stale reference to a project that no longer exists
@@ -2903,24 +3028,7 @@ function rpr(){
     return;
   }
 
-  const ITEMS=[
-    'Permit reflects the approved version',
-    'PTO/COC includes the approval date, signature, and correct address',
-    'Net metering document is accurate',
-    'PJM and SO screenshots are clear and accurate',
-    'JCO photos are clear and complete',
-    'Inverter and module label photos are merged and clear',
-    'Array photos are complete and clear',
-    'Fox or Tesla monitoring screenshot shows the system online, producing, with the correct homeowner name',
-    'Job training affidavits are accurate and properly signed',
-    'Inspection document is the approved version',
-    'SSR is updated to reflect mitigations, if applicable',
-    'REC table values match the final shade study',
-    'Arrays are updated per the final shade study (Part II only)',
-    'ACF: Confirm production from SS. Higher = retain original | Lower = update.',
-    'No conflicting data between the portal, Zoho, and supporting documents',
-    'Job training hours are accurate and compliant',
-  ];
+  const ITEMS=getChecklistItems();
 
   // Load saved checkbox state
   function getChecked(pid){
@@ -2939,21 +3047,67 @@ function rpr(){
 
   const el=document.getElementById('n-postreview');
 
-  const projOpts=P.map(p=>{
-    const chk=getChecked(p.id);
-    const d=ITEMS.filter((_,i)=>chk[i]).length;
-    const complete=d===ITEMS.length;
-    return `<option value="${p.id}"${p.id===pid?' selected':''}>${p.id}${p.pm?' ('+p.pm+')':''}${complete?' ✓':''}</option>`;
+  // Build PM-grouped kanban
+  var pmGroups={};
+  P.forEach(function(p){
+    var pm=p.pm||'Unassigned';
+    if(!pmGroups[pm])pmGroups[pm]=[];
+    pmGroups[pm].push(p);
+  });
+  var pmKeys=Object.keys(pmGroups).sort();
+
+  var kanbanCols=pmKeys.map(function(pm){
+    var cards=pmGroups[pm].map(function(p){
+      var chk=getChecked(p.id);
+      var d=ITEMS.filter(function(_,i){return chk[i];}).length;
+      var complete=d===ITEMS.length;
+      var st=getPrStatusObj(p.id);
+      var isSel=p.id===pid;
+      var pendingAlerts=getActiveSPLAlerts(p.id);
+      var hasAlert=pendingAlerts.length>0;
+      var selStyle=isSel?'border:1.5px solid #0891B2;background:rgba(8,145,178,.06);'
+        :hasAlert?'border:1.5px solid #D97706;background:rgba(217,119,6,.04);'
+        :'border:1px solid var(--bd);background:var(--cd);';
+      return '<div onclick="prPid=\''+p.id+'\';rpr()" style="'+selStyle+'border-radius:var(--r);padding:9px 11px;margin-bottom:6px;cursor:pointer;transition:all .15s">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">'
+        +'<span style="font-size:11px;font-family:Inter,sans-serif;font-weight:600;color:'+(isSel?'#0891B2':hasAlert?'#D97706':'var(--t2)')+'">'+p.id+'</span>'
+        +(hasAlert?'<span style="font-size:10px;padding:1px 6px;border-radius:8px;background:rgba(217,119,6,.12);color:#D97706;font-weight:700">Re-review</span>'
+          :complete?'<i class="ti ti-circle-check" style="font-size:13px;color:var(--ot)"></i>'
+          :st?'<span style="font-size:10px;padding:1px 5px;border-radius:8px;background:'+st.bg+';color:'+st.fg+'">'+st.l+'</span>':'')
+        +'</div>'
+        +'<div style="font-size:12.5px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(p.name||p.id)+'</div>'
+        +'<div style="font-size:11px;color:var(--t3);margin-top:2px">'+(p.ut||'')+(p.py?' · '+p.py:'')+'</div>'
+        +'</div>';
+    }).join('');
+    return '<div style="flex:1;min-width:140px">'
+      +'<div style="font-size:10.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;font-family:Nunito,sans-serif">'+pm+'</div>'
+      +cards
+      +'</div>';
+  }).join('');
+
+  // Review status pills
+  var curStatus=getPrStatus(pid);
+  var statusPills=PR_STATUSES.map(function(s){
+    var isActive=curStatus===s.v;
+    return '<button onclick="setPrStatus(\''+pid+'\',\''+(isActive?'':s.v)+'\')" style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;border:1px solid '+(isActive?s.border:'var(--bd)')+';background:'+(isActive?s.bg:'transparent')+';color:'+(isActive?s.fg:'var(--t2)')+';cursor:pointer;font-family:Nunito,sans-serif;transition:all .15s">'
+      +'<i class="ti '+s.icon+'" style="font-size:13px"></i>'+s.l+'</button>';
   }).join('');
 
   el.innerHTML=`
     <div class="hint" style="margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-      <span><i class="ti ti-shield-lock" style="vertical-align:-2px;margin-right:5px;color:var(--gd)"></i>This checklist only lives in this browser &mdash; back it up regularly so it's never lost.</span>
+      <span><i class="ti ti-shield-lock" style="vertical-align:-2px;margin-right:5px;color:var(--gd)"></i>This checklist only lives in this browser &mdash; back it up regularly.</span>
       <button class="add-proj-btn" onclick="exportReportBackup()" style="flex-shrink:0"><i class="ti ti-database-export" style="font-size:13px"></i> Backup Now</button>
     </div>
-    <div class="prsel">
-      <label>Select project to review</label>
-      <select id="pr-sel">${projOpts}</select>
+
+    <!-- Project selector — PM kanban -->
+    <div style="background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;margin-bottom:14px;box-shadow:var(--gshadow)">
+      <div style="padding:10px 16px;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:13px;font-weight:700;color:var(--tx)">Select Project to Review</span>
+        <span style="font-size:12px;color:var(--t3)">${P.length} projects</span>
+      </div>
+      <div style="padding:14px 16px;display:flex;gap:14px;overflow-x:auto;-webkit-overflow-scrolling:touch">
+        ${kanbanCols}
+      </div>
     </div>
 
     <div style="background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--gshadow)">
@@ -2971,6 +3125,29 @@ function rpr(){
             ${chatBadgeHtml(pid,false,'SPL',18)}
           </button>
         </div>
+      </div>
+
+      <!-- SPL re-review alerts (PM said they addressed it) -->
+      ${(function(){
+        var alerts=getActiveSPLAlerts(pid);
+        if(!alerts.length)return '';
+        return alerts.map(function(a){
+          return '<div style="background:rgba(217,119,6,.07);border-left:4px solid #D97706;padding:12px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:flex-start;gap:12px">'
+            +'<i class="ti ti-refresh-alert" style="font-size:18px;color:#D97706;flex-shrink:0;margin-top:1px"></i>'
+            +'<div style="flex:1;min-width:0">'
+            +'<div style="font-size:13px;font-weight:700;color:#D97706;margin-bottom:4px">PM marked this as addressed — please re-review</div>'
+            +'<div style="font-size:12.5px;color:var(--t2);line-height:1.5;margin-bottom:6px">Your comment: <em>"'+a.text+'"</em></div>'
+            +'<div style="font-size:11px;color:var(--t3);margin-bottom:8px">Addressed by '+a.pmName+' on '+new Date(a.addressedOn).toLocaleDateString()+'</div>'
+            +'<button onclick="clearSPLReviewAlert('+a.id+')" style="font-size:12px;font-weight:600;padding:5px 14px;border-radius:var(--r);border:1px solid #D97706;background:transparent;color:#D97706;cursor:pointer;font-family:Nunito,sans-serif">✓ Verified — clear this alert</button>'
+            +'</div>'
+            +'</div>';
+        }).join('');
+      })()}
+
+      <!-- Review status pills -->
+      <div style="padding:10px 20px;border-bottom:1px solid var(--bd);background:var(--cd);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="font-size:11.5px;color:var(--t3);font-family:Nunito,sans-serif;font-weight:600;margin-right:4px">Review status:</span>
+        ${statusPills}
       </div>
 
       <!-- Progress bar -->
@@ -3004,20 +3181,29 @@ function rpr(){
         <div id="pr-comments-list" style="padding:0 16px;max-height:340px;overflow-y:auto"></div>
         <div style="padding:14px 16px;border-top:1px solid var(--bd);background:var(--sf)">
           <textarea id="pr-comment-input" placeholder="Type your review comment here — visible to team..." style="width:100%;min-height:80px;padding:10px 12px;border:1.5px solid var(--bd);border-radius:var(--r);font-family:Nunito,sans-serif;font-size:13.5px;color:var(--tx);background:var(--cd);resize:vertical;box-sizing:border-box;line-height:1.6;outline:none;margin-bottom:10px"></textarea>
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <select id="pr-comment-priority" style="font-size:12.5px;padding:5px 10px;border-radius:var(--r);border:1px solid var(--bd);background:var(--cd);color:var(--tx);font-family:Nunito,sans-serif">
-              <option value="normal">Normal</option>
-              <option value="urgent">🔴 Urgent</option>
-              <option value="info">🔵 Info only</option>
-            </select>
-            <button onclick="addPrComment(prPid||(P.length?P[0].id:''))" style="font-size:13px;font-weight:600;padding:9px 20px;border-radius:var(--r);border:none;background:#0D2147;color:#fff;cursor:pointer;font-family:Nunito,sans-serif"><i class="ti ti-send" style="font-size:13px"></i> Send to Team</button>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+            <div style="display:flex;align-items:center;gap:12px">
+              <select id="pr-comment-priority" style="font-size:12.5px;padding:5px 10px;border-radius:var(--r);border:1px solid var(--bd);background:var(--cd);color:var(--tx);font-family:Nunito,sans-serif">
+                <option value="normal">Normal</option>
+                <option value="urgent">🔴 Urgent</option>
+                <option value="info">🔵 Info only</option>
+              </select>
+              <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--t2);font-family:Nunito,sans-serif;cursor:pointer">
+                <input type="checkbox" id="pr-notify-pm" style="width:14px;height:14px;cursor:pointer"/>
+                Notify PM
+              </label>
+            </div>
+            <button onclick="addPrComment(prPid||(P.length?P[0].id:''))" style="font-size:13px;font-weight:600;padding:8px 18px;border-radius:var(--r);border:none;background:#0D2147;color:#fff;cursor:pointer;font-family:Nunito,sans-serif"><i class="ti ti-send" style="font-size:13px"></i> Send</button>
           </div>
         </div>
       </div>
     </div>`;
 
   renderPrComments(prPid||(P.length?P[0].id:''));
-  document.getElementById('pr-sel').addEventListener('change',function(){prPid=this.value;rpr();});
+  // Set notify PM checkbox from settings preference (default: on)
+  var notifChkEl=document.getElementById('pr-notify-pm');
+  if(notifChkEl){var np={};try{np=JSON.parse(localStorage.getItem('ilsfa_notif_prefs')||'{}');}catch(e){}notifChkEl.checked=np['notif_pm_comment']!==false;}
+  document.getElementById('pr-sel')&&document.getElementById('pr-sel').addEventListener('change',function(){prPid=this.value;rpr();});
 }
 
 function prToggle(pid,idx){
@@ -3059,30 +3245,214 @@ function rset(){
     return '<div class="pmc"><div class="pma" style="background:#0891B2">'+py.key.slice(0,2)+'</div><div style="flex:1"><div style="font-size:15px;font-weight:600">'+py.key+'</div><div style="font-size:13.5px;color:var(--t3);margin-top:2px">'+count+' project'+(count!==1?'s':'')+' &middot; '+py.label+'</div></div><button class="pmr" onclick="removePY(\''+py.key+'\')"><i class="ti ti-trash" style="font-size:12px"></i> Remove</button></div>';
   }).join('');
 
-  document.getElementById('n-grid-settings').innerHTML=
-    '<div class="dt" style="margin-bottom:10px"><i class="ti ti-settings" style="font-size:16px;color:var(--gd)"></i> Settings — Project Manager List</div>'+af+
-    PML.map(n=>{const c=P.filter(p=>p.pm===n).length;const m=n===MGR;return `<div class="pmc"><div class="pma">${n.substring(0,2).toUpperCase()}</div><div style="flex:1"><div style="font-size:15px;font-weight:600">${n}${m?' <span class="mgr">Manager</span>':''}</div><div style="font-size:13.5px;color:var(--t3);margin-top:2px">${c} project${c!==1?'s':''} assigned</div></div>${(!m)?'<button class="pmr" onclick="dpm(\''+n+'\')" ><i class="ti ti-trash" style="font-size:12px"></i> Remove</button>':'<span style="font-size:13px;color:var(--t3)">Protected</span>'}</div>`;}).join('')+
-    '<div class="hint" style="margin-top:13px;margin-bottom:24px"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:5px"></i>Mary is protected as PM Manager and cannot be removed.</div>'+
+  // ── Helper: settings section card ──
+  function stCard(icon,title,content){
+    return '<div style="background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;margin-bottom:16px;box-shadow:var(--gshadow)">'
+      +'<div style="padding:12px 18px;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px">'
+      +'<i class="ti '+icon+'" style="font-size:16px;color:var(--gd)"></i>'
+      +'<span style="font-size:14px;font-weight:700;color:var(--tx)">'+title+'</span>'
+      +'</div>'
+      +'<div style="padding:16px 18px">'+content+'</div>'
+      +'</div>';
+  }
+  function stRow(label,note,control){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd);gap:12px">'
+      +'<div><div style="font-size:13.5px;font-weight:600;color:var(--tx)">'+label+'</div>'+(note?'<div style="font-size:12px;color:var(--t3);margin-top:2px;font-family:Nunito,sans-serif">'+note+'</div>':'')+'</div>'
+      +'<div style="flex-shrink:0">'+control+'</div>'
+      +'</div>';
+  }
 
-    '<div class="dt" style="margin-bottom:10px"><i class="ti ti-calendar" style="font-size:16px;color:var(--gd)"></i> Program Years</div>'+
-    '<button class="ab" onclick="addProgramYear(rset)"><i class="ti ti-plus" style="font-size:14px"></i> Add Program Year</button>'+
+  // SPL display name
+  var splName=localStorage.getItem('spl_display_name')||'Trisha';
+  // Notification preferences
+  var notifPrefs={};
+  try{notifPrefs=JSON.parse(localStorage.getItem('ilsfa_notif_prefs')||'{}');}catch(e){}
+
+  // ── 1. Portal Identity ──
+  var identityHtml=
+    stRow('SPL Name','Your name shown in comments, reports, and chat',
+      '<input id="st-spl-name" value="'+splName+'" style="font-size:13px;padding:6px 10px;border:1px solid var(--bd);border-radius:var(--r);background:var(--cd);color:var(--tx);font-family:Nunito,sans-serif;width:160px" onchange="localStorage.setItem(\'spl_display_name\',this.value);si(\'Name saved\',\'ok\')" />'
+    )+
+    stRow('Company Name','Shown in report headers and footers',
+      '<input id="st-company" value="'+(localStorage.getItem('portal_company_name')||'Sunrise Solar LLC')+'" style="font-size:13px;padding:6px 10px;border:1px solid var(--bd);border-radius:var(--r);background:var(--cd);color:var(--tx);font-family:Nunito,sans-serif;width:200px" onchange="localStorage.setItem(\'portal_company_name\',this.value);si(\'Saved\',\'ok\')" />'
+    )+
+    stRow('Company Website','Shown in report footers',
+      '<input id="st-website" value="'+(localStorage.getItem('portal_company_website')||'sunrisesolar-il.com')+'" style="font-size:13px;padding:6px 10px;border:1px solid var(--bd);border-radius:var(--r);background:var(--cd);color:var(--tx);font-family:Nunito,sans-serif;width:200px" onchange="localStorage.setItem(\'portal_company_website\',this.value);si(\'Saved\',\'ok\')" />'
+    );
+
+  // ── 2. PM List ──
+  var pmListHtml=af+
+    PML.map(function(n){
+      var c=P.filter(function(p){return p.pm===n;}).length;
+      var m=n===MGR;
+      return '<div class="pmc"><div class="pma">'+n.substring(0,2).toUpperCase()+'</div>'
+        +'<div style="flex:1"><div style="font-size:15px;font-weight:600">'+n+(m?' <span class="mgr">Manager</span>':'')+'</div>'
+        +'<div style="font-size:13.5px;color:var(--t3);margin-top:2px">'+c+' project'+(c!==1?'s':'')+' assigned</div></div>'
+        +(!m?'<button class="pmr" onclick="dpm(\''+n+'\')"><i class="ti ti-trash" style="font-size:12px"></i> Remove</button>'
+          :'<span style="font-size:13px;color:var(--t3)">Protected</span>')
+        +'</div>';
+    }).join('')+
+    '<div class="hint" style="margin-top:10px;margin-bottom:0"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:5px"></i>'+MGR+' is protected as PM Manager and cannot be removed.</div>';
+
+  // ── 3. Program Years ──
+  var pyHtml='<button class="ab" style="margin-bottom:12px" onclick="addProgramYear(rset)"><i class="ti ti-plus" style="font-size:14px"></i> Add Program Year</button>'+
     pyRowsHtml+
-    '<div class="hint" style="margin-top:13px;margin-bottom:24px"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:5px"></i>Removing a program year here also clears its saved Overall Report data. Projects already assigned to it are not deleted.</div>'+
+    '<div class="hint" style="margin-top:10px;margin-bottom:0"><i class="ti ti-info-circle" style="vertical-align:-2px;margin-right:5px"></i>Removing a program year clears its report data. Projects assigned to it are not deleted.</div>';
 
-    '<div class="dt" style="margin-bottom:10px"><i class="ti ti-database" style="font-size:16px;color:var(--gd)"></i> Data &amp; Backup</div>'+
-    '<div class="ds" style="margin-bottom:20px">'+
-      '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">'+
-        '<div><div style="font-size:14px;font-weight:600;color:var(--tx)">Full portal backup</div><div style="font-size:12.5px;color:var(--t3);margin-top:2px;font-family:Nunito,sans-serif">Projects, checklists, reports, REC data — everything in one file.</div></div>'+
-        '<div style="display:flex;gap:8px">'+
-          '<button class="add-proj-btn" onclick="exportReportBackup()"><i class="ti ti-database-export" style="font-size:13px"></i> Download</button>'+
-          '<button class="btn2" onclick="document.getElementById(\'settings-backup-file\').click()"><i class="ti ti-database-import" style="font-size:13px"></i> Restore</button>'+
-          '<input type="file" id="settings-backup-file" accept="application/json" style="display:none" onchange="importReportBackup(this)"/>'+
-        '</div>'+
-      '</div>'+
-    '</div>';
+  // ── 4. Notifications ──
+  function notifToggle(key,label,note){
+    var checked=notifPrefs[key]!==false;
+    return stRow(label,note,
+      '<label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;color:var(--t2);font-family:Nunito,sans-serif">'
+      +'<input type="checkbox" '+(checked?'checked':'')+' onchange="var p={};try{p=JSON.parse(localStorage.getItem(\'ilsfa_notif_prefs\')||\'{}\')}catch(e){}p[\''+key+'\']=this.checked;localStorage.setItem(\'ilsfa_notif_prefs\',JSON.stringify(p));si(\'Saved\',\'ok\')" style="width:15px;height:15px;cursor:pointer"/>'
+      +(checked?'On':'Off')+'</label>'
+    );
+  }
+  var notifHtml=
+    notifToggle('notif_pm_comment','Notify PM by default','Pre-check "Notify PM" whenever you add a post-review comment')+
+    notifToggle('notif_rereview','Show re-review alerts','Show amber banner when PM marks a comment as addressed')+
+    notifToggle('notif_checklist_badge','Show checklist badge count','Display unread/incomplete badge on the Post-review tab');
+
+  // ── 5. Checklist ──
+  var chkHtml=
+    stRow('Default checklist items','Edit the master checklist that appears for every project','<button onclick="openChecklistEditor()" style="font-size:12.5px;padding:6px 14px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sf);cursor:pointer;color:var(--t2);font-family:Nunito,sans-serif;font-weight:600"><i class="ti ti-edit" style="font-size:12px"></i> Edit items</button>')+
+    stRow('Reset all checklist data','Clears all saved checklist progress for all projects','<button onclick="if(confirm(\'Clear ALL checklist progress for all projects? This cannot be undone.\')){Object.keys(localStorage).filter(k=>k.startsWith(\'pr_chk_\')).forEach(k=>localStorage.removeItem(k));si(\'All checklist data cleared\',\'ok\');rset();}" style="font-size:12.5px;padding:6px 14px;border-radius:var(--r);border:1px solid rgba(225,29,72,.25);background:rgba(225,29,72,.04);cursor:pointer;color:var(--et);font-family:Nunito,sans-serif;font-weight:600"><i class="ti ti-trash" style="font-size:12px"></i> Clear all</button>')+
+    stRow('Reset all review notifications','Clears all PM notifications and SPL re-review alerts','<button onclick="if(confirm(\'Clear all PM notifications and SPL review alerts?\')){Object.keys(localStorage).filter(k=>k.startsWith(\'pm_notifs_\')||k===\'spl_review_alerts\').forEach(k=>localStorage.removeItem(k));si(\'Notifications cleared\',\'ok\');rset();}" style="font-size:12.5px;padding:6px 14px;border-radius:var(--r);border:1px solid rgba(225,29,72,.25);background:rgba(225,29,72,.04);cursor:pointer;color:var(--et);font-family:Nunito,sans-serif;font-weight:600"><i class="ti ti-bell-off" style="font-size:12px"></i> Clear all</button>');
+
+  // ── 6. Data & Backup ──
+  var dataHtml=
+    stRow('Full portal backup','Projects, checklists, reports, REC data — everything in one file',
+      '<div style="display:flex;gap:8px">'
+      +'<button class="add-proj-btn" onclick="exportReportBackup()"><i class="ti ti-database-export" style="font-size:13px"></i> Download</button>'
+      +'<button class="btn2" onclick="document.getElementById(\'settings-backup-file\').click()"><i class="ti ti-database-import" style="font-size:13px"></i> Restore</button>'
+      +'<input type="file" id="settings-backup-file" accept="application/json" style="display:none" onchange="importReportBackup(this)"/>'
+      +'</div>'
+    )+
+    stRow('Export projects CSV','Download all current projects as a spreadsheet',
+      '<button class="btn2" onclick="exportProjects()"><i class="ti ti-download" style="font-size:13px"></i> Export CSV</button>'
+    )+
+    stRow('Clear all report data','Resets daily, monthly, and REC report overrides — project data is untouched',
+      '<button onclick="if(confirm(\'Clear all saved report data? Project data is not affected.\')){Object.keys(localStorage).filter(k=>k.startsWith(\'ilsfa_report\')||k.startsWith(\'ilsfa_monthly\')||k.startsWith(\'ilsfa_rec\')||k.startsWith(\'target_report\')).forEach(k=>localStorage.removeItem(k));si(\'Report data cleared\',\'ok\');rset();}" style="font-size:12.5px;padding:6px 14px;border-radius:var(--r);border:1px solid rgba(225,29,72,.25);background:rgba(225,29,72,.04);cursor:pointer;color:var(--et);font-family:Nunito,sans-serif;font-weight:600"><i class="ti ti-trash" style="font-size:12px"></i> Clear reports</button>'
+    )+
+    stRow('Clear all project data','⚠️ Permanently deletes all projects from this browser',
+      '<button onclick="if(confirm(\'WARNING: This permanently deletes all projects. This cannot be undone. Are you sure?\')){localStorage.removeItem(\'ilsfa_projects\');P=[];ra();si(\'All projects cleared\',\'ok\');rset();}" style="font-size:12.5px;padding:6px 14px;border-radius:var(--r);border:1px solid rgba(225,29,72,.4);background:rgba(225,29,72,.08);cursor:pointer;color:var(--et);font-family:Nunito,sans-serif;font-weight:700"><i class="ti ti-alert-triangle" style="font-size:12px"></i> Delete all projects</button>'
+    );
+
+  // ── 7. About ──
+  var aboutHtml='<div style="display:flex;flex-direction:column;gap:6px">'
+    +'<div style="display:flex;gap:10px;font-size:13px;color:var(--t2);font-family:Nunito,sans-serif"><span style="font-weight:600;min-width:120px">Portal</span><span>ILSFA Projects Part II Portal</span></div>'
+    +'<div style="display:flex;gap:10px;font-size:13px;color:var(--t2);font-family:Nunito,sans-serif"><span style="font-weight:600;min-width:120px">Organization</span><span>Sunrise Solar LLC — Liaison Department</span></div>'
+    +'<div style="display:flex;gap:10px;font-size:13px;color:var(--t2);font-family:Nunito,sans-serif"><span style="font-weight:600;min-width:120px">Program</span><span>Illinois Solar For All (ILSFA)</span></div>'
+    +'<div style="display:flex;gap:10px;font-size:13px;color:var(--t2);font-family:Nunito,sans-serif"><span style="font-weight:600;min-width:120px">Built by</span><span>Claude (Anthropic) · claude.ai</span></div>'
+    +'<div style="display:flex;gap:10px;font-size:13px;color:var(--t2);font-family:Nunito,sans-serif"><span style="font-weight:600;min-width:120px">Storage</span><span>Browser localStorage (offline-first, no server)</span></div>'
+    +'<div style="margin-top:10px;font-size:12px;color:var(--t3);font-family:Nunito,sans-serif;font-style:italic">Data lives in this browser only. Always keep a backup downloaded.</div>'
+    +'</div>';
+
+  document.getElementById('n-grid-settings').innerHTML=
+    stCard('ti-user-circle','Portal Identity',identityHtml)+
+    stCard('ti-users','Project Manager Roster',pmListHtml)+
+    stCard('ti-calendar','Program Years',pyHtml)+
+    stCard('ti-bell','Notifications & Alerts',notifHtml)+
+    stCard('ti-checkbox','Checklist Settings',chkHtml)+
+    stCard('ti-database','Data & Backup',dataHtml)+
+    stCard('ti-info-circle','About this Portal',aboutHtml);
 }
 
 // ── PORTAL ASSISTANT — pattern-based command parser (no external AI dependency) ──
+var DEFAULT_CHECKLIST_ITEMS=[
+  'Permit reflects the approved version',
+  'PTO/COC includes the approval date, signature, and correct address',
+  'Net metering document is accurate',
+  'PJM and SO screenshots are clear and accurate',
+  'JCO photos are clear and complete',
+  'Inverter and module label photos are merged and clear',
+  'Array photos are complete and clear',
+  'Fox or Tesla monitoring screenshot shows the system online, producing, with the correct homeowner name',
+  'Job training affidavits are accurate and properly signed',
+  'Inspection document is the approved version',
+  'SSR is updated to reflect mitigations, if applicable',
+  'REC table values match the final shade study',
+  'Arrays are updated per the final shade study (Part II only)',
+  'ACF: Confirm production from SS. Higher = retain original | Lower = update.',
+  'No conflicting data between the portal, Zoho, and supporting documents',
+  'Job training hours are accurate and compliant',
+];
+function getChecklistItems(){
+  try{var s=JSON.parse(localStorage.getItem('ilsfa_checklist_items')||'null');if(s&&s.length)return s;}catch(e){}
+  return DEFAULT_CHECKLIST_ITEMS.slice();
+}
+function saveChecklistItems(items){localStorage.setItem('ilsfa_checklist_items',JSON.stringify(items));}
+
+function openChecklistEditor(){
+  var items=getChecklistItems();
+  var modal=document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  var box=document.createElement('div');
+  box.style.cssText='background:var(--cd);border-radius:var(--rl);width:100%;max-width:620px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden';
+  box.innerHTML=
+    '<div style="padding:14px 18px;background:#0D2147;display:flex;align-items:center;justify-content:space-between">'
+    +'<span style="font-size:15px;font-weight:700;color:#fff;font-family:Nunito,sans-serif"><i class="ti ti-list-check" style="margin-right:7px;color:var(--gd)"></i>Edit Checklist Items</span>'
+    +'<button onclick="this.closest(\'[data-modal]\').remove()" style="background:none;border:none;color:rgba(255,255,255,.6);font-size:20px;cursor:pointer;line-height:1">&times;</button>'
+    +'</div>'
+    +'<div style="padding:12px 16px;background:var(--sf);border-bottom:1px solid var(--bd);font-size:12px;color:var(--t3);font-family:Nunito,sans-serif">Click any item to edit it. Use the buttons to add, remove or reorder.</div>'
+    +'<div id="cl-editor-list" style="overflow-y:auto;flex:1;padding:8px 0"></div>'
+    +'<div style="padding:12px 16px;border-top:1px solid var(--bd);background:var(--sf);display:flex;gap:8px;align-items:center">'
+    +'<button onclick="clEditorAdd()" style="font-size:12.5px;padding:7px 14px;border-radius:var(--r);border:1px solid var(--bd);background:var(--cd);cursor:pointer;color:var(--t2);font-family:Nunito,sans-serif;font-weight:600"><i class="ti ti-plus" style="font-size:12px"></i> Add item</button>'
+    +'<button onclick="clEditorReset()" style="font-size:12.5px;padding:7px 14px;border-radius:var(--r);border:1px solid rgba(225,29,72,.25);background:rgba(225,29,72,.04);cursor:pointer;color:var(--et);font-family:Nunito,sans-serif;font-weight:600">Reset to defaults</button>'
+    +'<button onclick="clEditorSave()" style="font-size:13px;padding:7px 18px;border-radius:var(--r);border:none;background:#0D2147;color:#fff;cursor:pointer;font-family:Nunito,sans-serif;font-weight:600;margin-left:auto">Save</button>'
+    +'</div>';
+  modal.dataset.modal='1';
+  modal.appendChild(box);
+  document.body.appendChild(modal);
+  modal.addEventListener('click',function(e){if(e.target===modal)modal.remove();});
+  clEditorRender(items);
+}
+function clEditorRender(items){
+  var list=document.getElementById('cl-editor-list');
+  if(!list)return;
+  list.innerHTML=items.map(function(item,i){
+    return '<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--bd)">'
+      +'<span style="font-size:12px;color:var(--t3);font-family:Inter,sans-serif;min-width:20px">'+(i+1)+'.</span>'
+      +'<input value="'+item.replace(/"/g,'&quot;')+'" style="flex:1;font-size:13px;padding:5px 8px;border:1px solid var(--bd);border-radius:var(--r);background:var(--cd);color:var(--tx);font-family:Nunito,sans-serif;outline:none" oninput="clEditorUpdate('+i+',this.value)"/>'
+      +'<button onclick="clEditorMove('+i+',-1)" style="background:none;border:none;cursor:pointer;color:var(--t3);font-size:14px;padding:3px" title="Move up"><i class="ti ti-arrow-up"></i></button>'
+      +'<button onclick="clEditorMove('+i+',1)" style="background:none;border:none;cursor:pointer;color:var(--t3);font-size:14px;padding:3px" title="Move down"><i class="ti ti-arrow-down"></i></button>'
+      +'<button onclick="clEditorDelete('+i+')" style="background:none;border:none;cursor:pointer;color:var(--et);font-size:14px;padding:3px" title="Remove"><i class="ti ti-trash"></i></button>'
+      +'</div>';
+  }).join('');
+}
+var _clItems=null;
+function clEditorGetItems(){return _clItems||(_clItems=getChecklistItems());}
+function clEditorUpdate(i,v){clEditorGetItems()[i]=v;}
+function clEditorMove(i,dir){
+  var items=clEditorGetItems();
+  var j=i+dir;
+  if(j<0||j>=items.length)return;
+  var tmp=items[i];items[i]=items[j];items[j]=tmp;
+  clEditorRender(items);
+}
+function clEditorDelete(i){
+  if(!confirm('Remove this checklist item?'))return;
+  clEditorGetItems().splice(i,1);
+  clEditorRender(clEditorGetItems());
+}
+function clEditorAdd(){
+  var v=prompt('New checklist item:');
+  if(!v||!v.trim())return;
+  clEditorGetItems().push(v.trim());
+  clEditorRender(clEditorGetItems());
+}
+function clEditorReset(){
+  if(!confirm('Reset to the default 16 checklist items? Your edits will be lost.'))return;
+  _clItems=DEFAULT_CHECKLIST_ITEMS.slice();
+  clEditorRender(_clItems);
+}
+function clEditorSave(){
+  var items=clEditorGetItems().filter(function(s){return s.trim();});
+  saveChecklistItems(items);
+  _clItems=null;
+  document.querySelector('[data-modal]')&&document.querySelector('[data-modal]').remove();
+  si('Checklist updated — '+items.length+' items saved.','ok');
+}
 function toggleAssistantPanel(){
   var panel=document.getElementById('assistant-panel');
   if(!panel)return;
@@ -3290,10 +3660,77 @@ function svid(v){
   document.getElementById('sb-pm').style.display=v==='team'?'flex':'none';
   if(v==='team')rtv();
 }
-function getPYS(){
-  let saved=[];
-  try{saved=JSON.parse(localStorage.getItem('ilsfa_report_pys')||'null');}catch(e){}
+
+// ── Year Management ─────────────────────────────────────────────────────────
+function getActiveYear(){
+  return localStorage.getItem('ilsfa_active_year')||String(new Date().getFullYear());
+}
+function setActiveYear(yr){
+  localStorage.setItem('ilsfa_active_year',String(yr));
+}
+function getYearRegistry(){
+  try{
+    var d=JSON.parse(localStorage.getItem('ilsfa_year_registry')||'null');
+    if(d&&Array.isArray(d)&&d.length)return d;
+  }catch(e){}
+  var cur=String(new Date().getFullYear());
+  var reg=[{year:cur,status:'active',created:new Date().toLocaleDateString('en-CA')}];
+  saveYearRegistry(reg);
+  return reg;
+}
+function saveYearRegistry(reg){localStorage.setItem('ilsfa_year_registry',JSON.stringify(reg));}
+
+// Year-namespaced storage helpers
+function yrKey(base){return base+'_'+getActiveYear();}
+function yrKeyFor(base,yr){return base+'_'+yr;}
+
+// Get/set monthly manual with year namespace
+function getMonthlyManualY(pyKey,seedFn){
+  var k='ilsfa_monthly_'+getActiveYear()+'_'+pyKey;
+  var saved=null;
+  try{saved=JSON.parse(localStorage.getItem(k)||'null');}catch(e){}
+  if(saved)return saved;
+  // Fallback: try legacy key (migration)
+  try{var leg=JSON.parse(localStorage.getItem('ilsfa_monthly_'+pyKey)||'null');if(leg)return leg;}catch(e){}
+  var seed=seedFn();
+  localStorage.setItem(k,JSON.stringify(seed));
+  return seed;
+}
+function saveMonthlyManualY(pyKey,data){
+  localStorage.setItem('ilsfa_monthly_'+getActiveYear()+'_'+pyKey,JSON.stringify(data));
+}
+function getRecReportsY(){
+  var k='ilsfa_rec_reports_'+getActiveYear();
+  var saved=null;
+  try{saved=JSON.parse(localStorage.getItem(k)||'null');}catch(e){}
+  if(saved)return saved;
+  // Fallback: legacy migration
+  try{var leg=JSON.parse(localStorage.getItem('ilsfa_rec_reports')||'null');if(leg)return leg;}catch(e){}
+  return null;
+}
+function saveRecReportsY(data){
+  localStorage.setItem('ilsfa_rec_reports_'+getActiveYear(),JSON.stringify(data));
+}
+function getReportDataY(){
+  var k='ilsfa_report_'+getActiveYear();
+  try{var d=JSON.parse(localStorage.getItem(k)||'null');if(d)return d;}catch(e){}
+  // Legacy migration
+  try{var leg=JSON.parse(localStorage.getItem('ilsfa_report')||'{}');return leg;}catch(e){}
+  return {};
+}
+function saveReportDataY(data){
+  localStorage.setItem('ilsfa_report_'+getActiveYear(),JSON.stringify(data));
+}
+function getPYSY(){
+  var k='ilsfa_report_pys_'+getActiveYear();
+  var saved=null;
+  try{saved=JSON.parse(localStorage.getItem(k)||'null');}catch(e){}
   if(saved&&saved.length)return saved.map(function(p){return Object.assign({},p,{recLabel:'TOTAL REC'});});
+  // Legacy migration
+  try{
+    var leg=JSON.parse(localStorage.getItem('ilsfa_report_pys')||'null');
+    if(leg&&leg.length)return leg.map(function(p){return Object.assign({},p,{recLabel:'TOTAL REC'});});
+  }catch(e){}
   return [
     {key:'2024',label:'2024 PROJECTS',dropLabel:'Dropped',recLabel:'TOTAL REC'},
     {key:'PY7',label:'PY7 PROJECTS',dropLabel:'Dropped',recLabel:'TOTAL REC'},
@@ -3301,7 +3738,85 @@ function getPYS(){
     {key:'PY8-2025',label:'PY8-2025 PROJECTS (NOV SUBMISSION)',dropLabel:'Dropped',recLabel:'TOTAL REC'},
   ];
 }
-function savePYS(pys){localStorage.setItem('ilsfa_report_pys',JSON.stringify(pys));}
+function savePYSY(pys){localStorage.setItem('ilsfa_report_pys_'+getActiveYear(),JSON.stringify(pys));}
+
+function archiveYear(yr){
+  yr=yr||getActiveYear();
+  if(!confirm('Archive '+yr+'? This freezes all monthly and REC data for this year. You can still view it anytime.'))return;
+  var reg=getYearRegistry();
+  var found=reg.find(function(r){return r.year===yr;});
+  if(!found){reg.push({year:yr,status:'archived',archivedOn:new Date().toLocaleDateString('en-CA')});}
+  else{reg=reg.map(function(r){return r.year===yr?Object.assign({},r,{status:'archived',archivedOn:new Date().toLocaleDateString('en-CA')}):r;});}
+  saveYearRegistry(reg);
+  si('Year '+yr+' archived successfully.','ok');
+  renderYearBanner();
+}
+
+function startNewYear(){
+  var next=String(parseInt(getActiveYear())+1);
+  if(!confirm('Start '+next+'? This creates a fresh data set for '+next+'. Your '+getActiveYear()+' data stays intact.'))return;
+  // Archive current if not already
+  var reg=getYearRegistry();
+  var cur=getActiveYear();
+  var found=reg.find(function(r){return r.year===cur;});
+  if(found&&found.status==='active'){
+    reg=reg.map(function(r){return r.year===cur?Object.assign({},r,{status:'archived',archivedOn:new Date().toLocaleDateString('en-CA')}):r;});
+  }
+  // Add new year
+  reg.push({year:next,status:'active',created:new Date().toLocaleDateString('en-CA')});
+  saveYearRegistry(reg);
+  setActiveYear(next);
+  si(next+' started! You are now in '+next+'.','ok');
+  renderMonthly();renderMonthlyREC();renderYearBanner();
+}
+
+function switchYear(yr){
+  setActiveYear(yr);
+  renderMonthly();renderMonthlyREC();renderYearBanner();
+}
+
+function renderYearBanner(){
+  // Update all year banners in Monthly and REC report tabs
+  ['mo-year-banner','rec-year-banner'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el)el.innerHTML=buildYearBanner(id.startsWith('rec')?'rec':'mo');
+  });
+}
+
+function buildYearBanner(type){
+  var reg=getYearRegistry();
+  var active=getActiveYear();
+  var isArchived=reg.find(function(r){return r.year===active&&r.status==='archived';});
+  var out='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 0;border-bottom:1px solid var(--bd);margin-bottom:16px">';
+  out+='<span style="font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;font-family:Nunito,sans-serif">Year:</span>';
+  // Year chips
+  reg.forEach(function(r){
+    var isAct=r.year===active;
+    var clr=r.status==='archived'?'#D97706':'#10B981';
+    var bg=isAct?(r.status==='archived'?'rgba(217,119,6,.12)':'rgba(16,185,129,.1)'):'var(--s2)';
+    var icon=r.status==='archived'?'📁':'●';
+    out+='<button data-yr="'+r.year+'" onclick="switchYear(this.dataset.yr)" style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;border:1.5px solid '+(isAct?clr:'var(--bd)')+';background:'+bg+';color:'+(isAct?clr:'var(--t2)')+';cursor:pointer;font-family:Nunito,sans-serif;transition:all .15s">'+icon+' '+r.year+(isAct?' ✓':'')+'</button>';
+  });
+  out+='<div style="margin-left:auto;display:flex;gap:6px">';
+  if(!isArchived){
+    out+='<button data-yr="'+active+'" onclick="archiveYear(this.dataset.yr)" style="font-size:11px;padding:4px 11px;border-radius:20px;border:1px solid rgba(217,119,6,.3);background:rgba(217,119,6,.07);color:#D97706;cursor:pointer;font-family:Nunito,sans-serif;font-weight:600">📁 Archive '+active+'</button>';
+  }
+  // Check if next year exists
+  var nextYr=String(parseInt(active)+1);
+  var hasNext=reg.find(function(r){return r.year===nextYr;});
+  if(!hasNext){
+    out+='<button onclick="startNewYear()" style="font-size:11px;padding:4px 11px;border-radius:20px;border:1px solid rgba(16,185,129,.3);background:rgba(16,185,129,.07);color:#059669;cursor:pointer;font-family:Nunito,sans-serif;font-weight:600">+ Start '+nextYr+'</button>';
+  }
+  out+='</div>';
+  if(isArchived){
+    out+='<div style="width:100%;font-size:11.5px;color:#92400e;background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.2);border-radius:6px;padding:6px 12px;font-family:Nunito,sans-serif">📁 Viewing archived data for <strong>'+active+'</strong> — archived '+isArchived.archivedOn+'. Read-only.</div>';
+  }
+  out+='</div>';
+  return out;
+}
+// ─────────────────────────────────────────────────────────────────────────────
+function getPYS(){return getPYSY();}
+function savePYS(pys){savePYSY(pys);}
 
 function addProgramYear(afterFn){
   const key=prompt('New program year title (e.g. PY9, 2026):');
@@ -3404,110 +3919,75 @@ function renderDailyReport(){
       +'</div>';
   }
 
-  // Column header widths for consistent alignment across all sections
-  var COL_LABEL='flex:1;font-size:13.5px;font-family:Nunito,sans-serif;color:var(--t2)';
-  var COL_COUNT='width:60px;text-align:right;font-size:14px;font-weight:700;font-family:Inter,sans-serif;color:var(--tx)';
-  var COL_VAL='width:155px;text-align:right;font-size:14px;font-weight:700;font-family:Inter,sans-serif;color:var(--tx)';
-  var ROW='display:flex;align-items:center;gap:0;padding:11px 20px;border-bottom:1px solid var(--bd)';
-  var ROW_LAST='display:flex;align-items:center;gap:0;padding:11px 20px';
-
-  function secBlock(icon,title,color,rows){
-    return '<div style="border-bottom:2px solid var(--bd)">'
-      +'<div style="display:flex;align-items:center;gap:8px;padding:10px 20px 8px;background:var(--sf)">'
-      +'<i class="ti '+icon+'" style="font-size:14px;color:'+color+'"></i>'
-      +'<span style="font-size:11px;font-weight:700;color:'+color+';text-transform:uppercase;letter-spacing:.1em;font-family:Nunito,sans-serif">'+title+'</span>'
+  // ── Row builder — label + inline note, count, value ──
+  function tRow(label,note,countEl,valEl,last){
+    var row=last?'padding:9px 20px':'padding:9px 20px;border-bottom:1px solid var(--bd)';
+    return '<div style="display:flex;align-items:center;gap:0;background:var(--cd);'+row+'">'
+      +'<div style="flex:1;min-width:0">'
+      +'<span style="font-size:13px;font-weight:600;font-family:Nunito,sans-serif;color:var(--tx)">'+label+'</span>'
+      +(note?' <span style="font-size:11.5px;color:var(--t3);font-style:italic;font-family:Nunito,sans-serif">— '+note+'</span>':'')
       +'</div>'
-      +rows
+      +'<div style="width:64px;text-align:center;font-size:13.5px;font-weight:700;font-family:Inter,sans-serif;color:var(--tx);flex-shrink:0">'+countEl+'</div>'
+      +'<div style="width:158px;text-align:right;font-size:13.5px;font-weight:700;font-family:Inter,sans-serif;color:var(--tx);flex-shrink:0">'+valEl+'</div>'
       +'</div>';
   }
 
-  function tRow(label,countEl,valEl,last,accent){
-    var bg=accent?'background:'+accent+';':'background:var(--cd);';
-    return '<div style="'+bg+(last?ROW_LAST:ROW)+'">'
-      +'<span style="'+COL_LABEL+(accent?';color:var(--tx);font-weight:600':'')+'">'+label+'</span>'
-      +'<span style="'+COL_COUNT+'">'+countEl+'</span>'
-      +'<span style="'+COL_VAL+'">'+valEl+'</span>'
+  // Section header — colored left border + icon-less, compact
+  function secHdr(title,color){
+    return '<div style="display:flex;align-items:center;gap:0;padding:7px 20px;background:var(--sf);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)">'
+      +'<span style="flex:1;font-size:10px;font-weight:800;color:'+color+';text-transform:uppercase;letter-spacing:.14em;font-family:Nunito,sans-serif">'+title+'</span>'
       +'</div>';
   }
 
-  // Column headers
-  var colHeaders='<div style="display:flex;align-items:center;gap:0;padding:7px 20px;background:#091a38">'
-    +'<span style="flex:1;font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;font-family:Nunito,sans-serif">Category</span>'
-    +'<span style="width:60px;text-align:right;font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;font-family:Nunito,sans-serif">Count</span>'
-    +'<span style="width:155px;text-align:right;font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;font-family:Nunito,sans-serif">REC Value</span>'
-    +'</div>';
+  var SPAN_COUNT='width:64px;display:inline-block;text-align:center;font-size:13.5px;font-weight:700;font-family:Inter,sans-serif;color:var(--tx)';
 
-  var reportHTML='<div style="max-width:740px;margin:0 auto;background:var(--cd);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--gshadow)">';
+  var reportHTML='<div id="daily-report-card" style="max-width:700px;margin:0 auto;background:var(--cd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--gshadow);border:1px solid var(--bd)">';
 
-  // Header
-  reportHTML+='<div style="background:linear-gradient(135deg,#152d55 0%,#091a38 100%);padding:18px 20px;display:flex;align-items:center;justify-content:space-between">'
+  // ── Header ──
+  reportHTML+='<div style="background:linear-gradient(135deg,#152d55 0%,#091a38 100%);padding:16px 20px;display:flex;align-items:center;justify-content:space-between">'
     +'<div>'
-    +'<div style="font-size:18px;font-weight:800;color:#fff;letter-spacing:.08em;font-family:Inter,sans-serif">TARGET REPORT</div>'
-    +'<div style="font-size:12px;color:rgba(255,255,255,.45);font-family:Nunito,sans-serif;margin-top:3px">'+todayLabel+'</div>'
+    +'<div style="font-size:16px;font-weight:800;color:#fff;letter-spacing:.05em;font-family:Inter,sans-serif">Daily Target Report</div>'
+    +'<div style="font-size:11.5px;color:rgba(255,255,255,.4);font-family:Nunito,sans-serif;margin-top:3px">'+todayLabel+'</div>'
     +'</div>'
     +'<div style="display:flex;align-items:center;gap:8px">'
-    +'<span style="font-size:11px;color:rgba(255,255,255,.3);font-family:Nunito,sans-serif;font-style:italic">Click numbers to edit</span>'
-    +'<button onclick="resetTR()" style="font-size:11px;padding:5px 12px;border-radius:var(--r);border:1px solid rgba(255,255,255,.18);background:transparent;cursor:pointer;color:rgba(255,255,255,.55);font-family:Nunito,sans-serif">↺ Reset</button>'
+    +'<span style="font-size:10.5px;color:rgba(255,255,255,.28);font-family:Nunito,sans-serif;font-style:italic">click numbers to edit</span>'
+    +'<button onclick="resetTR()" style="font-size:11px;padding:4px 11px;border-radius:var(--r);border:1px solid rgba(255,255,255,.18);background:transparent;cursor:pointer;color:rgba(255,255,255,.55);font-family:Nunito,sans-serif">↺ Reset</button>'
     +'</div>'
     +'</div>';
 
-  // Column headers strip
-  reportHTML+=colHeaders;
-
   // ── Section 1: Program Year Breakdown ──
-  var pyRows='';
+  reportHTML+=secHdr('Program Year Breakdown','#0891B2');
   pys.forEach(function(py,i){
-    var isLast=i===pys.length-1;
-    pyRows+=tRow(py,trInput('py-'+py,pendingByPY[py]),'—',isLast);
+    reportHTML+=tRow(py,'',trInput('py-'+py,pendingByPY[py]),'—',i===pys.length-1);
   });
-  reportHTML+=secBlock('ti-calendar','Program Year Breakdown','#0891B2',pyRows);
 
   // ── Section 2: Pipeline Summary ──
-  var pipeRows='';
-  pipeRows+=tRow(
-    'Pending Part II Approval',
-    '<span id="tr-ppa-count-display" style="'+COL_COUNT+'">-</span>',
-    trInputRec('ppa-val',pendingApprovalVal.toFixed(2)),
-    false
-  );
-  pipeRows+=tRow(
-    'Pending PTO / COC',
-    trInput('pto-count',pendingPTO.length),
-    trInputRec('pto-val',pendingPTOVal.toFixed(2)),
-    true
-  );
-  reportHTML+=secBlock('ti-chart-bar','Pipeline Summary','#D97706',pipeRows);
+  reportHTML+=secHdr('Pipeline Summary','#D97706');
+  reportHTML+=tRow('Pending Part II Approval','awaiting approval','<span id="tr-ppa-count-display" style="'+SPAN_COUNT+'">-</span>',trInputRec('ppa-val',pendingApprovalVal.toFixed(2)),false);
+  reportHTML+=tRow('Pending PTO / COC','awaiting PTO or COC',trInput('pto-count',pendingPTO.length),trInputRec('pto-val',pendingPTOVal.toFixed(2)),true);
 
   // ── Section 3: Part II Approved ──
-  var appRows=tRow(
-    'Part II Approved — Ready to Invoice',
-    trInput('app-count',approved.length),
-    trInputRec('app-val',approvedVal.toFixed(2)),
-    true,
-    'rgba(16,185,129,.06)'
-  );
-  reportHTML+=secBlock('ti-circle-check','Part II Approved','#10B981',appRows);
+  reportHTML+=secHdr('Part II Approved','#10B981');
+  reportHTML+=tRow('Part II Approved — Ready to Invoice','fully approved by ILSFA',trInput('app-count',approved.length),trInputRec('app-val',approvedVal.toFixed(2)),true);
 
   // ── Section 4: Total Submitted ──
-  var subRows=tRow(
-    'Total Projects Submitted',
-    '<span id="tr-sub-count-display" style="'+COL_COUNT+'">-</span>',
-    trInputRec('sub-val',(pendingApprovalVal+approvedVal).toFixed(2)),
-    true,
-    'rgba(99,102,241,.05)'
-  );
-  reportHTML+=secBlock('ti-send','Total Submitted to Program','#6366F1',subRows);
+  reportHTML+=secHdr('Total Submitted to Program','#6366F1');
+  reportHTML+=tRow('Total Projects Submitted','approved + pending Part II approval','<span id="tr-sub-count-display" style="'+SPAN_COUNT+'">-</span>',trInputRec('sub-val',(pendingApprovalVal+approvedVal).toFixed(2)),true);
 
-  // ── Overall Total footer ──
-  reportHTML+='<div style="display:flex;align-items:center;gap:0;padding:14px 20px;background:linear-gradient(135deg,#152d55 0%,#091a38 100%)">'
-    +'<span style="flex:1;font-size:13px;font-weight:700;color:#fff;font-family:Nunito,sans-serif;text-transform:uppercase;letter-spacing:.06em">Overall Total</span>'
-    +'<span style="width:60px;text-align:right;font-size:16px;font-weight:800;color:rgba(255,255,255,.8);font-family:Inter,sans-serif" id="tr-overall-count">-</span>'
-    +'<span style="width:155px;text-align:right;font-size:16px;font-weight:800;color:#D4AF37;font-family:Inter,sans-serif" id="tr-overall-val">-</span>'
+  // ── Section 5: Total Estimated Portfolio Value ──
+  reportHTML+=secHdr('Total Estimated Portfolio Value','#D4AF37');
+  reportHTML+='<div style="display:flex;align-items:center;gap:0;padding:11px 20px;background:var(--cd);border-bottom:1px solid var(--bd)">'
+    +'<div style="flex:1;min-width:0">'
+    +'<span style="font-size:13px;font-weight:700;font-family:Nunito,sans-serif;color:var(--tx)">Overall Total (All Projects)</span>'
+    +'<span style="font-size:11.5px;color:var(--t3);font-style:italic;font-family:Nunito,sans-serif"> — Pending Approval + PTO/COC + Approved</span>'
+    +'</div>'
+    +'<span style="width:64px;text-align:center;font-size:14px;font-weight:800;color:var(--tx);font-family:Inter,sans-serif;flex-shrink:0" id="tr-overall-count">-</span>'
+    +'<span style="width:158px;text-align:right;font-size:14px;font-weight:800;color:#D4AF37;font-family:Inter,sans-serif;flex-shrink:0" id="tr-overall-val">-</span>'
     +'</div>';
 
-  // Footer
-  reportHTML+='<div style="padding:8px 20px;background:var(--sf);border-top:1px solid var(--bd);text-align:center">'
-    +'<span style="font-size:11px;color:var(--t3);font-family:Nunito,sans-serif;font-style:italic">Sunrise Solar LLC · sunrisesolar-il.com</span>'
+  // ── Footer ──
+  reportHTML+='<div style="padding:7px 20px;background:var(--sf);border-top:1px solid var(--bd);text-align:center">'
+    +'<span style="font-size:10.5px;color:var(--t3);font-family:Nunito,sans-serif;font-style:italic">'+(localStorage.getItem('portal_company_name')||'Sunrise Solar LLC')+' · '+(localStorage.getItem('portal_company_website')||'sunrisesolar-il.com')+'</span>'
     +'</div>';
 
   reportHTML+='</div>';
@@ -3520,7 +4000,7 @@ function renderDailyReport(){
     </div>
     <div style="display:flex;gap:8px">
       <button class="gen-report-btn" style="margin-left:0" onclick="exportDailyTarget()"><i class="ti ti-download" style="font-size:13px"></i> Export CSV</button>
-      <button class="gen-report-btn" style="margin-left:0;background:#0891B2" onclick="window.print()"><i class="ti ti-printer" style="font-size:13px"></i> Print</button>
+      <button class="gen-report-btn" style="margin-left:0;background:#0891B2" onclick="printDailyReport()"><i class="ti ti-printer" style="font-size:13px"></i> Print</button>
     </div>
   </div>
 
@@ -3533,6 +4013,25 @@ function renderDailyReport(){
   setTimeout(saveTR,50);
 }
 
+function printDailyReport(){
+  var card=document.getElementById('daily-report-card');
+  if(!card){window.print();return;}
+  var w=window.open('','_blank','width=800,height=900');
+  if(!w)return;
+  var company=localStorage.getItem('portal_company_name')||'Sunrise Solar LLC';
+  var html='<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+company+' — Daily Target Report</title>'
+    +'<style>@page{margin:15mm}body{margin:0;font-family:Nunito,sans-serif;background:#fff}'
+    +'input{border:none!important;background:transparent!important;font-family:inherit;font-weight:inherit;font-size:inherit;color:inherit;text-align:inherit;width:auto}'
+    +'a{text-decoration:none;color:inherit}'
+    +'div[style*="linear-gradient"]{-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    +'*{-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    +'</style></head><body>';
+  html+=card.outerHTML;
+  html+='</body></html>';
+  w.document.write(html);
+  w.document.close();
+  w.onload=function(){w.print();};
+}
 function saveTR(){
   var key='target_report_'+centralDateKey();
   var data={};
@@ -3596,7 +4095,7 @@ function exportDailyTarget(){
   csv+='Pending PTO/COC,'+pendingPTO.length+','+fmFull(pendingPTO.reduce(function(a,p){return a+rv2(p);},0))+'\n';
   csv+='\nAPPROVED\n';
   csv+='Part II Approved Ready to Invoice,'+approved.length+','+fmFull(approved.reduce(function(a,p){return a+rv2(p);},0))+'\n';
-  csv+='\nSunrise Solar LLC | sunrisesolar-il.com\n';
+  csv+='\n'+(localStorage.getItem('portal_company_name')||'Sunrise Solar LLC')+' | '+(localStorage.getItem('portal_company_website')||'sunrisesolar-il.com')+'\n';
   var a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
   a.download='Target_Report_'+centralDateKey()+'.csv';
@@ -3663,9 +4162,11 @@ function renderMonthly(){
     <button class="gen-report-btn" style="margin-left:0;background:#0891B2" onclick="window.print()"><i class="ti ti-printer" style="font-size:13px"></i> Print</button>
     </div>
   </div>
+  <div id="mo-year-banner"></div>
   <div id="mo-content"></div>`;
   el.innerHTML=out;
   attachRptSubtabEvents();
+  document.getElementById('mo-year-banner').innerHTML=buildYearBanner('mo');
   generateMonthly();
 }
 
@@ -3679,9 +4180,7 @@ function getMonthlyManual(pyKey,seedFn){
   localStorage.setItem(key,JSON.stringify(seed));
   return seed;
 }
-function saveMonthlyManual(pyKey,data){
-  localStorage.setItem('ilsfa_monthly_'+pyKey,JSON.stringify(data));
-}
+function saveMonthlyManual(pyKey,data){saveMonthlyManualY(pyKey,data);}
 function addMonthColumn(pyKey){
   var label=prompt('Month label (e.g. Sep, Sep 2026):');
   if(!label||!label.trim())return;
@@ -3714,6 +4213,19 @@ function updateMonthlyMeta(pyKey,field,val){
   data.meta[field]=val;
   saveMonthlyManual(pyKey,data);
 }
+var QUARTERS_MAP={Q1:['Jan','Feb','Mar'],Q2:['Apr','May','Jun'],Q3:['Jul','Aug','Sep'],Q4:['Oct','Nov','Dec']};
+function setMoQ(pyKey,q){
+  // Save active quarter to mdata and re-render
+  var data=getMonthlyManual(pyKey,function(){return {months:[],cells:{}};});
+  data.activeQ=q;
+  saveMonthlyManual(pyKey,data);
+  generateMonthly();
+}
+function saveReportField(pyKey,field,val){
+  var saved=getReportDataY();
+  saved[pyKey+'_'+field]=val;
+  saveReportDataY(saved);
+}
 function generateMonthly(){
   var content=document.getElementById('mo-content');
   if(!content)return;
@@ -3721,8 +4233,7 @@ function generateMonthly(){
   function fmFull(n){return '$'+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
   function pct(n,d){return d>0?Math.round(n/d*100)+'%':'—';}
 
-  var savedReport={};
-  try{savedReport=JSON.parse(localStorage.getItem('ilsfa_report')||'{}');}catch(e){}
+  var savedReport=getReportDataY();
   function reportVal(pyKey,field,fallback){
     var v=savedReport[pyKey+'_'+field];
     return (v!==undefined&&v!=='')?parseFloat(v)||0:fallback;
@@ -3740,6 +4251,10 @@ function generateMonthly(){
     var activeManual=reportVal(py.key,'active',total);
     var invoicedManual=reportVal(py.key,'invoiced',0);
     var recManual=reportVal(py.key,'rec',pp.reduce(function(a,p){return a+rv(p);},0));
+    var submittedManual=reportVal(py.key,'submitted',total);
+    var pendingCorrManual=reportVal(py.key,'pendingCorr',pendingCorrection);
+    var approvedManual=reportVal(py.key,'approved',approved);
+    var pendingApprovalManual=reportVal(py.key,'pendingApproval',pendingApproval);
     var pendingSubmission=Math.max(Math.round(activeManual)-total,0);
     var totalCorrections=pp.filter(function(p){return p.corr&&p.corr.trim();}).length;
     var correctionsAddressed=pp.filter(function(p){return p.corr&&p.corr.trim()&&p.cs!=='Pending';}).length;
@@ -3767,15 +4282,22 @@ function generateMonthly(){
     out+='<div style="background:#0D2147;padding:14px 20px"><div style="font-size:16px;font-weight:700;color:#fff">'+py.label+' — Project Status Summary</div></div>';
     out+='<div style="padding:18px 20px;display:grid;grid-template-columns:1fr 1fr;gap:20px">';
 
-    // Left: Project Update (overall status)
+    // Left: Project Update — fully editable
+    var pyEsc=py.key.replace(/'/g,"\\'");
+    function leftInput(field,val,isRec){
+      var w=isRec?'110px':'54px';
+      var style='width:'+w+';text-align:right;border:none;border-bottom:1.5px solid var(--bd);background:transparent;font-family:'+(isRec?'Inter':'Nunito')+',sans-serif;font-size:'+(isRec?'14':'13.5')+'px;font-weight:700;color:var(--tx);padding:1px 3px;outline:none';
+      var step=isRec?'step="0.01"':'';
+      return '<input type="number" '+step+' value="'+val+'" style="'+style+'" onchange="saveReportField(\''+pyEsc+'\',\''+field+'\',this.value)" oninput="saveReportField(\''+pyEsc+'\',\''+field+'\',this.value)"/>';
+    }
     out+='<div><div style="font-size:13px;font-weight:700;color:var(--gd);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">'+py.key+' Project Update</div>';
     out+='<table class="rpt-table dark-hd"><thead><tr><th>Overall Status</th><th style="text-align:right">Count</th><th style="text-align:right">%</th></tr></thead><tbody>';
-    out+='<tr><td>Part 2 Submitted</td><td style="text-align:right;font-weight:600">'+total+'</td><td style="text-align:right">'+pct(total,activeManual)+'</td></tr>';
-    out+='<tr><td>Pending Part 2 Correction</td><td style="text-align:right;font-weight:600">'+pendingCorrection+'</td><td></td></tr>';
-    out+='<tr><td>Part 2 Approved</td><td style="text-align:right;font-weight:600">'+approved+'</td><td style="text-align:right">'+pct(approved,activeManual)+'</td></tr>';
-    out+='<tr><td>Pending Part 2 Approval</td><td style="text-align:right;font-weight:600">'+pendingApproval+'</td><td></td></tr>';
-    out+='<tr><td>Invoiced</td><td style="text-align:right;font-weight:600">'+invoicedManual+'</td><td style="text-align:right">'+pct(invoicedManual,activeManual)+'</td></tr>';
-    out+='<tr class="rpt-total-row"><td>Total REC</td><td colspan="2" style="text-align:right">'+fmFull(recManual)+'</td></tr>';
+    out+='<tr><td>Part 2 Submitted</td><td style="text-align:right">'+leftInput('submitted',submittedManual)+'</td><td style="text-align:right">'+pct(submittedManual,activeManual)+'</td></tr>';
+    out+='<tr><td>Pending Part 2 Correction</td><td style="text-align:right">'+leftInput('pendingCorr',pendingCorrManual)+'</td><td></td></tr>';
+    out+='<tr><td>Part 2 Approved</td><td style="text-align:right">'+leftInput('approved',approvedManual)+'</td><td style="text-align:right">'+pct(approvedManual,activeManual)+'</td></tr>';
+    out+='<tr><td>Pending Part 2 Approval</td><td style="text-align:right">'+leftInput('pendingApproval',pendingApprovalManual)+'</td><td></td></tr>';
+    out+='<tr><td>Invoiced</td><td style="text-align:right">'+leftInput('invoiced',invoicedManual)+'</td><td style="text-align:right">'+pct(invoicedManual,activeManual)+'</td></tr>';
+    out+='<tr class="rpt-total-row"><td>Total REC</td><td colspan="2" style="text-align:right">'+leftInput('rec',recManual,true)+'</td></tr>';
     out+='</tbody></table></div>';
 
     // Right: Monthly Data (editable, extensible per program year)
@@ -3794,51 +4316,104 @@ function generateMonthly(){
       return {months:seedMonths,cells:seedCells};
     });
     function mNum(m,field){return parseFloat((mdata.cells[m]&&mdata.cells[m][field])||0)||0;}
-    out+='<div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px">'
+
+    // Ensure all 12 months have cells
+    var ALL_MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    ALL_MONTHS.forEach(function(m){
+      if(!mdata.cells[m])mdata.cells[m]={submitted:'',approved:'',pending:'',pct:'',corrections:'',invoiced:'',rec:''};
+    });
+
+    // Current quarter
+    var nowMIdx=new Date().getMonth();
+    var curQ=nowMIdx<3?'Q1':nowMIdx<6?'Q2':nowMIdx<9?'Q3':'Q4';
+    var activeQ=mdata.activeQ||curQ;
+    var nowM=new Date().toLocaleDateString('en-US',{timeZone:'America/Chicago',month:'short'});
+    // Only render the 3 months of the active quarter
+    var qMonths=QUARTERS_MAP[activeQ]||QUARTERS_MAP[curQ];
+    var pyIdSafe='mo-'+py.key.replace(/[^a-zA-Z0-9]/g,'_');
+
+    out+='<div>';
+    // Header row with Q tabs — use data-pykey and data-q to avoid quote escaping
+    out+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px">'
       +'<div style="font-size:13px;font-weight:700;color:var(--gd);text-transform:uppercase;letter-spacing:.05em">Monthly Data</div>'
-      +'<button onclick="addMonthColumn(\''+py.key+'\')" style="font-size:11.5px;font-weight:600;padding:5px 10px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sf);cursor:pointer;color:var(--t2);font-family:Nunito,sans-serif;display:flex;align-items:center;gap:5px;flex-shrink:0"><i class="ti ti-plus" style="font-size:12px"></i> Add Month</button>'
+      +'<div style="display:flex;gap:3px">'
+      +['Q1','Q2','Q3','Q4'].map(function(q){
+        var active=q===activeQ;
+        return '<button data-pykey="'+py.key+'" data-q="'+q+'" onclick="setMoQ(this.dataset.pykey,this.dataset.q)" style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;border:1px solid '+(active?'#0D2147':'var(--bd)')+';background:'+(active?'#0D2147':'var(--sf)')+';color:'+(active?'#D4AF37':'var(--t2)')+';cursor:pointer;font-family:Nunito,sans-serif;transition:all .15s">'+q+'</button>';
+      }).join('')
+      +'</div>'
       +'</div>';
-    if(mdata.months.length){
-      out+='<div style="overflow-x:auto"><table class="rpt-table dark-hd"><thead><tr><th>Status</th>';
-      mdata.months.forEach(function(m){
+
+    // Scrollable table
+    out+='<div style="overflow-x:auto;border:1px solid var(--bd);border-radius:var(--r)">';
+    out+='<table class="rpt-table dark-hd" style="min-width:max-content;width:100%"><thead><tr>';
+    out+='<th style="white-space:nowrap;position:sticky;left:0;background:#0D2147;z-index:2">Status</th>';
+    qMonths.forEach(function(m){
+      var isCur=m===nowM;
+      var pyEsc=py.key.replace(/'/g,"\\'");
+      var mEsc=m.replace(/'/g,"\\'");
+      out+='<th data-mo="'+m+'" style="text-align:right;white-space:nowrap;min-width:80px;'+(isCur?'background:rgba(8,145,178,.85);':'')+'">'+m+(isCur?' ←':'')+'</th>';
+    });
+    out+='</tr></thead><tbody>';
+
+    var mrows=[
+      {key:'submitted',label:'Part 2 Submitted'},
+      {key:'approved',label:'Part 2 Approved'},
+      {key:'pending',label:'Pending Part 2 Approval'},
+      {key:'corrections',label:'Correction Received/Addressed'},
+      {key:'invoiced',label:'Invoiced'},
+    ];
+
+    mrows.forEach(function(r){
+      out+='<tr><td style="position:sticky;left:0;background:var(--cd);white-space:nowrap;font-weight:500">'+r.label+'</td>';
+      qMonths.forEach(function(m){
+        var isCur=m===nowM;
+        var pyEsc=py.key.replace(/'/g,"\\'");
         var mEsc=m.replace(/'/g,"\\'");
-        out+='<th style="text-align:right;white-space:nowrap">'+m+' <span onclick="removeMonthColumn(\''+py.key+'\',\''+mEsc+'\')" style="cursor:pointer;opacity:.5;margin-left:3px" title="Remove column">&times;</span></th>';
-      });
-      out+='</tr></thead><tbody>';
-      var mrows=[
-        {key:'submitted',label:'Part 2 Submitted'},
-        {key:'approved',label:'Part 2 Approved'},
-        {key:'pending',label:'Pending Part 2 Approval'},
-        {key:'corrections',label:'Correction Received/Addressed'},
-        {key:'invoiced',label:'Invoiced'},
-      ];
-      mrows.forEach(function(r){
-        out+='<tr><td>'+r.label+'</td>'+mdata.months.map(function(m){
-          var mEsc=m.replace(/'/g,"\\'");
-          var stored=(mdata.cells[m]&&mdata.cells[m][r.key]!==undefined)?mdata.cells[m][r.key]:'';
-          var v=stored;
-          if(v===''&&r.key==='pending')v=String(Math.max(mNum(m,'submitted')-mNum(m,'approved'),0));
-          return '<td><input type="number" value="'+v+'" placeholder="0" style="width:56px;text-align:right;border:none;background:transparent;font-family:Nunito,sans-serif;font-size:13.5px;font-weight:600;color:var(--tx);padding:2px;outline:none" onchange="updateMonthlyCell(\''+py.key+'\',\''+mEsc+'\',\''+r.key+'\',this.value)"/></td>';
-        }).join('')+'</tr>';
-      });
-      // % Approved — editable, pre-filled with Approved/Submitted as a starting default
-      out+='<tr><td>% Approved</td>'+mdata.months.map(function(m){
-        var mEsc=m.replace(/'/g,"\\'");
-        var stored=(mdata.cells[m]&&mdata.cells[m].pct!==undefined)?mdata.cells[m].pct:'';
+        var stored=(mdata.cells[m]&&mdata.cells[m][r.key]!==undefined)?mdata.cells[m][r.key]:'';
         var v=stored;
-        if(v===''){var sub=mNum(m,'submitted'),app=mNum(m,'approved');v=sub>0?String(Math.round(app/sub*100)):'';}
-        return '<td style="white-space:nowrap"><input type="number" value="'+v+'" placeholder="0" style="width:46px;text-align:right;border:none;background:transparent;font-family:Nunito,sans-serif;font-size:13.5px;font-weight:700;color:var(--gd);padding:2px;outline:none" onchange="updateMonthlyCell(\''+py.key+'\',\''+mEsc+'\',\'pct\',this.value)"/>%</td>';
-      }).join('')+'</tr>';
-      out+='<tr class="rpt-total-row"><td>Total REC</td>'+mdata.months.map(function(m){
-        var mEsc=m.replace(/'/g,"\\'");
-        var v=(mdata.cells[m]&&mdata.cells[m].rec!==undefined)?mdata.cells[m].rec:'';
-        return '<td><input type="number" step="0.01" value="'+v+'" placeholder="0.00" style="width:90px;text-align:right;border:none;background:transparent;font-family:Inter,sans-serif;font-size:14px;font-weight:700;color:#FCD34D;padding:2px;outline:none" onchange="updateMonthlyCell(\''+py.key+'\',\''+mEsc+'\',\'rec\',this.value)"/></td>';
-      }).join('')+'</tr>';
-      out+='</tbody></table></div>';
-      out+='<div class="hint" style="margin-top:10px;font-size:12px">Every field is editable — click any number to change it. Pending Approval and % Approved start pre-filled from Submitted/Approved but you can override either one. Use "Add Month" for a new column; click &times; to remove one.</div>';
-    } else {
-      out+='<div class="hint">No months added yet. Click "Add Month" to start tracking.</div>';
-    }
+        if(v===''&&r.key==='pending')v=String(Math.max(mNum(m,'submitted')-mNum(m,'approved'),0));
+        var isEmpty=v===''||v==='-';
+        out+='<td data-mo="'+m+'" style="text-align:right;'+(isCur?'background:rgba(8,145,178,.06);':'')+'">';
+        if(isEmpty&&!isCur){out+='<span style="color:var(--t3)">—</span>';}
+        else{out+='<input type="number" value="'+(isEmpty?'':v)+'" placeholder="—" style="width:58px;text-align:right;border:none;background:transparent;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--tx);padding:2px;outline:none" onchange="updateMonthlyCell(\''+pyEsc+'\',\''+mEsc+'\',\''+r.key+'\',this.value)"/>';}
+        out+='</td>';
+      });
+      out+='</tr>';
+    });
+
+    // % Approved row
+    out+='<tr><td style="position:sticky;left:0;background:var(--cd);white-space:nowrap;font-weight:500">% Approved</td>';
+    qMonths.forEach(function(m){
+      var isCur=m===nowM;
+      var pyEsc=py.key.replace(/'/g,"\\'");
+      var mEsc=m.replace(/'/g,"\\'");
+      var stored=(mdata.cells[m]&&mdata.cells[m].pct!==undefined)?mdata.cells[m].pct:'';
+      var v=stored;
+      if(v===''){var sub=mNum(m,'submitted'),app=mNum(m,'approved');v=sub>0?String(Math.round(app/sub*100)):'';}
+      var isEmpty=v===''||v==='-';
+      out+='<td data-mo="'+m+'" style="text-align:right;white-space:nowrap;'+(isCur?'background:rgba(8,145,178,.06);':'')+'">';
+      if(isEmpty&&!isCur){out+='<span style="color:var(--t3)">—</span>';}
+      else{out+='<input type="number" value="'+(isEmpty?'':v)+'" placeholder="—" style="width:44px;text-align:right;border:none;background:transparent;font-family:Nunito,sans-serif;font-size:13px;font-weight:700;color:var(--gd);padding:2px;outline:none" onchange="updateMonthlyCell(\''+pyEsc+'\',\''+mEsc+'\',\'pct\',this.value)"/>%';}
+      out+='</td>';
+    });
+    out+='</tr>';
+
+    // Total REC row
+    out+='<tr class="rpt-total-row"><td style="position:sticky;left:0;background:#0D2147;white-space:nowrap">Total REC</td>';
+    qMonths.forEach(function(m){
+      var isCur=m===nowM;
+      var pyEsc=py.key.replace(/'/g,"\\'");
+      var mEsc=m.replace(/'/g,"\\'");
+      var v=(mdata.cells[m]&&mdata.cells[m].rec!==undefined)?mdata.cells[m].rec:'';
+      var isEmpty=v===''||v==='0'||v==='-';
+      out+='<td data-mo="'+m+'" style="text-align:right;'+(isCur?'background:rgba(8,145,178,.25);':'')+'">';
+      if(isEmpty&&!isCur){out+='<span style="color:rgba(255,255,255,.3)">—</span>';}
+      else{out+='<input type="number" step="0.01" value="'+(isEmpty?'':v)+'" placeholder="—" style="width:88px;text-align:right;border:none;background:transparent;font-family:Inter,sans-serif;font-size:13px;font-weight:700;color:#FCD34D;padding:2px;outline:none" onchange="updateMonthlyCell(\''+pyEsc+'\',\''+mEsc+'\',\'rec\',this.value)"/>';}
+      out+='</td>';
+    });
+    out+='</tr></tbody></table></div>';
+    out+='<div class="hint" style="margin-top:8px;font-size:12px">Click any cell to edit. Switch quarters with Q1–Q4. Current month is highlighted.</div>';
     out+='</div>';
 
     out+='</div>'; // close two-column grid
@@ -3999,7 +4574,7 @@ function rtvProj(){
     var prFailSpan=prFail>0?'<span style="font-size:12px;color:var(--et);font-family:Nunito,sans-serif"><i class="ti ti-alert-circle" style="font-size:12px"></i> '+prFail+' post-review failure'+(prFail>1?'s':'')+'</span>':'';
 
     function cellFor(key){
-      if(key==='id')return '<td><span class="proj-id">'+p.id+'</span>'+(isp(p)?'<span style="font-size:10px;padding:1px 5px;border-radius:8px;background:var(--wn);color:var(--wt);margin-left:5px;font-family:Nunito,sans-serif">Pilot</span>':'')+'</td>';
+      if(key==='id')return '<td style="position:sticky;left:0;background:var(--cd);z-index:2;box-shadow:2px 0 5px rgba(0,0,0,.06)"><span class="proj-id">'+p.id+'</span>'+(isp(p)?'<span style="font-size:10px;padding:1px 5px;border-radius:8px;background:var(--wn);color:var(--wt);margin-left:5px;font-family:Nunito,sans-serif">Pilot</span>':'')+'</td>';
       if(key==='name')return '<td class="proj-name" title="'+(p.name||'')+'">'+(p.name||'<span style="color:var(--t3);font-style:italic">—</span>')+'</td>';
       if(key==='py')return '<td><span style="font-size:12px;padding:2px 8px;border-radius:10px;background:var(--s2);color:var(--t2);font-family:Nunito,sans-serif">'+p.py+'</span></td>';
       if(key==='pm')return '<td>'+pmCell+'</td>';
@@ -4757,13 +5332,12 @@ function defaultRecReportsSeed(){
 }
 function getRecReports(){
   var seed=defaultRecReportsSeed();
-  var saved=null;
-  try{saved=JSON.parse(localStorage.getItem('ilsfa_rec_reports')||'null');}catch(e){}
+  var saved=getRecReportsY();
   if(!saved||!saved.order||!saved.order.length){
-    localStorage.setItem('ilsfa_rec_reports',JSON.stringify(seed));
+    saveRecReportsY(seed);
     return seed;
   }
-  // Merge in any seed months the saved data is missing, preserving all existing saved data/edits
+  // Merge in any seed months the saved data is missing
   var changed=false;
   var mergedOrder=saved.order.slice();
   seed.order.forEach(function(month,seedIdx){
@@ -4771,25 +5345,18 @@ function getRecReports(){
       changed=true;
       if(!saved.reports)saved.reports={};
       saved.reports[month]=seed.reports[month];
-      // Insert at the same relative position as in the seed order, when possible
       var insertBefore=null;
       for(var i=seedIdx+1;i<seed.order.length;i++){
         if(mergedOrder.indexOf(seed.order[i])>=0){insertBefore=seed.order[i];break;}
       }
-      if(insertBefore){
-        mergedOrder.splice(mergedOrder.indexOf(insertBefore),0,month);
-      }else{
-        mergedOrder.push(month);
-      }
+      if(insertBefore){mergedOrder.splice(mergedOrder.indexOf(insertBefore),0,month);}
+      else{mergedOrder.push(month);}
     }
   });
-  if(changed){
-    saved.order=mergedOrder;
-    localStorage.setItem('ilsfa_rec_reports',JSON.stringify(saved));
-  }
+  if(changed){saved.order=mergedOrder;saveRecReportsY(saved);}
   return saved;
 }
-function saveRecReports(data){localStorage.setItem('ilsfa_rec_reports',JSON.stringify(data));}
+function saveRecReports(data){saveRecReportsY(data);}
 function activeRecReport(data){
   if(data.order.indexOf(data.active)<0)data.active=data.order[0];
   if(!data.reports[data.active])data.reports[data.active]={totalSubmitted:'',pendingApproval:'',rows:[]};
@@ -5021,6 +5588,9 @@ function renderMonthlyREC(){
     +'</div>'
     +'</div>';
   out+='</div>';
+
+  // Year banner
+  out+='<div id="rec-year-banner">'+buildYearBanner('rec')+'</div>';
 
   // Compact month navigator — short labels in a horizontal scroll strip
   out+='<div class="no-print" style="display:flex;align-items:center;gap:6px;margin-bottom:18px">';
@@ -5398,26 +5968,110 @@ function updatePrNotifBadge(){
 function addPrComment(pid){
   var inp=document.getElementById('pr-comment-input');
   var pri=document.getElementById('pr-comment-priority');
+  var notifyChk=document.getElementById('pr-notify-pm');
   if(!inp||!inp.value.trim()){si('Please type a comment first','err');return;}
   var text=inp.value.trim();
   var priority=pri?pri.value:'normal';
+  var notifyPM=notifyChk?notifyChk.checked:true;
   var comment={
     id:Date.now(),
     pid:pid,
     text:text,
     priority:priority,
-    author:'SPL (Trisha)',
+    author:localStorage.getItem('spl_display_name')||'SPL',
     ts:new Date().toISOString(),
-    read:false
+    read:false,
+    notifyPM:notifyPM,
+    pmAddressed:false
   };
   var comments=getPrComments(pid);
   comments.push(comment);
   savePrComments(pid,comments);
+  // Save PM notification if checked
+  if(notifyPM){
+    var proj=P.find(function(p){return p.id===pid;});
+    var pmName=proj?proj.pm||'Unassigned':'Unassigned';
+    var notifs=getPMNotifications(pmName);
+    notifs.push({id:comment.id,pid:pid,text:text,priority:priority,ts:comment.ts,addressed:false});
+    savePMNotifications(pmName,notifs);
+  }
   inp.value='';
   renderPrComments(pid);
-  si('Comment sent to team!','ok');
-  // Trigger notification
+  si(notifyPM?'Comment sent — PM notified!':'Comment sent to team!','ok');
   updatePrNotifBadge();
+}
+
+function escQ(s){return (s||'').replace(/'/g,"\\'");}
+// PM notification storage
+function getPMNotifications(pmName){
+  try{return JSON.parse(localStorage.getItem('pm_notifs_'+pmName)||'[]');}catch(e){return [];}
+}
+function savePMNotifications(pmName,notifs){
+  localStorage.setItem('pm_notifs_'+pmName,JSON.stringify(notifs));
+}
+function markPMNotifAddressed(pmName,id){
+  // Mark addressed on PM side
+  var notif=null;
+  var notifs=getPMNotifications(pmName).map(function(n){
+    if(n.id===id){notif=n;return Object.assign({},n,{addressed:true,addressedOn:new Date().toISOString()});}
+    return n;
+  });
+  savePMNotifications(pmName,notifs);
+  // Also mark the comment as PM-addressed
+  if(notif){
+    P.forEach(function(p){
+      var comments=getPrComments(p.id).map(function(c){
+        return c.id===id?Object.assign({},c,{pmAddressed:true,pmAddressedOn:new Date().toISOString()}):c;
+      });
+      savePrComments(p.id,comments);
+    });
+    // Create SPL re-review alert for this project
+    var splAlerts=getSPLReviewAlerts();
+    // Avoid duplicate alerts for same comment
+    if(!splAlerts.find(function(a){return a.commentId===id;})){
+      splAlerts.push({
+        id:Date.now(),
+        commentId:id,
+        pid:notif.pid,
+        pmName:pmName,
+        text:notif.text,
+        addressedOn:new Date().toISOString(),
+        clearedBySPL:false
+      });
+      saveSPLReviewAlerts(splAlerts);
+    }
+  }
+  rtv();
+}
+
+// SPL re-review alerts (PM said they fixed it — SPL needs to verify)
+function getSPLReviewAlerts(){
+  try{return JSON.parse(localStorage.getItem('spl_review_alerts')||'[]');}catch(e){return [];}
+}
+function saveSPLReviewAlerts(alerts){
+  localStorage.setItem('spl_review_alerts',JSON.stringify(alerts));
+}
+function clearSPLReviewAlert(alertId){
+  var alerts=getSPLReviewAlerts().map(function(a){
+    return a.id===alertId?Object.assign({},a,{clearedBySPL:true}):a;
+  });
+  saveSPLReviewAlerts(alerts);
+  rpr(); // re-render post-review tab
+}
+function getActiveSPLAlerts(pid){
+  return getSPLReviewAlerts().filter(function(a){return a.pid===pid&&!a.clearedBySPL;});
+}
+function clearPMNotif(pmName,id){
+  var notifs=getPMNotifications(pmName).filter(function(n){return n.id!==id;});
+  savePMNotifications(pmName,notifs);
+  // Also mark comment as PM-addressed
+  P.forEach(function(p){
+    var comments=getPrComments(p.id).map(function(c){
+      return c.id===id?Object.assign({},c,{pmAddressed:true}):c;
+    });
+    savePrComments(p.id,comments);
+  });
+  rtv();
 }
 function deletePrComment(pid,id){
   if(!confirm('Delete this comment?'))return;
