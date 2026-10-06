@@ -965,7 +965,19 @@ function loadData(){
     bgRefresh();
   }
 }
-function hardRefresh(){try{localStorage.removeItem('ilsfa2');}catch(e){}si('Refreshing...','');bgRefresh();}
+function hardRefresh(){
+  // Instant re-render from cached data — no network call
+  var btn=document.querySelector('.rfbtn');
+  if(btn){btn.style.transform='rotate(360deg)';btn.style.transition='transform .4s';setTimeout(function(){btn.style.transform='';btn.style.transition='';},400);}
+  ra();
+  si('Refreshed','ok');
+}
+function syncFromSheets(){
+  // Explicit network sync — only when user wants fresh data from Google Sheets
+  si('Syncing from Google Sheets...','');
+  try{localStorage.removeItem('ilsfa2');}catch(e){}
+  bgRefresh();
+}
 
 const CLS=[
   {id:'ss',title:'Site suitability',ic:'ti-home',items:[
@@ -1729,8 +1741,10 @@ const DEFAULT_SCOPE={
     {tool:'Zoho CRM',task:'SV Application Corrections/ Approvals'},
     {tool:'SFA Meeting Minutes Doc',task:'Part I Corrections/ Approvals'},
     {tool:'ILSFA Website',task:'Eligibility Letter Review/ Approval'},
-    {tool:'Invoice Meeting Calendar',task:'ICC Review/ Approval'},
-    {tool:'ICC Meeting Calendar',task:''},
+    {tool:'ICC Meeting Calendar',task:'ICC Review/ Approval'},
+    {tool:'NREL',task:'Residential Energy Cost Estimator'},
+    {tool:'Sejda',task:'PDF editing'},
+    {tool:'iLovePDF',task:'PDF tools'},
     {tool:'ChatGPT',task:''},
     {tool:'Income Eligibility Map',task:''},
   ],
@@ -1742,7 +1756,9 @@ const DEFAULT_SCOPE={
     {tool:'SFA Meeting Minutes Doc',task:'Part II Corrections/ Approvals'},
     {tool:'ILSFA Website',task:'Invoice Review'},
     {tool:'Invoice Meeting Calendar',task:'Reports'},
-    {tool:'ICC Meeting Calendar',task:''},
+    {tool:'HRP Final Invoice Template',task:'Invoice preparation'},
+    {tool:'Sejda',task:'PDF editing'},
+    {tool:'iLovePDF',task:'PDF tools'},
     {tool:'ChatGPT',task:''},
   ],
 };
@@ -1796,6 +1812,10 @@ const TOOL_URLS={
   'Gmail/ Gchat':'https://mail.google.com/mail/u/0/#inbox',
   'Gmail':'https://mail.google.com/mail/u/0/#inbox',
   'Income Eligibility Map':'https://elevate.maps.arcgis.com/apps/webappviewer/index.html?id=924cfbc202f24e22a88f07f21423fad0',
+  'NREL':'https://www.nlr.gov/state-local-tribal/the-residential-energy-cost-estimator',
+  'HRP Final Invoice Template':'https://docs.google.com/spreadsheets/d/1q1ectrXc_NI_0VM-axlbdd6pB_iZ4RLe5_XgzcHIgm4/edit?gid=1483315145#gid=1483315145',
+  'Sejda':'https://www.sejda.com',
+  'iLovePDF':'https://www.ilovepdf.com',
 };
 
 function rscope(){
@@ -2820,7 +2840,6 @@ function rtv(){
   const sb=document.getElementById('sb-pm');
   sb.innerHTML=`<div class="sb-lbl" style="margin-top:0">Overview</div>`+
     `<button class="sb-pm${activePM==='__db'?' a':''}" onclick="activePM='__db';rtv()"><i class="ti ti-layout-dashboard" style="font-size:15px"></i> Dashboard</button>`+
-    `<button class="sb-pm${activePM==='__proj'?' a':''}" onclick="activePM='__proj';rtv()"><i class="ti ti-folder" style="font-size:15px"></i> Projects</button>`+
     `<div class="sbdiv"></div>`+
     `<div class="sb-lbl">Project Managers</div>`+
     PML.map((pm,i)=>{const c=P.filter(p=>p.pm===pm).length;const m=pm===MGR;return `<button class="sb-pm${pm===activePM?' a':''}" data-pm="${i}" onclick="activePM=this.dataset.pmname;rtv()"><div class="pmav">${pm.charAt(0)}</div><span style="flex:1">${pm}${m?'<span class="mgr">MGR</span>':''}</span>${c>0?'<span style="font-size:11px;padding:1px 6px;border-radius:10px;background:rgba(8,145,178,.1);color:#0891B2;font-weight:600">'+c+'</span>':''}</button>`;}).join('')+
@@ -2839,13 +2858,103 @@ function rtv(){
   if(activePM==='__proj'){rtvProj();return;}
 
   const mp=P.filter(p=>p.pm===activePM);const m=activePM===MGR;
+
+  // ── Categorise projects into 4 lanes ──
+  function getLane(p){
+    var ps=p.ps||'';
+    var cs=p.cs||'No feedback';
+    var prSt=getPrStatus(p.id)||'none';
+    // Lane 4: Good to go — submitted, no pending ILSFA correction, correction addressed or none, post-review good/none, under inspection waiting
+    if(ps==='Under Inspection'&&cs!=='Pending')return 'good';
+    if(ps==='Approved')return 'good';
+    // Lane 3: Needs correction — ILSFA correction OR post-review correction
+    if(ps==='Further Part II information requested')return 'corr';
+    if(cs==='Pending'||cs==='Partially addressed')return 'corr';
+    if(prSt==='correction')return 'corr';
+    // Lane 2: Part II submitted — cleanly submitted
+    if(ps==='Part II Submitted')return 'sub';
+    // Lane 1: PTO/COC pending — everything else (not yet submitted to Part II)
+    return 'pto';
+  }
+
+  var lanes={
+    pto:{label:'PTO / COC Pending',icon:'ti-clock-hour-4',hint:'Pre-check docs now — ready to submit once PTO arrives',hd:'#854d0e',bg:'rgba(234,179,8,.07)',bdg:'rgba(254,249,195,.95)',bdgFg:'#713f12',projects:[]},
+    sub:{label:'Part II Submitted',icon:'ti-send',hint:'Submitted — no corrections pending',hd:'#0891B2',bg:'rgba(8,145,178,.05)',bdg:'rgba(224,242,254,.9)',bdgFg:'#0369a1',projects:[]},
+    corr:{label:'Needs Correction',icon:'ti-alert-triangle',hint:'ILSFA correction or post-review feedback',hd:'#c2410c',bg:'rgba(194,65,12,.05)',bdg:'rgba(255,237,213,.9)',bdgFg:'#9a3412',projects:[]},
+    good:{label:'Good to Go',icon:'ti-circle-check',hint:'Awaiting ILSFA approval',hd:'#16a34a',bg:'rgba(22,163,74,.05)',bdg:'rgba(220,252,231,.9)',bdgFg:'#166534',projects:[]},
+  };
+  mp.forEach(function(p){lanes[getLane(p)].projects.push(p);});
+  var laneOrder=['pto','sub','corr','good'];
+
+  // PM notif count
+  var pmNotifs=getPMNotifications(activePM).filter(function(n){return !n.addressed;});
+
+  function renderLane(key){
+    var lane=lanes[key];
+    var projs=lane.projects;
+    var isOpen=projs.length>0; // default open if has projects
+    var laneId='lane-'+activePM.replace(/\s/g,'_')+'-'+key;
+    var rows=projs.map(function(p){
+      var cl=ppx(p.id);
+      var ps=p.ps||'';
+      var cs=p.cs||'No feedback';
+      var prSt=getPrStatus(p.id)||'none';
+      var prSto=getPrStatusObj(p.id);
+      var hasNotif=pmNotifs.some(function(n){return n.pid===p.id;});
+      // Tags
+      var tags='';
+      if(ps==='Further Part II information requested')tags+='<span style="font-size:10.5px;padding:2px 6px;border-radius:8px;background:#ffedd5;color:#9a3412;font-weight:600">ILSFA corr.</span>';
+      if(cs==='Pending'||cs==='Partially addressed')tags+='<span style="font-size:10.5px;padding:2px 6px;border-radius:8px;background:#fee2e2;color:#991b1b;font-weight:600">Corr. pending</span>';
+      if(prSto&&key==='corr')tags+='<span style="font-size:10.5px;padding:2px 6px;border-radius:8px;background:'+prSto.bg+';color:'+prSto.fg+';font-weight:600">'+prSto.l+'</span>';
+      if(ps==='Under Inspection'&&key==='good')tags+='<span style="font-size:10.5px;padding:2px 6px;border-radius:8px;background:#ede9fe;color:#6d28d9;font-weight:600">Under inspection</span>';
+      if(ps==='Approved')tags+='<span style="font-size:10.5px;padding:2px 6px;border-radius:8px;background:var(--ok);color:var(--ot);font-weight:600">Approved</span>';
+      return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r);border:0.5px solid var(--bd);background:var(--cd);margin-bottom:5px">'
+        +(hasNotif?'<i class="ti ti-bell" style="font-size:13px;color:#D97706;flex-shrink:0;animation:chatPulse 1.8s infinite"></i>':'')
+        +'<span style="font-size:11px;font-family:Inter,sans-serif;color:var(--t3);min-width:80px;flex-shrink:0">'+p.id+'</span>'
+        +'<span style="font-size:13px;font-weight:600;color:var(--tx);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(p.name||p.id)+'</span>'
+        +'<div style="display:flex;align-items:center;gap:5px;flex-shrink:0">'
+        +tags
+        +(p.py?'<span style="font-size:10.5px;padding:2px 6px;border-radius:8px;background:var(--s2);color:var(--t2)">'+p.py+'</span>':'')
+        +(p.ut?'<span style="font-size:10.5px;padding:2px 6px;border-radius:8px;background:var(--s2);color:var(--t2)">'+p.ut+'</span>':'')
+        +'<span style="font-size:11px;color:var(--t3);white-space:nowrap"><i class="ti ti-checkbox" style="font-size:12px;vertical-align:-1px"></i> '+cl.d+'/'+cl.t+'</span>'
+        +'</div>'
+        +'</div>';
+    }).join('');
+
+    var emptyRow=projs.length===0?'<div style="padding:12px 10px;font-size:12.5px;color:var(--t3);font-style:italic;font-family:Nunito,sans-serif">No projects in this category</div>':'';
+
+    return '<div style="border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;margin-bottom:10px">'
+      +'<div onclick="var b=document.getElementById(\''+laneId+'\');if(b){b.style.display=b.style.display===\'none\'?\'block\':\'none\'}" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:'+lane.bg+';cursor:pointer;border-bottom:1px solid var(--bd)">'
+      +'<i class="ti '+lane.icon+'" style="font-size:15px;color:'+lane.hd+';flex-shrink:0"></i>'
+      +'<span style="font-size:13px;font-weight:700;color:'+lane.hd+';flex:1">'+lane.label+'</span>'
+      +'<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:'+lane.bdg+';color:'+lane.bdgFg+';font-weight:700">'+projs.length+'</span>'
+      +(lane.hint?'<span style="font-size:11px;color:var(--t3);font-style:italic;margin-left:6px;font-family:Nunito,sans-serif">'+lane.hint+'</span>':'')
+      +'</div>'
+      +'<div id="'+laneId+'" style="padding:8px 10px;display:'+(isOpen?'block':'none')+'">'
+      +rows+emptyRow
+      +'</div>'
+      +'</div>';
+  }
+
+  // PM notification banner
+  var notifBanner='';
+  if(pmNotifs.length>0){
+    notifBanner='<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(217,119,6,.07);border:1px solid rgba(217,119,6,.25);border-radius:var(--r);margin-bottom:12px">'
+      +'<i class="ti ti-bell" style="font-size:15px;color:#D97706;flex-shrink:0;animation:chatPulse 1.8s infinite"></i>'
+      +'<span style="font-size:12.5px;font-weight:600;color:#D97706;font-family:Nunito,sans-serif">'+pmNotifs.length+' review comment'+( pmNotifs.length!==1?'s':'')+' from SPL need your attention</span>'
+      +'</div>';
+  }
+
   document.getElementById('pmc').innerHTML=
-    `<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:14px 17px;background:var(--glass);border:1px solid var(--gborder);border-radius:var(--rl);box-shadow:var(--gshadow)">
-      <div class="pma">${activePM.charAt(0)}</div>
-      <div style="flex:1"><div style="font-size:16px;font-weight:600">${activePM}${m?' <span class="mgr">Manager</span>':''}</div>
-      <div style="font-size:13.5px;color:var(--t3);margin-top:2px">${mp.length} project${mp.length!==1?'s':''} assigned</div></div>
-    </div>`+
-    (mp.length?mp.map(p=>tpc(p)).join(''):'<div style="text-align:center;padding:48px 20px;color:var(--t3)"><i class="ti ti-folder" style="font-size:36px;display:block;margin-bottom:12px;opacity:.35"></i><div style="font-size:15px;font-weight:500;margin-bottom:5px">No projects assigned yet</div></div>');
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:14px 17px;background:var(--glass);border:1px solid var(--gborder);border-radius:var(--rl);box-shadow:var(--gshadow)">'
+    +'<div class="pma">'+activePM.charAt(0)+'</div>'
+    +'<div style="flex:1"><div style="font-size:16px;font-weight:600">'+activePM+(m?' <span class="mgr">Manager</span>':'')+'</div>'
+    +'<div style="font-size:13.5px;color:var(--t3);margin-top:2px">'+mp.length+' project'+(mp.length!==1?'s':'')+' assigned</div></div>'
+    +'</div>'
+    +notifBanner
+    +(mp.length
+      ? laneOrder.map(renderLane).join('')
+      : '<div style="text-align:center;padding:48px 20px;color:var(--t3)"><i class="ti ti-folder" style="font-size:36px;display:block;margin-bottom:12px;opacity:.35"></i><div style="font-size:15px;font-weight:500;margin-bottom:5px">No projects assigned yet</div></div>');
 }
 
 function rtdb(){
@@ -2866,9 +2975,31 @@ function rtdb(){
   const prFail=P.filter((_,i)=>prStats[i].fa>0).length;
   const attn=P.filter(p=>p.ps==='Further Part II information requested'&&p.cs==='Pending');
 
+  // ── Collect PM notification counts ──
+  const pmNotifMap={};
+  PML.forEach(function(pm){
+    pmNotifMap[pm]=getPMNotifications(pm).filter(function(n){return !n.addressed;}).length;
+  });
+  const totalPMNotifs=Object.values(pmNotifMap).reduce(function(a,b){return a+b;},0);
+  // ── Re-review alerts ──
+  const reReviewAlerts=getSPLReviewAlerts().filter(function(a){return !a.clearedBySPL;});
+
+  // ── Review status counts ──
+  const rvStatusCounts={good:0,correction:0,pending:0,progress:0,none:0};
+  P.forEach(function(p){var s=getPrStatus(p.id)||'none';rvStatusCounts[s]=(rvStatusCounts[s]||0)+1;});
+
   let html=`<div style="font-family:'Inter',sans-serif;font-size:18px;font-weight:600;color:var(--tx);margin-bottom:4px">Team Overview</div><div class="ts" style="margin-bottom:16px">Last updated: ${new Date().toLocaleString('en-US',{timeZone:'America/Chicago',month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'})}</div>`;
 
-  // Top stats — read only, no click
+  // ── Fix 1: PM notification banner ──
+  if(totalPMNotifs>0){
+    html+=`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(217,119,6,.07);border:1px solid rgba(217,119,6,.25);border-radius:var(--r);margin-bottom:12px;cursor:pointer" onclick="activePM=Object.keys(pmNotifMap).find(pm=>pmNotifMap[pm]>0)||PML[0];rtv()">
+      <i class="ti ti-bell" style="font-size:16px;color:#D97706;flex-shrink:0;animation:chatPulse 1.8s infinite"></i>
+      <span style="font-size:13px;font-weight:600;color:#D97706;font-family:Nunito,sans-serif">You have ${totalPMNotifs} unread review notification${totalPMNotifs!==1?'s':''} from SPL — tap to view</span>
+      <i class="ti ti-chevron-right" style="font-size:13px;color:#D97706;margin-left:auto"></i>
+    </div>`;
+  }
+
+  // ── Top 4 KPI cards ──
   html+=`<div class="dbs" style="margin-bottom:16px">
     <div class="dbc g" onclick="navTeamProj('all','')">
       <div class="dbc-top"><span class="dbc-lbl">Total Projects</span><span class="dbc-ic ic-nv"><i class="ti ti-folder"></i></span></div>
@@ -2892,7 +3023,7 @@ function rtdb(){
     </div>
   </div>`;
 
-  // Program Year Breakdown donut — same component & colors as the Executive Overview, counts only
+  // ── Fix 5: PY donut WITH legend ──
   const pyKeysT=['PY7','PY8','PY8-2025'];
   const pyColorsT={'PY7':'#CBD5E1','PY8':'#3B82F6','PY8-2025':'#0F172A'};
   const pyCountsT=pyKeysT.map(function(py){var saved=getPYAdjust();return (typeof saved[py]==='number')?saved[py]:P.filter(function(p){return p.py===py;}).length;});
@@ -2903,11 +3034,27 @@ function rtdb(){
     donutLegendT+='<div class="donut-leg-row" style="cursor:pointer" onclick="navTeamProj(\'all\',\''+py+'\')"><span class="dot" style="background:'+pyColorsT[py]+'"></span>'+py+'<span class="donut-leg-n">'+pyCountsT[i]+'</span></div>';
   });
 
-  // Progress — percentages only, no dollar figures
+  // ── Fix 3: Post-review status breakdown ──
   const prAvg=tot?Math.round(prStats.reduce((a,s)=>a+(s.t?s.pa/s.t*100:0),0)/tot):0;
+  const prStatusPills=[
+    {v:'good',l:'Good to go',bg:'var(--ok)',fg:'var(--ot)'},
+    {v:'correction',l:'Needs correction',bg:'var(--er)',fg:'var(--et)'},
+    {v:'pending',l:'Pending docs',bg:'rgba(217,119,6,.1)',fg:'#D97706'},
+    {v:'progress',l:'In progress',bg:'rgba(8,145,178,.1)',fg:'#0891B2'},
+  ].map(function(s){
+    var c=rvStatusCounts[s.v]||0;
+    if(!c)return '';
+    return '<div style="display:flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;background:'+s.bg+'">'
+      +'<span style="font-size:13px;font-weight:700;color:'+s.fg+'">'+c+'</span>'
+      +'<span style="font-size:11px;color:'+s.fg+';font-family:Nunito,sans-serif">'+s.l+'</span>'
+      +'</div>';
+  }).join('');
+
   html+=`<div class="d2c" style="grid-template-columns:1fr 1fr 1fr">
     <div class="ds">
-      <div class="dt"><i class="ti ti-list-check" style="font-size:16px;color:var(--gd)"></i> Checklist Progress</div>
+      <div class="dt"><i class="ti ti-list-check" style="font-size:16px;color:var(--gd)"></i> Checklist Progress
+        <button onclick="navTeamProj('all','')" style="margin-left:auto;font-size:11px;padding:2px 9px;border-radius:var(--r);border:1px solid var(--bd);background:transparent;cursor:pointer;color:var(--t2);font-family:Nunito,sans-serif">View →</button>
+      </div>
       <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
         <span style="font-family:'Inter',sans-serif;font-size:32px;font-weight:600">${clAvg}%</span>
         <span style="font-size:13px;color:var(--t3);font-family:'Nunito',sans-serif">avg completion</span>
@@ -2919,14 +3066,15 @@ function rtdb(){
     </div>
     <div class="ds">
       <div class="dt"><i class="ti ti-zoom-check" style="font-size:16px;color:var(--gd)"></i> Post-review Progress</div>
-      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
+      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px">
         <span style="font-family:'Inter',sans-serif;font-size:32px;font-weight:600">${prAvg}%</span>
         <span style="font-size:13px;color:var(--t3);font-family:'Nunito',sans-serif">avg reviewed</span>
       </div>
       <div style="height:7px;background:var(--s2);border-radius:4px;overflow:hidden;margin-bottom:6px">
         <div style="height:100%;width:${prAvg}%;background:linear-gradient(90deg,#0891B2,var(--ot));border-radius:4px"></div>
       </div>
-      <div style="font-size:12px;color:var(--t3);font-family:'Nunito',sans-serif">${prDone} of ${tot} projects fully reviewed</div>
+      <div style="font-size:12px;color:var(--t3);font-family:'Nunito',sans-serif;margin-bottom:8px">${prDone} of ${tot} projects fully reviewed</div>
+      ${prStatusPills?'<div style="display:flex;gap:5px;flex-wrap:wrap">'+prStatusPills+'</div>':''}
     </div>
     <div class="ds">
       <div class="dt"><i class="ti ti-calendar" style="font-size:16px;color:var(--gd)"></i> Program Year Breakdown</div>
@@ -2934,54 +3082,79 @@ function rtdb(){
         <div class="donut" style="background:conic-gradient(${donutStopsT.join(',')})">
           <div class="donut-center"><div class="donut-n">${tot}</div><div class="donut-l">Projects</div></div>
         </div>
+        <div class="donut-legend">${donutLegendT}</div>
       </div>
     </div>
   </div>`;
 
-  // Needs attention — read only
-  if(attn.length>0){
+  // ── Fix 6: Needs Attention — correction + unread PM notifs ──
+  const pmNotifProjects=P.filter(function(p){
+    var pm=p.pm||'Unassigned';
+    return getPMNotifications(pm).some(function(n){return n.pid===p.id&&!n.addressed;});
+  });
+  const attnAll=[...new Map([...attn,...pmNotifProjects].map(function(p){return [p.id,p];})).values()];
+  if(attnAll.length>0){
     html+=`<div class="ds" style="border-left:3px solid var(--et)">
       <div class="dt"><i class="ti ti-alert-triangle" style="font-size:16px;color:var(--et)"></i> Needs Attention</div>`;
-    attn.forEach(p=>{
-      html+=`<div class="dbrow z">
-        <div class="dbrl"><span style="width:8px;height:8px;border-radius:50%;background:var(--et);display:inline-block;flex-shrink:0"></span>${p.id} <span style="font-size:12px;color:var(--t3)">${p.py}${p.pm?' · '+p.pm:''}</span></div>
-        <span class="badge br" style="font-size:11px">Correction Pending</span>
+    attnAll.forEach(function(p){
+      const hasNotif=getPMNotifications(p.pm||'Unassigned').some(function(n){return n.pid===p.id&&!n.addressed;});
+      const isCorr=p.ps==='Further Part II information requested'&&p.cs==='Pending';
+      html+=`<div class="dbrow z" style="cursor:pointer" onclick="activePM='${p.pm||''}';rtv()">
+        <div class="dbrl"><span style="width:8px;height:8px;border-radius:50%;background:var(--et);display:inline-block;flex-shrink:0"></span>${p.id} <span style="font-size:12px;color:var(--t3)">${p.py||''}${p.pm?' · '+p.pm:''}</span></div>
+        <div style="display:flex;gap:5px">
+          ${isCorr?'<span class="badge br" style="font-size:11px">Correction Pending</span>':''}
+          ${hasNotif?'<span style="font-size:11px;padding:2px 7px;border-radius:10px;background:rgba(217,119,6,.1);color:#D97706;font-weight:600">SPL Notif</span>':''}
+        </div>
       </div>`;
     });
     html+=`</div>`;
   }
 
-  // Per PM progress — read only
+  // ── Fix 2+4+7: Per PM cards — total count, review status, clickable ──
   html+=`<div class="ds">
     <div class="dt"><i class="ti ti-users" style="font-size:16px;color:var(--gd)"></i> Team Progress</div>
     <div style="display:flex;flex-direction:column;gap:10px">
-    ${PML.map(pm=>{
-      const pp=P.filter(p=>p.pm===pm);
-      const pApp=pp.filter(p=>p.ps==='Approved').length;
-      const pCorr=pp.filter(p=>p.ps==='Further Part II information requested').length;
-      const clP=pp.length?Math.round(pp.map(p=>ppx(p.id).pct).reduce((a,b)=>a+b,0)/pp.length):0;
-      const prP=pp.length?Math.round(pp.map((_,i)=>{const s=gprs(pp[i].id);return s.re===0?100:Math.round(s.pa/s.t*100);}).reduce((a,b)=>a+b,0)/pp.length):0;
-      return `<div style="padding:11px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r)">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:26px;height:26px;border-radius:50%;background:#0D2147;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600">${pm.charAt(0)}</div>
-            <span style="font-size:13.5px;font-weight:600">${pm}${pm===MGR?'<span class="mgr" style="margin-left:6px">MGR</span>':''}</span>
+    ${PML.map(function(pm){
+      const pp=P.filter(function(p){return p.pm===pm;});
+      const pTot=pp.length;
+      const pApp=pp.filter(function(p){return p.ps==='Approved';}).length;
+      const pCorr=pp.filter(function(p){return p.ps==='Further Part II information requested';}).length;
+      const pUI=pp.filter(function(p){return p.ps==='Under Inspection';}).length;
+      const clP=pTot?Math.round(pp.map(function(p){return ppx(p.id).pct;}).reduce(function(a,b){return a+b;},0)/pTot):0;
+      const prP=pTot?Math.round(pp.map(function(p){const s=gprs(p.id);return s.re===0?100:Math.round(s.pa/s.t*100);}).reduce(function(a,b){return a+b;},0)/pTot):0;
+      const pmNotifCount=pmNotifMap[pm]||0;
+      // Review status for this PM's projects
+      const pmGood=pp.filter(function(p){return getPrStatus(p.id)==='good';}).length;
+      const pmCorr=pp.filter(function(p){return getPrStatus(p.id)==='correction';}).length;
+      return `<div style="padding:12px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);cursor:pointer;transition:background .15s" onclick="navTeamProj('all','')" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background='var(--sf)'">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="width:30px;height:30px;border-radius:50%;background:#0D2147;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:700">${pm.charAt(0)}</div>
+            <div>
+              <div style="font-size:13.5px;font-weight:700;color:var(--tx)">${pm}${pm===MGR?'<span class="mgr" style="margin-left:6px">MGR</span>':''}</div>
+              <div style="font-size:11.5px;color:var(--t3);font-family:Nunito,sans-serif">${pTot} project${pTot!==1?'s':''} assigned</div>
+            </div>
           </div>
-          <div style="display:flex;gap:8px;font-size:11px;font-family:'Nunito',sans-serif">
-            <span style="color:var(--ot)">${pApp} approved</span>
-            ${pCorr>0?'<span style="color:var(--et)">'+pCorr+' correction</span>':''}
+          <div style="display:flex;gap:6px;align-items:center">
+            ${pmNotifCount>0?'<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(217,119,6,.1);color:#D97706;font-weight:700;animation:chatPulse 1.8s infinite">'+pmNotifCount+' notif</span>':''}
+            ${pCorr>0?'<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--er);color:var(--et);font-weight:600">'+pCorr+' corr</span>':''}
+            <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(16,185,129,.1);color:var(--ot);font-weight:600">${pApp} approved</span>
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px">
           <div>
             <div style="font-size:10.5px;color:var(--t3);font-family:'Nunito',sans-serif;margin-bottom:3px;text-transform:uppercase;letter-spacing:.06em">Checklist ${clP}%</div>
-            <div style="height:4px;background:var(--bd);border-radius:2px;overflow:hidden"><div style="height:100%;width:${clP}%;background:#0891B2;border-radius:2px"></div></div>
+            <div style="height:5px;background:var(--bd);border-radius:2px;overflow:hidden"><div style="height:100%;width:${clP}%;background:#0891B2;border-radius:2px;transition:width .4s"></div></div>
           </div>
           <div>
             <div style="font-size:10.5px;color:var(--t3);font-family:'Nunito',sans-serif;margin-bottom:3px;text-transform:uppercase;letter-spacing:.06em">Post-review ${prP}%</div>
-            <div style="height:4px;background:var(--bd);border-radius:2px;overflow:hidden"><div style="height:100%;width:${prP}%;background:var(--ot);border-radius:2px"></div></div>
+            <div style="height:5px;background:var(--bd);border-radius:2px;overflow:hidden"><div style="height:100%;width:${prP}%;background:var(--ot);border-radius:2px;transition:width .4s"></div></div>
           </div>
         </div>
+        ${(pmGood>0||pmCorr>0)?'<div style="display:flex;gap:5px;flex-wrap:wrap">'
+          +(pmGood>0?'<div style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--ok);color:var(--ot)">'+pmGood+' good to go</div>':'')
+          +(pmCorr>0?'<div style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--er);color:var(--et)">'+pmCorr+' needs correction</div>':'')
+          +'</div>':''}
       </div>`;
     }).join('')}
     </div>
@@ -3772,7 +3945,13 @@ function startNewYear(){
 
 function switchYear(yr){
   setActiveYear(yr);
-  renderMonthly();renderMonthlyREC();renderYearBanner();
+  // Only re-render the currently active report subtab
+  var activeTab=document.querySelector('.rpt-stab.a');
+  var tab=activeTab?activeTab.dataset.tab:'monthly';
+  if(tab==='monthly'||tab==='overall'||tab==='daily')renderMonthly();
+  else if(tab==='monthlyREC')renderMonthlyREC();
+  else renderMonthly();
+  renderYearBanner();
 }
 
 function renderYearBanner(){
@@ -3795,7 +3974,7 @@ function buildYearBanner(type){
     var clr=r.status==='archived'?'#D97706':'#10B981';
     var bg=isAct?(r.status==='archived'?'rgba(217,119,6,.12)':'rgba(16,185,129,.1)'):'var(--s2)';
     var icon=r.status==='archived'?'📁':'●';
-    out+='<button data-yr="'+r.year+'" onclick="switchYear(this.dataset.yr)" style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;border:1.5px solid '+(isAct?clr:'var(--bd)')+';background:'+bg+';color:'+(isAct?clr:'var(--t2)')+';cursor:pointer;font-family:Nunito,sans-serif;transition:all .15s">'+icon+' '+r.year+(isAct?' ✓':'')+'</button>';
+    out+='<button data-yr="'+r.year+'" onclick="switchYear(this.dataset.yr);event.stopPropagation()" style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;border:1.5px solid '+(isAct?clr:'var(--bd)')+';background:'+bg+';color:'+(isAct?clr:'var(--t2)')+';cursor:pointer;font-family:Nunito,sans-serif;transition:all .15s">'+icon+' '+r.year+(isAct?' ✓':'')+'</button>';
   });
   out+='<div style="margin-left:auto;display:flex;gap:6px">';
   if(!isArchived){
@@ -4215,11 +4394,20 @@ function updateMonthlyMeta(pyKey,field,val){
 }
 var QUARTERS_MAP={Q1:['Jan','Feb','Mar'],Q2:['Apr','May','Jun'],Q3:['Jul','Aug','Sep'],Q4:['Oct','Nov','Dec']};
 function setMoQ(pyKey,q){
-  // Save active quarter to mdata and re-render
+  // Save activeQ in a dedicated simple key (avoids migration/namespace issues)
+  localStorage.setItem('ilsfa_activeQ_'+pyKey, q);
+  // Also save into mdata for completeness
   var data=getMonthlyManual(pyKey,function(){return {months:[],cells:{}};});
   data.activeQ=q;
   saveMonthlyManual(pyKey,data);
-  generateMonthly();
+  setTimeout(generateMonthly,0);
+}
+function getActiveQ(pyKey){
+  // Read from dedicated key first, then mdata fallback, then current quarter
+  var stored=localStorage.getItem('ilsfa_activeQ_'+pyKey);
+  if(stored)return stored;
+  var nowMIdx=new Date().getMonth();
+  return nowMIdx<3?'Q1':nowMIdx<6?'Q2':nowMIdx<9?'Q3':'Q4';
 }
 function saveReportField(pyKey,field,val){
   var saved=getReportDataY();
@@ -4324,12 +4512,10 @@ function generateMonthly(){
     });
 
     // Current quarter
-    var nowMIdx=new Date().getMonth();
-    var curQ=nowMIdx<3?'Q1':nowMIdx<6?'Q2':nowMIdx<9?'Q3':'Q4';
-    var activeQ=mdata.activeQ||curQ;
     var nowM=new Date().toLocaleDateString('en-US',{timeZone:'America/Chicago',month:'short'});
+    var activeQ=getActiveQ(py.key);
     // Only render the 3 months of the active quarter
-    var qMonths=QUARTERS_MAP[activeQ]||QUARTERS_MAP[curQ];
+    var qMonths=QUARTERS_MAP[activeQ];
     var pyIdSafe='mo-'+py.key.replace(/[^a-zA-Z0-9]/g,'_');
 
     out+='<div>';
@@ -4594,10 +4780,7 @@ function rtvProj(){
 
     out+='<tr class="'+(isExp?'expanded':'')+'" onclick="tvExpanded=tvExpanded===\''+p.id+'\' ? null : \''+p.id+'\';rtvProj()">'
       +vcols.map(function(c){return cellFor(c.key);}).join('')
-      +'<td style="text-align:right;white-space:nowrap">'
-      +'<button class="act-btn" title="Edit" onclick="openEditModal(\''+p.id+'\');event.stopPropagation()"><i class="ti ti-pencil"></i></button>'
-      +'<button class="act-btn" title="Delete" onclick="rmP(\''+p.id+'\');event.stopPropagation()" style="color:var(--et)"><i class="ti ti-trash"></i></button>'
-      +'</td></tr>';
+      +'<td></td></tr>';
 
     if(isExp){
       var cl2=ppx(p.id);
@@ -5779,14 +5962,59 @@ function updateOverallSummary(){
   var invoiced=sumField('invoiced');
   var totalRec=sumRec();                 // real aggregate REC across all program years
 
+  // Per-category REC: sum from saved editable rec fields per PY
+  function sumRecField(field){
+    var total=0;
+    document.querySelectorAll('.rpt-inp[data-field="'+field+'"]').forEach(function(inp){
+      var py=inp.dataset.py;
+      // Get the total rec for this PY and scale by category ratio
+      var recInp=document.querySelector('.rpt-rec-inp[data-py="'+py+'"]');
+      var pyRec=recInp?parseFloat(recInp.value)||0:0;
+      var pyTotal=parseFloat(inp.closest('.rpt-card')&&inp.closest('.rpt-card').querySelector('.rpt-inp[data-field="submitted"]')&&inp.closest('.rpt-card').querySelector('.rpt-inp[data-field="submitted"]').value)||submitted||1;
+      var catVal=parseFloat(inp.value)||0;
+      // Proportional REC: (category count / submitted count) * PY REC
+      var subInp=inp.closest('.rpt-card')&&inp.closest('.rpt-card').querySelector('.rpt-inp[data-field="submitted"]');
+      var pySub=subInp?parseFloat(subInp.value)||0:0;
+      if(pySub>0&&catVal>0)total+=Math.round((catVal/pySub)*pyRec*100)/100;
+      else if(catVal>0&&field==='submitted')total+=pyRec;
+    });
+    return total;
+  }
+  // submitted REC = sum of all PY total RECs
+  var recSubmitted=totalRec;
+  // approved REC = proportional
+  var recApproved=0;
+  document.querySelectorAll('.rpt-card').forEach(function(card){
+    var recInp=card.querySelector('.rpt-rec-inp[data-field="rec"]');
+    var subInp=card.querySelector('.rpt-inp[data-field="submitted"]');
+    var appInp=card.querySelector('.rpt-inp[data-field="approved"]');
+    var invInp=card.querySelector('.rpt-inp[data-field="invoiced"]');
+    var pyRec=recInp?parseFloat(recInp.value)||0:0;
+    var pySub=subInp?parseFloat(subInp.value)||0:0;
+    if(pySub>0){
+      recApproved+=Math.round(((parseFloat(appInp&&appInp.value)||0)/pySub)*pyRec*100)/100;
+    }
+  });
+  var recInvoiced=0;
+  document.querySelectorAll('.rpt-card').forEach(function(card){
+    var recInp=card.querySelector('.rpt-rec-inp[data-field="rec"]');
+    var subInp=card.querySelector('.rpt-inp[data-field="submitted"]');
+    var invInp=card.querySelector('.rpt-inp[data-field="invoiced"]');
+    var pyRec=recInp?parseFloat(recInp.value)||0:0;
+    var pySub=subInp?parseFloat(subInp.value)||0:0;
+    if(pySub>0){
+      recInvoiced+=Math.round(((parseFloat(invInp&&invInp.value)||0)/pySub)*pyRec*100)/100;
+    }
+  });
+
   var n1=document.getElementById('rov1-n');if(n1)n1.textContent=totalActive.toLocaleString();
   var r1=document.getElementById('rov1-r');if(r1)r1.textContent=fmFull(totalRec);
   var n2=document.getElementById('rov2-n');if(n2)n2.textContent=submitted.toLocaleString();
-  var r2=document.getElementById('rov2-r');if(r2)r2.textContent=fmFull(totalRec);
+  var r2=document.getElementById('rov2-r');if(r2)r2.textContent=fmFull(recSubmitted);
   var n3=document.getElementById('rov3-n');if(n3)n3.textContent=approved.toLocaleString();
-  var r3=document.getElementById('rov3-r');if(r3)r3.textContent=fmFull(totalRec);
+  var r3=document.getElementById('rov3-r');if(r3)r3.textContent=fmFull(recApproved);
   var n4=document.getElementById('rov4-n');if(n4)n4.textContent=invoiced.toLocaleString();
-  var r4=document.getElementById('rov4-r');if(r4)r4.textContent=fmFull(totalRec);
+  var r4=document.getElementById('rov4-r');if(r4)r4.textContent=fmFull(recInvoiced);
 }
 function exportReportBackup(){
   var backup={};
